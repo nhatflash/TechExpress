@@ -1,0 +1,6 @@
+@TechExpress.Application_HostAddress = http://localhost:5166
+
+GET {{TechExpress.Application_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
