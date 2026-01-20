@@ -1,4 +1,7 @@
 <Solution>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
   <Project Path="TechExpress.Application/TechExpress.Application.csproj" />
   <Project Path="TechExpress.Repository/TechExpress.Repository.csproj" />
   <Project Path="TechExpress.Service/TechExpress.Service.csproj" />
