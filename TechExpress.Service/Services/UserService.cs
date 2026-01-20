@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
+using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Dtos.Requests;
+using TechExpress.Service.Dtos.Responses;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services
@@ -17,63 +20,60 @@ namespace TechExpress.Service.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<object> InsertTwoTestUsersAsync()
+        public async Task<UserProfileDto> GetMyProfileAsync(Guid userId)
         {
-            var emails = new[]
-            {
-                "thongduy06@gmail.com",
-                "duythongtrannguyen98@gmail.com"
-            };
+            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId);
+            if (user == null)
+                throw new NotFoundException("User not found.");
 
-            int inserted = 0;
-            int skipped = 0;
+            return MapToProfileDto(user);
+        }
 
-            foreach (var rawEmail in emails)
-            {
-                var email = NormalizeEmailOrThrow(rawEmail);
+        public async Task<UserProfileDto> UpdateMyProfileAsync(Guid userId, UpdateMyProfileDto dto)
+        {
+            var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId);
+            if (user == null)
+                throw new NotFoundException("User not found.");
 
-                var exists = await _unitOfWork.UserRepository.FindUserByEmailAsync(email);
-                if (exists != null)
-                {
-                    skipped++;
-                    continue;
-                }
+            // Only customer can update
+            if (user.Role != UserRole.Customer)
+                throw new ForbiddenException("Only customer can update profile.");
 
-                var user = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Email = email,
-                    PasswordHash = PasswordEncoder.HashPassword("Test@1234"),
+            // Update fields that EXIST in domain
+            user.Phone = dto.Phone?.Trim();
+            user.Gender = dto.Gender;
 
-                    // Bạn đổi theo enum thực tế của bạn
-                    // Role = UserRole.Customer,
-                    // Status = UserStatus.Active
-                };
+            user.Province = dto.Province?.Trim();
+            user.Ward = dto.Ward?.Trim();
 
-                await _unitOfWork.UserRepository.AddAsync(user);
-                inserted++;
-            }
+            // StreetAddress maps to Address (domain)
+            user.Address = dto.StreetAddress?.Trim();
+
+            // DTO fields requested but domain doesn't have -> commented in DTO, so nothing here.
 
             await _unitOfWork.SaveChangesAsync();
 
-            return new
+            return MapToProfileDto(user);
+        }
+
+        private static UserProfileDto MapToProfileDto(User user)
+        {
+            return new UserProfileDto
             {
-                message = "Seed completed",
-                inserted,
-                skipped
+                Id = user.Id,
+                Email = user.Email,
+
+                Phone = user.Phone,
+                Gender = user.Gender,
+
+                Province = user.Province,
+                Ward = user.Ward,
+
+                StreetAddress = user.Address
             };
         }
 
-        private static string NormalizeEmailOrThrow(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ForbiddenException("Email không hợp lệ.");
 
-            var e = email.Trim().ToLowerInvariant();
-            if (!e.Contains("@"))
-                throw new ForbiddenException("Email không hợp lệ.");
 
-            return e;
-        }
     }
 }

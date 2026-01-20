@@ -43,5 +43,12 @@ namespace TechExpress.Repository.Repositories
             await _context.Users.AddAsync(user);
         }
 
+        public Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            return Task.CompletedTask;
+        }
+
+
     }
 }

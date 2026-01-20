@@ -27,8 +27,4 @@
     <ProjectReference Include="..\TechExpress.Repository\TechExpress.Repository.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\Responses\" />
-  </ItemGroup>
-
 </Project>
