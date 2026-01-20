@@ -6,6 +6,12 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ConnectionStrings__RedisConnection=distributedcache:6379
+
+      - Email__Smtp__Host=${Email__Smtp__Host}
+      - Email__Smtp__Port=${Email__Smtp__Port}
+      - Email__Smtp__Username=${Email__Smtp__Username}
+      - Email__Smtp__Password=${Email__Smtp__Password}
+      - Email__Smtp__From=${Email__Smtp__From}
     depends_on:
       mssql:
         condition: service_healthy

@@ -14,6 +14,7 @@ using TechExpress.Repository.Contexts;
 using TechExpress.Service;
 using TechExpress.Service.Contexts;
 using TechExpress.Service.Utils;
+using Viren.Services.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +81,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 
 builder.Services.AddScoped<ApplicationDbContext>();
 
+
+
 builder.Services.AddScoped<UnitOfWork>();
+
+builder.Services.AddScoped<SmtpEmailSender>();
+
 
 builder.Services.AddScoped<ServiceProviders>();
 
