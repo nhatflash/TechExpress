@@ -13,6 +13,8 @@ using TechExpress.Repository;
 using TechExpress.Repository.Contexts;
 using TechExpress.Service;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Implements;
+using TechExpress.Service.Interfaces;
 using TechExpress.Service.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -177,6 +179,8 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserContext>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Redis server configuration
 var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
