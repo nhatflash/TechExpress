@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TechExpress.Service.Dtos.Requests
+namespace TechExpress.Application.Dtos.Requests
 {
-    public class ForgotPasswordRequestDto
+    public class ForgotPasswordRequest
     {
         public string Email { get; set; } = default!;
     }

@@ -11,29 +11,29 @@ namespace TechExpress.Application.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly ServiceProviders _sp;
+        private readonly ServiceProviders _serviceProvider;
 
-        public UsersController(ServiceProviders sp)
+        public UserController(ServiceProviders serviceProvider)
         {
-            _sp = sp;
+            _serviceProvider = serviceProvider;
         }
 
 
         [HttpGet("me/profile")]
-        public async Task<IActionResult> GetMyProfile(CancellationToken ct)
+        public async Task<IActionResult> GetMyProfile()
         {
             var userId = GetCurrentUserId();
 
-            var profile = await _sp.UserService.GetMyProfileAsync(userId);
+            var profile = await _serviceProvider.UserService.GetMyProfileAsync(userId);
 
             return Ok(ApiResponse<UserProfileDto>.OkResponse(profile));
         }
 
 
         [HttpPut("me/profile")]
-        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileDto dto, CancellationToken ct)
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileRequest request)
         {
             var userId = GetCurrentUserId();
 

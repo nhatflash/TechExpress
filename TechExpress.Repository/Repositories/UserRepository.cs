@@ -29,24 +29,18 @@ namespace TechExpress.Repository.Repositories
 
         public async Task<User?> FindUserByEmailAsync(string emailNorm)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == emailNorm);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(emailNorm, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task<User?> FindUserByEmailWithTrackingAsync(string emailNorm)
         {
             return await _context.Users.AsTracking()
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == emailNorm);
+                .FirstOrDefaultAsync(u => u.Email.Equals(emailNorm, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public async Task AddAsync(User user)
         {
             await _context.Users.AddAsync(user);
-        }
-
-        public Task UpdateAsync(User user)
-        {
-            _context.Users.Update(user);
-            return Task.CompletedTask;
         }
 
 

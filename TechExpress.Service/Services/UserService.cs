@@ -5,8 +5,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
-using TechExpress.Service.Dtos.Requests;
-using TechExpress.Service.Dtos.Responses;
+using TechExpress.Service.Contexts;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services
@@ -14,23 +13,24 @@ namespace TechExpress.Service.Services
     public class UserService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly UserContext _userContext;
 
-        public UserService(UnitOfWork unitOfWork)
+        public UserService(UnitOfWork unitOfWork, UserContext userContext)
         {
             _unitOfWork = unitOfWork;
+            _userContext = userContext;
         }
 
-        public async Task<UserProfileDto> GetMyProfileAsync(Guid userId)
+        public async Task<User> GetMyProfileAsync(Guid userId)
         {
-            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId);
-            if (user == null)
-                throw new NotFoundException("User not found.");
+            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
 
-            return MapToProfileDto(user);
+            return user;
         }
 
-        public async Task<UserProfileDto> UpdateMyProfileAsync(Guid userId, UpdateMyProfileDto dto)
+        public async Task<User> UpdateMyProfileAsync(UpdateMyProfileDto dto)
         {
+            var userId = _userContext.GetCurrentAuthenticatedUserId();
             var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId);
             if (user == null)
                 throw new NotFoundException("User not found.");
@@ -54,23 +54,6 @@ namespace TechExpress.Service.Services
             await _unitOfWork.SaveChangesAsync();
 
             return MapToProfileDto(user);
-        }
-
-        private static UserProfileDto MapToProfileDto(User user)
-        {
-            return new UserProfileDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-
-                Phone = user.Phone,
-                Gender = user.Gender,
-
-                Province = user.Province,
-                Ward = user.Ward,
-
-                StreetAddress = user.Address
-            };
         }
 
 

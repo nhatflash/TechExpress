@@ -8,7 +8,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Viren.Services.Impl
+namespace TechExpress.Service.Utils
 {
     public class SmtpEmailSender 
     {
