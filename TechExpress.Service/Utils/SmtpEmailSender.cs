@@ -44,7 +44,7 @@ namespace TechExpress.Service.Utils
 
             await client.SendMailAsync(message, ct);
 
-            _logger.LogInformation("Email sent to {Email}", toEmail);
+            _logger.LogInformation("Email đã được gửi đến {}", toEmail);
         }
     }
 }

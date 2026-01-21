@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
+using TechExpress.Repository.CustomExceptions;
 
 namespace TechExpress.Service.Contexts
 {
@@ -17,7 +18,7 @@ namespace TechExpress.Service.Contexts
 
         public Guid GetCurrentAuthenticatedUserId()
         {
-            string? idStr = (_httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value) ?? throw new UnauthorizedAccessException();
+            string? idStr = (_httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value) ?? throw new UnauthorizedException("Người dùng chưa xác thực.");
             return Guid.Parse(idStr);
         }
 

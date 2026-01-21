@@ -19,7 +19,7 @@ namespace TechExpress.Application.Middlewares
             var (statusCode, message) = exception switch
             {
                 BaseException customEx => (customEx.StatusCode, customEx.Message),
-                _ => (StatusCodes.Status500InternalServerError, $"An unexpected error occurred: {exception}")
+                _ => (StatusCodes.Status500InternalServerError, $"Lỗi không xác định: {exception}")
             };
 
             httpContext.Response.StatusCode = statusCode;

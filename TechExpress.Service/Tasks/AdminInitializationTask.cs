@@ -40,19 +40,19 @@ public class AdminInitializationTask : IHostedService
 
             if (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword))
             {
-                _logger.LogWarning("Admin user configuration is missing. Skipping admin initialization.");
+                _logger.LogWarning("Cấu hình người dùng admin không đầy đủ. Bỏ qua khởi tạo người dùng admin.");
                 return;
             }
 
             if (await unitOfWork.UserRepository.UserExistByEmailAsync(adminEmail))
             {
-                _logger.LogInformation("Admin user already exists. Skipping initialization.");
+                _logger.LogInformation("Hệ thống đã có người dùng quản trị với email {}. Bỏ qua khởi tạo.", adminEmail);
                 return;
             }
 
             if (await unitOfWork.UserRepository.UserExistByRoleAsync(UserRole.Admin))
             {
-                _logger.LogInformation("Admin user already exists in database. Skipping initialization.");
+                _logger.LogInformation("Hệ thống đã có người dùng quản trị. Bỏ qua khởi tạo.");
                 return;
             }
 
@@ -70,11 +70,11 @@ public class AdminInitializationTask : IHostedService
             await unitOfWork.UserRepository.AddUserAsync(adminUser);
             await unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Admin user created successfully: {Email}", adminEmail);
+            _logger.LogInformation("Người dùng admin đã được tạo thành công: {}", adminEmail);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while initializing admin user");
+            _logger.LogError(ex, "Lỗi khi khởi tạo người dùng admin.");
         }
     }
 
