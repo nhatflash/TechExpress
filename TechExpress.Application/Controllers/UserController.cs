@@ -70,7 +70,7 @@ namespace TechExpress.Application.Controllers
         /// </summary>
         /// <param name="pageNumber">Page number (default: 1)</param>
         /// <param name="pageSize">Page size (default: 20, max: 100)</param>
-        [HttpGet]
+        [HttpGet("pagination")]
         [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> GetUsersWithPagination(
             [FromQuery] int pageNumber = 1,
