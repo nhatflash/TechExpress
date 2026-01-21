@@ -5,9 +5,9 @@ using System.Text;
 
 namespace TechExpress.Repository.CustomExceptions
 {
-    public class UnauthorizedAccessException : BaseException
+    public class UnauthorizedException : BaseException
     {
-        public UnauthorizedAccessException(string message) : base(StatusCodes.Status401Unauthorized, message)
+        public UnauthorizedException(string message) : base(StatusCodes.Status401Unauthorized, message)
         {
         }
     }

@@ -68,7 +68,7 @@ namespace TechExpress.Repository.Contexts
                     .HasMaxLength(20);
 
                 user.Property(u => u.AvatarImage)
-                    .HasColumnName("profile_image");
+                    .HasColumnName("avatar_image");
 
                 user.Property(u => u.Status)
                     .HasColumnName("status")

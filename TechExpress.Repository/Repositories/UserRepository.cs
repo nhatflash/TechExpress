@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using TechExpress.Repository.Contexts;
+using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 
 namespace TechExpress.Repository.Repositories
@@ -26,5 +27,46 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Users.AsTracking().FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        public async Task<User?> FindUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<User?> FindUserByPhoneAsync(string phone)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Phone == phone);
+        }
+
+        public async Task CreateUserAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<User?> FindUserByRoleAsync(UserRole role)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Role == role);
+        }
+
+        public async Task<bool> UserExistByRoleAsync(UserRole role)
+        {
+            return await _context.Users.AnyAsync(u => u.Role == role);
+        }
+
+        public async Task<bool> UserExistByEmailAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> UserExistByPhoneAsync(string phone)
+        {
+            return await _context.Users.AnyAsync(u => u.Phone == phone);
+        }
+
     }
 }

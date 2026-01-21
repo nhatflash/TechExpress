@@ -13,6 +13,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.Contexts;
 using TechExpress.Service;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Tasks;
 using TechExpress.Service.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -204,7 +205,20 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.UseInlineDefinitionsForEnums();
+});
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.ValueCountLimit = int.MaxValue;
+    options.KeyLengthLimit = int.MaxValue;
+});
+
+builder.Services.AddHostedService<AdminInitializationTask>();
 
 var app = builder.Build();
 
@@ -234,6 +248,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseCors();
 
