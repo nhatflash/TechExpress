@@ -95,5 +95,27 @@ namespace TechExpress.Repository.Repositories
             return (users, totalCount);
         }
 
+        // ============= STAFF LIST =================
+        public async Task<List<User>> GetStaffAsync(int page, int pageSize, StaffSortBy sortBy)
+        {
+            var query = _context.Users
+                .Where(u => u.Role == UserRole.Staff);
+
+            // == OrderBy tăng dần ==
+
+            query = sortBy switch
+            {
+                StaffSortBy.Email => query.OrderBy(u => u.Email),
+                StaffSortBy.FirstName => query.OrderBy(u => u.FirstName),
+                StaffSortBy.Salary => query.OrderBy(u => u.Salary),
+                _ => query.OrderBy(u => u.Email)
+            };
+
+            return await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

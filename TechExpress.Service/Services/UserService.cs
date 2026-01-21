@@ -295,7 +295,17 @@ public class UserService
 
     }
 
+    // Trả về List<User> (Entity gốc)
+    public async Task<List<User>> GetStaffListAsync(int page, StaffSortBy sortBy)
+    {
+        const int pageSize = 20;
 
+        // Lấy dữ liệu từ Repo
+        var staffList = await _unitOfWork.UserRepository
+            .GetStaffAsync(page, pageSize, sortBy);
+
+        return staffList;
+    }
 
 }
 

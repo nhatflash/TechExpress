@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
+using TechExpress.Repository.Enums;
 using TechExpress.Service;
 using TechExpress.Service.Utils;
 
@@ -135,6 +136,45 @@ namespace TechExpress.Application.Controllers
         {
             await _serviceProvider.UserService.DeleteUserAsync(id);
             return Ok(ApiResponse<string>.OkResponse("Người dùng đã được xóa thành công."));
+        }
+    
+    //========================Staff List =========================//
+        [Authorize(Roles = "Admin")]
+        [HttpGet("staffs")]
+        public async Task<IActionResult> GetStaffList(
+            [FromQuery] int page = 1,
+            [FromQuery] StaffSortBy sortBy = StaffSortBy.Email)
+        {
+            if (page < 1)
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "Page must be greater than 0"
+                });
+            }
+
+            // 1. Lấy dữ liệu gốc (List<User>)
+            var staffEntities = await _serviceProvider.UserService
+                .GetStaffListAsync(page, sortBy);
+
+            // 2. MAP DỮ LIỆU (Tối ưu nhất)
+            // Cú pháp này gọi là "Method Group".
+            // Nó tự động lấy từng User trong list ném vào hàm MapToStaffListResponse
+            var staffDtos = staffEntities
+                            .Select(ResponseMapper.MapToStaffListResponse)
+                            .ToList();
+
+            // 3. Trả về
+            var response = ApiResponse<object>.OkResponse(new
+            {
+                Page = page,
+                PageSize = 2,
+                SortBy = sortBy.ToString(),
+                Data = staffDtos
+            });
+
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

@@ -32,8 +32,4 @@
     <ProjectReference Include="..\TechExpress.Service\TechExpress.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos/Responses/" />
-  </ItemGroup>
-
 </Project>

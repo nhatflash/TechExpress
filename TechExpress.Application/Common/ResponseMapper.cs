@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
@@ -56,6 +56,19 @@ public static UserResponse MapToUserResponseFromUser(User user)
             PageNumber = userPagination.PageNumber,
             PageSize = userPagination.PageSize,
             TotalCount = userPagination.TotalCount
+        };
+    }
+    // =========== Map từ User sang StaffListResponse ===========
+    public static StaffListResponse MapToStaffListResponse(User user)
+    {
+        return new StaffListResponse
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Salary = user.Salary,
+            Status = user.Status
         };
     }
 }
