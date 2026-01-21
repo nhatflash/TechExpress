@@ -69,7 +69,7 @@ public class UserService
                 throw new BadRequestException("Loại tệp tin không hợp lệ. Các loại cho phép: jpg, jpeg, png, gif, webp");
             }
 
-            const long maxFileSize = 5 * 1024 * 1024; 
+            const long maxFileSize = 5 * 1024 * 1024;
             if (avatarImage.Length > maxFileSize)
             {
                 throw new BadRequestException("Tệp tin quá lớn. Kích thước tối đa cho phép là 5MB.");
@@ -102,7 +102,7 @@ public class UserService
 
             // Get base URL from HttpContext
             var httpContext = _httpContextAccessor.HttpContext;
-            var baseUrl = httpContext != null 
+            var baseUrl = httpContext != null
                 ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
                 : "https://localhost:7194"; // Fallback if HttpContext is not available
 
@@ -262,7 +262,7 @@ public class UserService
     }
 
 
-    private async Task UpdateUserWithUpdatedInformation(User user,string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    private async Task UpdateUserWithUpdatedInformation(User user, string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
     {
         if (!string.IsNullOrWhiteSpace(phone))
         {
@@ -295,8 +295,51 @@ public class UserService
 
     }
 
+    //================ Update Staff Profile =================//
+    //================ Update Staff Profile =================//
+    public async Task<User> HandleUpdateStaffProfile(
+        Guid staffId,
+        User request)
+    {
+        var user = await _unitOfWork.UserRepository
+            .FindUserByIdWithTrackingAsync(staffId)
+            ?? throw new UnauthorizedException("Người dùng không tồn tại.");
 
+        // ========= PHONE =========
+        if (!string.IsNullOrWhiteSpace(request.Phone) &&
+            request.Phone != user.Phone)
+        {
+            var phoneExists = await _unitOfWork.UserRepository
+                .UserExistByPhoneAsync(request.Phone);
 
+            if (phoneExists)
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+
+            user.Phone = request.Phone;
+        }
+
+        // ========= IDENTITY =========
+        if (!string.IsNullOrWhiteSpace(request.Identity) &&
+            request.Identity != user.Identity)
+        {
+            var identityExists = await _unitOfWork.UserRepository
+                .AnyAsync(u => u.Identity == request.Identity && u.Id != staffId);
+
+            if (identityExists)
+                throw new BadRequestException("CCCD/CMND đã tồn tại.");
+
+            user.Identity = request.Identity;
+        }
+
+        // ========= BASIC FIELDS =========
+        user.FirstName = request.FirstName ?? user.FirstName;
+        user.LastName = request.LastName ?? user.LastName;
+        user.Address = request.Address ?? user.Address;
+        user.Ward = request.Ward ?? user.Ward;
+        user.Province = request.Province ?? user.Province;
+
+        await _unitOfWork.SaveChangesAsync();
+        return user;
+    }
 }
-
 

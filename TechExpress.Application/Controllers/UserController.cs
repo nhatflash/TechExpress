@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
+using TechExpress.Repository.Models;
 using TechExpress.Service;
 using TechExpress.Service.Utils;
 
@@ -135,6 +136,39 @@ namespace TechExpress.Application.Controllers
         {
             await _serviceProvider.UserService.DeleteUserAsync(id);
             return Ok(ApiResponse<string>.OkResponse("Người dùng đã được xóa thành công."));
+        }
+
+        //======================= Update Staff Profile =======================//
+        [HttpPut("staff/{id}/details")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateStaffDetails(Guid id, [FromBody] UpdateStaffRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "Invalid request"
+                });
+            }
+
+            var userRequest = new User
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Phone = request.Phone,
+                Address = request.Address,
+                Ward = request.Ward,
+                Province = request.Province,
+                Identity = request.Identity
+            };
+
+            var updatedUser = await _serviceProvider.UserService
+                .HandleUpdateStaffProfile(id, userRequest);
+
+            return Ok(ApiResponse<UpdateStaffResponse>.OkResponse(
+                ResponseMapper.MapToUpdateStaffResponse(updatedUser)
+            ));
         }
     }
 }
