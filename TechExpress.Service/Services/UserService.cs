@@ -295,7 +295,16 @@ public class UserService
 
     }
 
-
+    // ======================= Staff_Details=======================//
+    public async Task<User> HandleGetStaffDetails(Guid staffId)
+    {
+        var staff = await _unitOfWork.UserRepository.FindUserByIdAsync(staffId) ?? throw new NotFoundException("Không tìm thấy nhân viên.");
+        if (staff.Role != UserRole.Staff)
+        {
+            throw new BadRequestException("Người dùng không phải là nhân viên.");
+        }
+        return staff;
+    }
 
 }
 

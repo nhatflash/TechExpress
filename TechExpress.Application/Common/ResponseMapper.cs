@@ -7,7 +7,7 @@ namespace TechExpress.Application.Common;
 
 public class ResponseMapper
 {
-public static UserResponse MapToUserResponseFromUser(User user)
+    public static UserResponse MapToUserResponseFromUser(User user)
     {
         return new UserResponse
         {
@@ -29,6 +29,28 @@ public static UserResponse MapToUserResponseFromUser(User user)
             CreatedAt = user.CreatedAt
         };
     }
+
+    //============= Map to StaffDetailResponse =============//
+    public static StaffDetailResponse MapToStaffDetailResponseFromUser(User user)
+    {
+        return new StaffDetailResponse
+        {
+
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Address = user.Address,
+            Province = user.Province,
+            Identity = user.Identity,
+            Salary = user.Salary,
+            Status = user.Status,
+        };
+    }
+
+
+
+
 
     public static List<UserResponse> MapToUserResponseListFromUserList(List<User> users)
     {

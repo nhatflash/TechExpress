@@ -136,5 +136,19 @@ namespace TechExpress.Application.Controllers
             await _serviceProvider.UserService.DeleteUserAsync(id);
             return Ok(ApiResponse<string>.OkResponse("Người dùng đã được xóa thành công."));
         }
+
+
+        [HttpGet("Staff-Details{id}")]
+        [Authorize(Roles = "Admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApiResponse<UserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetStaffDetails(Guid id)
+        {
+            var staff = await _serviceProvider.UserService.HandleGetStaffDetails(id);
+            var response = ResponseMapper.MapToStaffDetailResponseFromUser(staff);
+            return Ok(ApiResponse<StaffDetailResponse>.OkResponse(response));
+        }
     }
 }
