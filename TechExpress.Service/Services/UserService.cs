@@ -248,7 +248,7 @@ public class UserService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeleteUserAsync(Guid userId)
+    public async Task HandleDeleteUser(Guid userId)
     {
         var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
 
@@ -296,15 +296,23 @@ public class UserService
     }
 
     // Trả về List<User> (Entity gốc)
-    public async Task<List<User>> GetStaffListAsync(int page, StaffSortBy sortBy)
+    public async Task<Pagination<User>> HandleGetStaffListWithPagination(int page, StaffSortBy sortBy)
     {
         const int pageSize = 20;
 
         // Lấy dữ liệu từ Repo
-        var staffList = await _unitOfWork.UserRepository
-            .GetStaffAsync(page, pageSize, sortBy);
+        var staffs = await _unitOfWork.UserRepository
+            .GetStaffListAsync(page, pageSize, sortBy);
 
-        return staffList;
+        var totalCount = await _unitOfWork.UserRepository.GetTotalStaffCountAsync();
+
+        return new Pagination<User>
+        {
+            Items = staffs,
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+        };
     }
 
 }

@@ -46,6 +46,32 @@ public static UserResponse MapToUserResponseFromUser(User user)
         };
     }
 
+    public static Pagination<StaffResponse> MapToStaffResponsePaginationFromUserPagination(Pagination<User> userPagination)
+    {
+        var staffResponses = userPagination.Items.Select(MapToStaffResponseFromUser).ToList();
+
+        return new Pagination<StaffResponse>
+        {
+            Items = staffResponses,
+            PageNumber = userPagination.PageNumber,
+            PageSize = userPagination.PageSize,
+            TotalCount = userPagination.TotalCount
+        };
+    }
+
+    public static StaffResponse MapToStaffResponseFromUser(User user)
+    {
+        return new StaffResponse
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Salary = user.Salary,
+            Status = user.Status
+        };
+    }
+
     public static Pagination<UserResponse> MapToUserResponsePaginationFromUserPagination(Pagination<User> userPagination)
     {
         var userResponses = userPagination.Items.Select(MapToUserResponseFromUser).ToList();
@@ -56,19 +82,6 @@ public static UserResponse MapToUserResponseFromUser(User user)
             PageNumber = userPagination.PageNumber,
             PageSize = userPagination.PageSize,
             TotalCount = userPagination.TotalCount
-        };
-    }
-    // =========== Map từ User sang StaffListResponse ===========
-    public static StaffListResponse MapToStaffListResponse(User user)
-    {
-        return new StaffListResponse
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Phone = user.Phone,
-            Salary = user.Salary,
-            Status = user.Status
         };
     }
 }

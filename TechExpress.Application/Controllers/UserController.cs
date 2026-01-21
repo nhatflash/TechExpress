@@ -5,6 +5,7 @@ using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Enums;
+using TechExpress.Repository.Models;
 using TechExpress.Service;
 using TechExpress.Service.Utils;
 
@@ -100,7 +101,7 @@ namespace TechExpress.Application.Controllers
         /// <param name="request">User update data</param>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult<ApiResponse<UserResponse>>> UpdateUser(
+        public async Task<IActionResult> UpdateUser(
             Guid id,
             [FromBody] UpdateUserRequest request)
         {
@@ -134,7 +135,7 @@ namespace TechExpress.Application.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await _serviceProvider.UserService.DeleteUserAsync(id);
+            await _serviceProvider.UserService.HandleDeleteUser(id);
             return Ok(ApiResponse<string>.OkResponse("Người dùng đã được xóa thành công."));
         }
     
@@ -155,26 +156,16 @@ namespace TechExpress.Application.Controllers
             }
 
             // 1. Lấy dữ liệu gốc (List<User>)
-            var staffEntities = await _serviceProvider.UserService
-                .GetStaffListAsync(page, sortBy);
+            var staffs = await _serviceProvider.UserService
+                .HandleGetStaffListWithPagination(page, sortBy);
 
             // 2. MAP DỮ LIỆU (Tối ưu nhất)
             // Cú pháp này gọi là "Method Group".
             // Nó tự động lấy từng User trong list ném vào hàm MapToStaffListResponse
-            var staffDtos = staffEntities
-                            .Select(ResponseMapper.MapToStaffListResponse)
-                            .ToList();
+            var response = ResponseMapper
+                .MapToUserResponsePaginationFromUserPagination(staffs);
 
-            // 3. Trả về
-            var response = ApiResponse<object>.OkResponse(new
-            {
-                Page = page,
-                PageSize = 20,
-                SortBy = sortBy.ToString(),
-                Data = staffDtos
-            });
-
-            return Ok(response);
+            return Ok( ApiResponse<Pagination<UserResponse>>.OkResponse(response));
         }
     }
 }

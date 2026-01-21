@@ -96,7 +96,7 @@ namespace TechExpress.Repository.Repositories
         }
 
         // ============= STAFF LIST =================
-        public async Task<List<User>> GetStaffAsync(int page, int pageSize, StaffSortBy sortBy)
+        public async Task<List<User>> GetStaffListAsync(int page, int pageSize, StaffSortBy sortBy)
         {
             var query = _context.Users
                 .Where(u => u.Role == UserRole.Staff);
@@ -114,8 +114,14 @@ namespace TechExpress.Repository.Repositories
             return await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<int> GetTotalStaffCountAsync()
+        {
+            return await _context.Users
+                .Where(u => u.Role == UserRole.Staff)
+                .CountAsync();
         }
     }
 }
