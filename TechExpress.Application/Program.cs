@@ -164,7 +164,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
-        var errors = context.ModelState.Where(e => e.Value!.Errors.Count > 0).ToDictionary(kv => kv.Key, kv => kv.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
+        var errors = context.ModelState.Where(e => e.Value?.Errors.Count > 0).ToDictionary(kv => kv.Key, kv => kv.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
 
         var response = new ErrorResponse
         {

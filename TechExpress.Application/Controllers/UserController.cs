@@ -5,6 +5,7 @@ using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Service;
+using TechExpress.Service.Utils;
 
 namespace TechExpress.Application.Controllers
 {
@@ -12,11 +13,11 @@ namespace TechExpress.Application.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly ServiceProviders _serviceProviders;
+        private readonly ServiceProviders _serviceProvider;
 
-        public UserController(ServiceProviders serviceProviders)
+        public UserController(ServiceProviders serviceProvider)
         {
-            _serviceProviders = serviceProviders;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace TechExpress.Application.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
-            var users = await _serviceProviders.UserService.GetAllUsersAsync();
+            var users = await _serviceProvider.UserService.HandleGetAllUsers();
 
             var response = ResponseMapper.MapToUserResponseListFromUserList(users);
 
@@ -41,7 +42,7 @@ namespace TechExpress.Application.Controllers
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<ApiResponse<UserResponse>>> CreateStaff([FromForm] CreateStaffRequest request)
         {
-            var user = await _serviceProviders.UserService.CreateStaffAsync(
+            var user = await _serviceProvider.UserService.HandleCreateStaff(
                 request.Email,
                 request.Password,
                 request.FirstName,
@@ -61,6 +62,79 @@ namespace TechExpress.Application.Controllers
 
             return CreatedAtAction(nameof(CreateStaff), ApiResponse<UserResponse>.CreatedResponse(response));
         }
-    }
 
+        /// <summary>
+        /// Get paginated list of users (20 records per page by default)
+        /// </summary>
+        /// <param name="pageNumber">Page number (default: 1)</param>
+        /// <param name="pageSize">Page size (default: 20, max: 100)</param>
+        [HttpGet]
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> GetUsersWithPagination(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 20)
+        {
+            var userPagination = await _serviceProvider.UserService.HandleGetUsersWithPagination(pageNumber, pageSize);
+            var response = ResponseMapper.MapToUserResponsePaginationFromUserPagination(userPagination);
+            return Ok(ApiResponse<Pagination<UserResponse>>.OkResponse(response));
+        }
+
+        /// <summary>
+        /// Get detailed information of a specific user
+        /// </summary>
+        /// <param name="id">User ID</param>
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> GetUserDetail(Guid id)
+        {
+            var user = await _serviceProvider.UserService.HandleGetUserDetails(id);
+            var response = ResponseMapper.MapToUserResponseFromUser(user);
+            return Ok(ApiResponse<UserResponse>.OkResponse(response));
+        }
+
+        /// <summary>
+        /// Update user profile information
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <param name="request">User update data</param>
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<UserResponse>>> UpdateUser(
+            Guid id,
+            [FromBody] UpdateUserRequest request)
+        {
+            var user = await _serviceProvider.UserService.HandleUpdateUser(id, request.FirstName, request.LastName, request.Phone, request.Gender, request.Address, request.Ward, request.Province, request.PostalCode, request.AvatarImage);
+
+            var response = ResponseMapper.MapToUserResponseFromUser(user);
+            return Ok(ApiResponse<UserResponse>.OkResponse(response));
+        }
+
+        /// <summary>
+        /// Update user status
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <param name="request">Status update data</param>
+        [HttpPatch("{id}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUserStatus(
+            Guid id,
+            [FromBody] UpdateUserStatusRequest request)
+        {
+            await _serviceProvider.UserService.HandleUpdateUserStatus(id, request.Status);
+
+            return Ok(ApiResponse<string>.OkResponse($"Trạng thái người dùng đã được cập nhật thành {request.Status}."));
+        }
+
+        /// <summary>
+        /// Delete a user (soft delete - sets status to Deleted)
+        /// </summary>
+        /// <param name="id">User ID</param>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            await _serviceProvider.UserService.DeleteUserAsync(id);
+            return Ok(ApiResponse<string>.OkResponse("Người dùng đã được xóa thành công."));
+        }
+    }
 }

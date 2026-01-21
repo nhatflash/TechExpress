@@ -33,8 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos/" />
-    <Folder Include="Dtos/Requests/" />
     <Folder Include="Dtos/Responses/" />
   </ItemGroup>
 

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using TechExpress.Repository.Contexts;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
@@ -77,5 +79,21 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Users.AnyAsync(u => u.Id == userId);
         }
+
+        public async Task<(List<User> Users, int TotalCount)> GetUsersPagedAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Users.AsNoTracking();
+
+            var totalCount = await query.CountAsync();
+
+            var users = await query
+                .OrderBy(u => u.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (users, totalCount);
+        }
+
     }
 }

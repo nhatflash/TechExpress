@@ -26,12 +26,12 @@ public class UserService
         _userContext = userContext;
     }
 
-    public async Task<List<User>> GetAllUsersAsync()
+    public async Task<List<User>> HandleGetAllUsers()
     {
         return await _unitOfWork.UserRepository.GetAllUsersAsync();
     }
 
-    public async Task<User> CreateStaffAsync(
+    public async Task<User> HandleCreateStaff(
         string email,
         string password,
         string? firstName,
@@ -48,14 +48,14 @@ public class UserService
     {
         if (await _unitOfWork.UserRepository.UserExistByEmailAsync(email))
         {
-            throw new BadRequestException("Email already exists");
+            throw new BadRequestException("Email đã tồn tại");
         }
 
         if (!string.IsNullOrWhiteSpace(phone))
         {
             if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone))
             {
-                throw new BadRequestException("Phone number already exists");
+                throw new BadRequestException("Số điện thoại đã tồn tại");
             }
         }
 
@@ -66,13 +66,13 @@ public class UserService
             var fileExtension = Path.GetExtension(avatarImage.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(fileExtension))
             {
-                throw new BadRequestException("Invalid file type. Allowed types: jpg, jpeg, png, gif, webp");
+                throw new BadRequestException("Loại tệp tin không hợp lệ. Các loại cho phép: jpg, jpeg, png, gif, webp");
             }
 
             const long maxFileSize = 5 * 1024 * 1024; 
             if (avatarImage.Length > maxFileSize)
             {
-                throw new BadRequestException("File size exceeds the maximum limit of 5MB");
+                throw new BadRequestException("Tệp tin quá lớn. Kích thước tối đa cho phép là 5MB.");
             }
 
             // Ensure wwwroot exists
@@ -135,7 +135,7 @@ public class UserService
         return newUser;
     }
 
-    public async Task<User> GetMyProfileAsync()
+    public async Task<User> HandleGetProfile()
     {
         var userId = _userContext.GetCurrentAuthenticatedUserId();
         var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
@@ -143,7 +143,7 @@ public class UserService
         return user;
     }
 
-    public async Task<User> UpdateMyProfileAsync(string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    public async Task<User> HandleUpdateProfile(string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
     {
         var userId = _userContext.GetCurrentAuthenticatedUserId();
         var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Người dùng không tồn tại.");
@@ -156,33 +156,139 @@ public class UserService
     }
 
 
+    public async Task<Pagination<User>> HandleGetUsersWithPagination(int pageNumber = 1, int pageSize = 20)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1 || pageSize > 100) pageSize = 20;
+
+        var (users, totalCount) = await _unitOfWork.UserRepository.GetUsersPagedAsync(pageNumber, pageSize);
+
+        return new Pagination<User>
+        {
+            Items = users,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
+    }
+
+    public async Task<User> HandleGetUserDetails(Guid userId)
+    {
+        var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
+
+        return user;
+    }
+
+    public async Task<User> HandleUpdateUser(Guid userId, string? firstName, string? lastName, string? phone, Gender? gender, string? address, string? ward, string? province, string? postalCode, string? avatarImage)
+    {
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
+
+        if (!string.IsNullOrWhiteSpace(firstName))
+        {
+            user.FirstName = firstName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(lastName))
+        {
+            user.LastName = lastName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
+            {
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+            }
+            user.Phone = phone;
+        }
+
+        if (gender.HasValue)
+        {
+            user.Gender = gender;
+        }
+
+        if (!string.IsNullOrWhiteSpace(province))
+        {
+            user.Province = province;
+        }
+        if (!string.IsNullOrWhiteSpace(ward))
+        {
+            user.Ward = ward;
+        }
+        if (!string.IsNullOrWhiteSpace(address))
+        {
+            user.Address = address;
+        }
+
+        if (!string.IsNullOrWhiteSpace(postalCode))
+        {
+            user.PostalCode = postalCode;
+        }
+        if (!string.IsNullOrWhiteSpace(avatarImage))
+        {
+            user.AvatarImage = avatarImage;
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return user;
+    }
+
+    public async Task HandleUpdateUserStatus(Guid userId, UserStatus status)
+    {
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
+
+        if (user.Status == status)
+        {
+            throw new BadRequestException("Người dùng đã có trạng thái được chỉ định.");
+        }
+
+        user.Status = status;
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task DeleteUserAsync(Guid userId)
+    {
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
+
+        if (user.Status == UserStatus.Deleted)
+        {
+            throw new BadRequestException("Người dùng đã bị xóa.");
+        }
+
+        user.Status = UserStatus.Deleted;
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+
     private async Task UpdateUserWithUpdatedInformation(User user,string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
     {
-        if (!string.IsNullOrWhiteSpace(phone) && phone != user.Phone)
+        if (!string.IsNullOrWhiteSpace(phone))
         {
-            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone))
+            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
             {
                 throw new BadRequestException("Số điện thoại đã tồn tại.");
             }
             user.Phone = phone.Trim();
         }
 
-        if (gender != null && gender != user.Gender)
+        if (gender.HasValue)
         {
             user.Gender = gender;
         }
 
-        if (!string.IsNullOrWhiteSpace(province) && province != user.Province)
+        if (!string.IsNullOrWhiteSpace(province))
         {
             user.Province = province.Trim();
         }
 
-        if (!string.IsNullOrWhiteSpace(ward) && ward != user.Ward)
+        if (!string.IsNullOrWhiteSpace(ward))
         {
             user.Ward = ward.Trim();
         }
 
-        if (!string.IsNullOrWhiteSpace(streetAddress) && streetAddress != user.Address)
+        if (!string.IsNullOrWhiteSpace(streetAddress))
         {
             user.Address = streetAddress.Trim();
         }

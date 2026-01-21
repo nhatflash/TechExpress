@@ -25,7 +25,7 @@ namespace TechExpress.Application.Controllers
         [HttpGet("/")]
         public IActionResult GetServerHealthStatus()
         {
-            return Ok(ApiResponse<string>.OkResponse("Server alive."));
+            return Ok(ApiResponse<string>.OkResponse("Máy chủ đang hoạt động"));
         }
 
         [HttpGet("redis")]
@@ -63,7 +63,7 @@ namespace TechExpress.Application.Controllers
                 {
                     return StatusCode(
                         StatusCodes.Status503ServiceUnavailable,
-                        ApiResponse<string>.OkResponse("Database unreachable")
+                        ApiResponse<string>.OkResponse("Không thể kết nối đến cơ sở dữ liệu")
                     );
                 }
 

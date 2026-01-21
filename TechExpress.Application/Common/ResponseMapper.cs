@@ -1,6 +1,7 @@
 using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Utils;
 
 namespace TechExpress.Application.Common;
 
@@ -42,6 +43,19 @@ public static UserResponse MapToUserResponseFromUser(User user)
             RefreshToken = refreshToken,
             Email = user.Email,
             Role = user.Role.ToString(),
+        };
+    }
+
+    public static Pagination<UserResponse> MapToUserResponsePaginationFromUserPagination(Pagination<User> userPagination)
+    {
+        var userResponses = userPagination.Items.Select(MapToUserResponseFromUser).ToList();
+
+        return new Pagination<UserResponse>
+        {
+            Items = userResponses,
+            PageNumber = userPagination.PageNumber,
+            PageSize = userPagination.PageSize,
+            TotalCount = userPagination.TotalCount
         };
     }
 }

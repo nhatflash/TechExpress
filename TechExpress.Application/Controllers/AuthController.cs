@@ -11,11 +11,11 @@ namespace TechExpress.Application.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly ServiceProviders _serviceProviders;
+        private readonly ServiceProviders _serviceProvider;
 
-        public AuthController(ServiceProviders serviceProviders)
+        public AuthController(ServiceProviders serviceProvider)
         {
-            _serviceProviders = serviceProviders;
+            _serviceProvider = serviceProvider;
         }
 
 
@@ -26,7 +26,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (user, accessToken, refreshToken) = await _serviceProviders.AuthService.LoginAsyncWithUser(request.Email, request.Password);
+            var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.LoginAsyncWithUser(request.Email, request.Password);
             
             var response = ResponseMapper.MapToAuthResponse(accessToken, refreshToken, user);
 
@@ -41,7 +41,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request)
         {
-            var (user, accessToken, refreshToken) = await _serviceProviders.AuthService.RegisterAsync(
+            var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.RegisterAsync(
                 request.Email,
                 request.Password,
                 request.FirstName,
@@ -60,7 +60,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("register-staff")]
         public async Task<ActionResult<ApiResponse<AuthResponse>>> RegisterStaff([FromBody] RegisterStaffRequest request)
         {
-            var (user, accessToken, refreshToken) = await _serviceProviders.AuthService.RegisterStaffAsync(
+            var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.RegisterStaffAsync(
                 request.Email,
                 request.Password,
                 request.FirstName,
@@ -77,7 +77,7 @@ namespace TechExpress.Application.Controllers
         [Authorize]
         public async Task<IActionResult> RequestForgotPasswordOtp()
         {
-            await _serviceProviders.AuthService.HandleForgotPasswordRequestOtp();
+            await _serviceProvider.AuthService.HandleForgotPasswordRequestOtp();
 
             return Ok(ApiResponse<string>.OkResponse("Mã OTP đã được gửi đến email của bạn."));
         }
@@ -88,7 +88,7 @@ namespace TechExpress.Application.Controllers
         [Authorize]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
         {
-            await _serviceProviders.AuthService.HandleResetPassword(dto.Otp, dto.NewPassword, dto.ConfirmNewPassword);
+            await _serviceProvider.AuthService.HandleResetPassword(dto.Otp, dto.NewPassword, dto.ConfirmNewPassword);
 
             return Ok(ApiResponse<string>.OkResponse("Đặt lại mật khẩu thành công."));
         }
