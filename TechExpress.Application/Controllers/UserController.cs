@@ -169,12 +169,12 @@ namespace TechExpress.Application.Controllers
             var response = ApiResponse<object>.OkResponse(new
             {
                 Page = page,
-                PageSize = 2,
+                PageSize = 20,
                 SortBy = sortBy.ToString(),
                 Data = staffDtos
             });
 
-            return StatusCode(response.StatusCode, response);
+            return Ok(response);
         }
     }
 }
