@@ -59,6 +59,14 @@ public class UserService
             }
         }
 
+        if (!string.IsNullOrWhiteSpace(identity))
+        {
+            if (await _unitOfWork.UserRepository.UserExistByIdentityAsync(identity!))
+            {
+                throw new BadRequestException("Số CMND/CCCD đã tồn tại");
+            }
+        }
+
         string? avatarImagePath = null;
         if (avatarImage != null && avatarImage.Length > 0)
         {

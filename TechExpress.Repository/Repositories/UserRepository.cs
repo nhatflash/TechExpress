@@ -123,5 +123,10 @@ namespace TechExpress.Repository.Repositories
                 .Where(u => u.Role == UserRole.Staff)
                 .CountAsync();
         }
+
+        public async Task<bool> UserExistByIdentityAsync(string identity)
+        {
+            return await _context.Users.AnyAsync(u => u.Identity == identity);
+        }
     }
 }
