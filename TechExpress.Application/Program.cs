@@ -81,7 +81,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 
 builder.Services.AddScoped<ApplicationDbContext>();
 
+
+
 builder.Services.AddScoped<UnitOfWork>();
+
+builder.Services.AddScoped<SmtpEmailSender>();
+
 
 builder.Services.AddScoped<ServiceProviders>();
 
@@ -186,6 +191,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = redisConnectionString;
 });
 builder.Services.AddScoped<RedisUtils>();
+builder.Services.AddScoped<OtpUtils>();
+builder.Services.AddScoped<SmtpEmailSender>();
 
 builder.Services.AddCors(options =>
 {

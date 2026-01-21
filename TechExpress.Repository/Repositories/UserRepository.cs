@@ -38,7 +38,7 @@ namespace TechExpress.Repository.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Phone == phone);
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task AddUserAsync(User user)
         {
             await _context.Users.AddAsync(user);
         }
@@ -68,5 +68,14 @@ namespace TechExpress.Repository.Repositories
             return await _context.Users.AnyAsync(u => u.Phone == phone);
         }
 
+        public async Task<User?> FindUserByEmailWithTrackingAsync(string email)
+        {
+            return await _context.Users.AsTracking().FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> UserExistsByIdAsync(Guid userId)
+        {
+            return await _context.Users.AnyAsync(u => u.Id == userId);
+        }
     }
 }

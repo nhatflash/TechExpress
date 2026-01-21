@@ -67,7 +67,7 @@ public class AdminInitializationTask : IHostedService
                 Status = UserStatus.Active
             };
 
-            await unitOfWork.UserRepository.CreateUserAsync(adminUser);
+            await unitOfWork.UserRepository.AddUserAsync(adminUser);
             await unitOfWork.SaveChangesAsync();
 
             _logger.LogInformation("Admin user created successfully: {Email}", adminEmail);

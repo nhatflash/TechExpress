@@ -42,5 +42,11 @@ namespace TechExpress.Service.Utils
             return await _redisCache.GetStringAsync(key);
         }
 
+        public async Task RemoveAsync(string key)
+        {
+            await _redisCache.RemoveAsync(key);
+        }
+
+
     }
 }

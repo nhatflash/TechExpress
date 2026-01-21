@@ -1,10 +1,12 @@
 using System;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Contexts;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services;
@@ -14,12 +16,14 @@ public class UserService
     private readonly UnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserContext _userContext;
 
-    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
+    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext)
     {
         _unitOfWork = unitOfWork;
         _webHostEnvironment = webHostEnvironment;
         _httpContextAccessor = httpContextAccessor;
+        _userContext = userContext;
     }
 
     public async Task<List<User>> GetAllUsersAsync()
@@ -125,9 +129,68 @@ public class UserService
             Status = UserStatus.Active,
         };
 
-        await _unitOfWork.UserRepository.CreateUserAsync(newUser);
+        await _unitOfWork.UserRepository.AddUserAsync(newUser);
         await _unitOfWork.SaveChangesAsync();
 
         return newUser;
     }
+
+    public async Task<User> GetMyProfileAsync()
+    {
+        var userId = _userContext.GetCurrentAuthenticatedUserId();
+        var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new NotFoundException("Không tìm thấy người dùng.");
+
+        return user;
+    }
+
+    public async Task<User> UpdateMyProfileAsync(string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    {
+        var userId = _userContext.GetCurrentAuthenticatedUserId();
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Người dùng không tồn tại.");
+
+        await UpdateUserWithUpdatedInformation(user, phone, gender, province, ward, streetAddress);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return user;
+    }
+
+
+    private async Task UpdateUserWithUpdatedInformation(User user,string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    {
+        if (!string.IsNullOrWhiteSpace(phone) && phone != user.Phone)
+        {
+            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone))
+            {
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+            }
+            user.Phone = phone.Trim();
+        }
+
+        if (gender != null && gender != user.Gender)
+        {
+            user.Gender = gender;
+        }
+
+        if (!string.IsNullOrWhiteSpace(province) && province != user.Province)
+        {
+            user.Province = province.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(ward) && ward != user.Ward)
+        {
+            user.Ward = ward.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(streetAddress) && streetAddress != user.Address)
+        {
+            user.Address = streetAddress.Trim();
+        }
+
+    }
+
+
+
 }
+
+

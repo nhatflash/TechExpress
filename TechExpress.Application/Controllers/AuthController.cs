@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
@@ -71,6 +71,26 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToAuthResponse(accessToken, refreshToken, user);
 
             return CreatedAtAction(nameof(RegisterStaff), ApiResponse<AuthResponse>.CreatedResponse(response));
+        }
+
+        [HttpGet("forgot-password")]
+        [Authorize]
+        public async Task<IActionResult> RequestForgotPasswordOtp()
+        {
+            await _serviceProviders.AuthService.HandleForgotPasswordRequestOtp();
+
+            return Ok(ApiResponse<string>.OkResponse("Mã OTP đã được gửi đến email của bạn."));
+        }
+
+        
+
+        [HttpPost("forgot-password")]
+        [Authorize]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
+        {
+            await _serviceProviders.AuthService.HandleResetPassword(dto.Otp, dto.NewPassword, dto.ConfirmNewPassword);
+
+            return Ok(ApiResponse<string>.OkResponse("Đặt lại mật khẩu thành công."));
         }
     }
 }

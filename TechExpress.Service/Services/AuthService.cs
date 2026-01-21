@@ -1,8 +1,10 @@
-﻿
+
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Constants;
+using TechExpress.Service.Contexts;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services
@@ -11,11 +13,17 @@ namespace TechExpress.Service.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly JwtUtils _jwtUtils;
+        private readonly UserContext _userContext;
+        private readonly OtpUtils _otpUtils;
+        private readonly SmtpEmailSender _emailSender;
 
-        public AuthService(UnitOfWork unitOfWork, JwtUtils jwtUtils)
+        public AuthService(UnitOfWork unitOfWork, JwtUtils jwtUtils, UserContext userContext, OtpUtils otpUtils, SmtpEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
             _jwtUtils = jwtUtils;
+            _userContext = userContext;
+            _otpUtils = otpUtils;
+            _emailSender = emailSender;
         }
 
         public async Task<(User user, string accessToken, string refreshToken)> LoginAsyncWithUser(string email, string password)
@@ -70,7 +78,7 @@ namespace TechExpress.Service.Services
                 Status = UserStatus.Active
             };
 
-            await _unitOfWork.UserRepository.CreateUserAsync(newUser);
+            await _unitOfWork.UserRepository.AddUserAsync(newUser);
             await _unitOfWork.SaveChangesAsync();
 
             var accessToken = _jwtUtils.GenerateAccessToken(newUser);
@@ -112,7 +120,7 @@ namespace TechExpress.Service.Services
                 Status = UserStatus.Active
             };
 
-            await _unitOfWork.UserRepository.CreateUserAsync(newUser);
+            await _unitOfWork.UserRepository.AddUserAsync(newUser);
             await _unitOfWork.SaveChangesAsync();
 
             var accessToken = _jwtUtils.GenerateAccessToken(newUser);
@@ -121,5 +129,47 @@ namespace TechExpress.Service.Services
             return (newUser, accessToken, refreshToken);
         }
     
+
+        public async Task HandleForgotPasswordRequestOtp()
+        {
+            var userId = _userContext.GetCurrentAuthenticatedUserId();
+            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
+
+            var key = RedisKeyConstant.ForgotPasswordOtpKey(userId);
+            var otp = await _otpUtils.CreateAndStoreResetPasswordOtp(userId);
+
+            var subject = "TechExpress - OTP reset password";
+            var html = $@"
+                <div style=""font-family: Arial, sans-serif;"">
+                    <h3>Reset password</h3>
+                    <p>Mã OTP của bạn là:</p>
+                    <div style=""font-size: 28px; font-weight: 700; letter-spacing: 4px;"">{otp}</div>
+                    <p>Mã có hiệu lực trong <b>15 phút</b>.</p>
+                </div>";
+
+            await _emailSender.SendAsync(user.Email.Trim().ToLowerInvariant(), subject, html);
+        }
+
+        public async Task HandleResetPassword(string otp, string newPassword, string confirmNewPassword)
+        {
+            var userId = _userContext.GetCurrentAuthenticatedUserId();
+            var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
+
+            if (newPassword != confirmNewPassword)
+            {
+                throw new BadRequestException("Mật khẩu mới và xác nhận mật khẩu không khớp.");
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            {
+                throw new ForbiddenException("Mật khẩu không hợp lệ (tối thiểu 6 ký tự).");
+            }
+
+            await _otpUtils.VerifyResetPasswordOtp(userId, otp);
+
+            user.PasswordHash = PasswordEncoder.HashPassword(newPassword);
+
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
