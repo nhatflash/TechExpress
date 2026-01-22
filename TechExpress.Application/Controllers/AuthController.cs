@@ -26,7 +26,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.LoginAsyncWithUser(request.Email, request.Password);
+            var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.LoginAsyncWithUser(request.Email.Trim(), request.Password);
             
             var response = ResponseMapper.MapToAuthResponse(accessToken, refreshToken, user);
 
@@ -42,11 +42,11 @@ namespace TechExpress.Application.Controllers
         public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request)
         {
             var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.RegisterAsync(
-                request.Email,
+                request.Email.Trim(),
                 request.Password,
-                request.FirstName,
-                request.LastName,
-                request.Phone
+                request.FirstName?.Trim(),
+                request.LastName?.Trim(),
+                request.Phone?.Trim()
             );
 
             var response = ResponseMapper.MapToAuthResponse(accessToken, refreshToken, user);
@@ -61,11 +61,11 @@ namespace TechExpress.Application.Controllers
         public async Task<ActionResult<ApiResponse<AuthResponse>>> RegisterStaff([FromBody] RegisterStaffRequest request)
         {
             var (user, accessToken, refreshToken) = await _serviceProvider.AuthService.RegisterStaffAsync(
-                request.Email,
+                request.Email.Trim(),
                 request.Password,
-                request.FirstName,
-                request.LastName,
-                request.Phone
+                request.FirstName?.Trim(),
+                request.LastName?.Trim(),
+                request.Phone?.Trim()
             );
 
             var response = ResponseMapper.MapToAuthResponse(accessToken, refreshToken, user);
@@ -76,7 +76,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("forgot-password/request-otp")]
         public async Task<IActionResult> RequestForgotPasswordOtp([FromBody] ResetPasswordOtpRequest request)
         {
-            await _serviceProvider.AuthService.HandleForgotPasswordRequestOtp(request.Email);
+            await _serviceProvider.AuthService.HandleForgotPasswordRequestOtp(request.Email.Trim());
             return Ok(ApiResponse<string>.OkResponse("Mã OTP đã được gửi đến email của bạn."));
         }
 
@@ -85,7 +85,7 @@ namespace TechExpress.Application.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            await _serviceProvider.AuthService.HandleResetPassword(request.Email, request.Otp, request.NewPassword, request.ConfirmNewPassword);
+            await _serviceProvider.AuthService.HandleResetPassword(request.Email.Trim(), request.Otp.Trim(), request.NewPassword, request.ConfirmNewPassword);
 
             return Ok(ApiResponse<string>.OkResponse("Đặt lại mật khẩu thành công."));
         }

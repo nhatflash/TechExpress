@@ -22,7 +22,7 @@ namespace TechExpress.Application.Controllers
             _serviceProvider = serviceProvider;
         }
 
-        [HttpGet("me/profile")]
+        [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetMyProfile()
         {
@@ -32,11 +32,11 @@ namespace TechExpress.Application.Controllers
         }
 
 
-        [HttpPut("me/profile")]
+        [HttpPut("me")]
         [Authorize(Roles = "Customer, Admin")]
         public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileRequest request)
         {
-            var updated = await _serviceProvider.UserService.HandleUpdateProfile(request.Phone, request.Gender, request.Province, request.Ward, request.StreetAddress);
+            var updated = await _serviceProvider.UserService.HandleUpdateProfile(request.Phone?.Trim(), request.Gender, request.Province?.Trim(), request.Ward?.Trim(), request.StreetAddress?.Trim());
             var response = ResponseMapper.MapToUserResponseFromUser(updated);
             return Ok(ApiResponse<UserResponse>.OkResponse(response));
         }
@@ -64,18 +64,18 @@ namespace TechExpress.Application.Controllers
         public async Task<ActionResult<ApiResponse<UserResponse>>> CreateStaff([FromForm] CreateStaffRequest request)
         {
             var user = await _serviceProvider.UserService.HandleCreateStaff(
-                request.Email,
+                request.Email.Trim(),
                 request.Password,
-                request.FirstName,
-                request.LastName,
-                request.Phone,
+                request.FirstName?.Trim(),
+                request.LastName?.Trim(),
+                request.Phone?.Trim(),
                 request.Gender,
-                request.Address,
-                request.Ward,
-                request.Province,
-                request.PostalCode,
+                request.Address?.Trim(),
+                request.Ward?.Trim(),
+                request.Province?.Trim(),
+                request.PostalCode?.Trim(),
                 request.AvatarImage,
-                request.Identity,
+                request.Identity?.Trim(),
                 request.Salary
             );
 
@@ -124,7 +124,17 @@ namespace TechExpress.Application.Controllers
             Guid id,
             [FromBody] UpdateUserRequest request)
         {
-            var user = await _serviceProvider.UserService.HandleUpdateUser(id, request.FirstName, request.LastName, request.Phone, request.Gender, request.Address, request.Ward, request.Province, request.PostalCode, request.AvatarImage);
+            var user = await _serviceProvider.UserService.HandleUpdateUser(
+                id, 
+                request.FirstName?.Trim(), 
+                request.LastName?.Trim(), 
+                request.Phone?.Trim(), 
+                request.Gender, 
+                request.Address?.Trim(), 
+                request.Ward?.Trim(), 
+                request.Province?.Trim(), 
+                request.PostalCode?.Trim(), 
+                request.AvatarImage);
 
             var response = ResponseMapper.MapToUserResponseFromUser(user);
             return Ok(ApiResponse<UserResponse>.OkResponse(response));
@@ -197,22 +207,21 @@ namespace TechExpress.Application.Controllers
             return Ok(ApiResponse<StaffDetailResponse>.OkResponse(response));
         }
 
+
         //======================= Update Staff Profile =======================//
         [HttpPut("staffs/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateStaffDetails(Guid id, [FromBody] UpdateStaffRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new ErrorResponse
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Message = "Invalid request"
-                });
-            }
-
-            var updatedUser = await _serviceProvider.UserService
-                .HandleUpdateStaffDetails(id, request.FirstName, request.LastName, request.Phone, request.Address, request.Ward, request.Province, request.Identity);
+            var updatedUser = await _serviceProvider.UserService.HandleUpdateStaffDetails(
+                    id, 
+                    request.FirstName?.Trim(), 
+                    request.LastName?.Trim(), 
+                    request.Phone?.Trim(), 
+                    request.Address?.Trim(), 
+                    request.Ward?.Trim(), 
+                    request.Province?.Trim(), 
+                    request.Identity);
 
             return Ok(ApiResponse<UpdateStaffResponse>.OkResponse(
                 ResponseMapper.MapToUpdateStaffResponse(updatedUser)

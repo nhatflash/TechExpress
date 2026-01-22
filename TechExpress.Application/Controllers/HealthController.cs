@@ -11,14 +11,11 @@ namespace TechExpress.Application.Controllers
     [ApiController]
     public class HealthController : ControllerBase
     {
-        private readonly IDistributedCache _cache;
         private readonly ApplicationDbContext _db;
 
         public HealthController(
-            IDistributedCache cache,
             ApplicationDbContext db)
         {
-            _cache = cache;
             _db = db;
         }
 

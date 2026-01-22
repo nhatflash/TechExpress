@@ -10,42 +10,41 @@ public class ResponseMapper
     public static UserResponse MapToUserResponseFromUser(User user)
     {
         return new UserResponse
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Role = user.Role,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Phone = user.Phone,
-            Gender = user.Gender,
-            Address = user.Address,
-            Ward = user.Ward,
-            Province = user.Province,
-            PostalCode = user.PostalCode,
-            AvatarImage = user.AvatarImage,
-            Identity = user.Identity,
-            Salary = user.Salary,
-            Status = user.Status,
-            CreatedAt = user.CreatedAt
-        };
+        (
+            user.Id,
+            user.Email,
+            user.Role,
+            user.FirstName,
+            user.LastName,
+            user.Phone,
+            user.Gender,
+            user.Address,
+            user.Ward,
+            user.Province,
+            user.PostalCode,
+            user.AvatarImage,
+            user.Identity,
+            user.Salary,
+            user.Status,
+            user.CreatedAt
+        );
     }
 
     //============= Map to StaffDetailResponse =============//
     public static StaffDetailResponse MapToStaffDetailResponseFromUser(User user)
     {
         return new StaffDetailResponse
-        {
-
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Phone = user.Phone,
-            Address = user.Address,
-            Province = user.Province,
-            Identity = user.Identity,
-            Salary = user.Salary,
-            Status = user.Status,
-        };
+        (
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Phone,
+            user.Address,
+            user.Province,
+            user.Identity,
+            user.Salary,
+            user.Status
+        );
     }
 
     public static List<UserResponse> MapToUserResponseListFromUserList(List<User> users)
@@ -56,19 +55,19 @@ public class ResponseMapper
     public static AuthResponse MapToAuthResponse(string accessToken, string refreshToken, User user)
     {
         return new AuthResponse
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
-            Email = user.Email,
-            Role = user.Role.ToString(),
-        };
+        (
+            accessToken,
+            refreshToken,
+            user.Email,
+            user.Role
+        );
     }
 
-    public static Pagination<StaffResponse> MapToStaffResponsePaginationFromUserPagination(Pagination<User> userPagination)
+    public static Pagination<StaffListResponse> MapToStaffListResponsePaginationFromUserPagination(Pagination<User> userPagination)
     {
-        var staffResponses = userPagination.Items.Select(MapToStaffResponseFromUser).ToList();
+        var staffResponses = userPagination.Items.Select(MapToStaffListResponseFromUser).ToList();
 
-        return new Pagination<StaffResponse>
+        return new Pagination<StaffListResponse>
         {
             Items = staffResponses,
             PageNumber = userPagination.PageNumber,
@@ -77,17 +76,18 @@ public class ResponseMapper
         };
     }
 
-    public static StaffResponse MapToStaffResponseFromUser(User user)
+    public static StaffListResponse MapToStaffListResponseFromUser(User user)
     {
-        return new StaffResponse
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Phone = user.Phone,
-            Salary = user.Salary,
-            Status = user.Status
-        };
+        return new StaffListResponse
+        (
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Phone,
+            user.Salary,
+            user.Status
+        );
     }
 
     public static Pagination<UserResponse> MapToUserResponsePaginationFromUserPagination(Pagination<User> userPagination)
@@ -106,14 +106,14 @@ public class ResponseMapper
     public static UpdateStaffResponse MapToUpdateStaffResponse(User user)
     {
         return new UpdateStaffResponse
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Phone = user.Phone,
-            Address = user.Address,
-            Ward = user.Ward,
-            Province = user.Province,
-            Identity = user.Identity
-        };
+        (
+            user.FirstName,
+            user.LastName,
+            user.Phone,
+            user.Address,
+            user.Ward,
+            user.Province,
+            user.Identity
+        );
     }
 }
