@@ -77,7 +77,7 @@ public class UserService
                 throw new BadRequestException("Loại tệp tin không hợp lệ. Các loại cho phép: jpg, jpeg, png, gif, webp");
             }
 
-            const long maxFileSize = 5 * 1024 * 1024; 
+            const long maxFileSize = 5 * 1024 * 1024;
             if (avatarImage.Length > maxFileSize)
             {
                 throw new BadRequestException("Tệp tin quá lớn. Kích thước tối đa cho phép là 5MB.");
@@ -110,7 +110,7 @@ public class UserService
 
             // Get base URL from HttpContext
             var httpContext = _httpContextAccessor.HttpContext;
-            var baseUrl = httpContext != null 
+            var baseUrl = httpContext != null
                 ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
                 : "https://localhost:7194"; // Fallback if HttpContext is not available
 
@@ -270,7 +270,7 @@ public class UserService
     }
 
 
-    private async Task UpdateUserWithUpdatedInformation(User user,string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    private async Task UpdateUserWithUpdatedInformation(User user, string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
     {
         if (!string.IsNullOrWhiteSpace(phone))
         {
@@ -332,8 +332,66 @@ public class UserService
             throw new BadRequestException("Người dùng không phải là nhân viên.");
         }
         return staff;
+    }    
+
+    //================ Update Staff Profile =================//
+    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity)
+    {
+        var user = await _unitOfWork.UserRepository
+            .FindUserByIdWithTrackingAsync(staffId)
+            ?? throw new UnauthorizedException("Người dùng không tồn tại.");
+        if (!user.IsStaffUser())
+        {
+            throw new BadRequestException("Người dùng không phải là nhân viên.");
+        }
+
+        // ========= PHONE =========
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (user.Phone != null && phone != user.Phone &&await _unitOfWork.UserRepository
+                .UserExistByPhoneAsync(phone))
+            {
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+            }
+            user.Phone = phone;
+        }
+
+        // ========= IDENTITY =========
+        if (!string.IsNullOrWhiteSpace(identity))
+        {
+
+            if (user.Identity != null && identity != user.Identity && await _unitOfWork.UserRepository
+                .AnyAsync(u => u.Identity == identity && u.Id != staffId))
+            {
+                throw new BadRequestException("CCCD/CMND đã tồn tại.");
+            }
+            user.Identity = identity;
+        }
+
+        // ========= BASIC FIELDS =========
+        if (!string.IsNullOrWhiteSpace(firstName))
+        {
+            user.FirstName = firstName;
+        }
+        if (!string.IsNullOrWhiteSpace(lastName))
+        {
+            user.LastName = lastName;
+        }
+        if (!string.IsNullOrWhiteSpace(address))
+        {
+            user.Address = address;
+        }
+        if (!string.IsNullOrWhiteSpace(ward))
+        {
+            user.Ward = ward;
+        }
+        if (!string.IsNullOrWhiteSpace(province))
+        {
+            user.Province = province;
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+        return user;
     }
-
 }
-
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,12 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Users.AnyAsync(u => u.Phone == phone);
         }
+
+        public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await _context.Users.AnyAsync(predicate);
+        }
+
 
         public async Task<User?> FindUserByEmailWithTrackingAsync(string email)
         {

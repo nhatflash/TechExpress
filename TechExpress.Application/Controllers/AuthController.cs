@@ -73,22 +73,19 @@ namespace TechExpress.Application.Controllers
             return CreatedAtAction(nameof(RegisterStaff), ApiResponse<AuthResponse>.CreatedResponse(response));
         }
 
-        [HttpGet("forgot-password")]
-        [Authorize]
-        public async Task<IActionResult> RequestForgotPasswordOtp()
+        [HttpPost("forgot-password/request-otp")]
+        public async Task<IActionResult> RequestForgotPasswordOtp([FromBody] ResetPasswordOtpRequest request)
         {
-            await _serviceProvider.AuthService.HandleForgotPasswordRequestOtp();
-
+            await _serviceProvider.AuthService.HandleForgotPasswordRequestOtp(request.Email);
             return Ok(ApiResponse<string>.OkResponse("Mã OTP đã được gửi đến email của bạn."));
         }
 
         
 
         [HttpPost("forgot-password")]
-        [Authorize]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            await _serviceProvider.AuthService.HandleResetPassword(dto.Otp, dto.NewPassword, dto.ConfirmNewPassword);
+            await _serviceProvider.AuthService.HandleResetPassword(request.Email, request.Otp, request.NewPassword, request.ConfirmNewPassword);
 
             return Ok(ApiResponse<string>.OkResponse("Đặt lại mật khẩu thành công."));
         }

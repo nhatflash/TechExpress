@@ -102,4 +102,18 @@ public class ResponseMapper
             TotalCount = userPagination.TotalCount
         };
     }
+    //======================= Map Update Staff Response =======================//
+    public static UpdateStaffResponse MapToUpdateStaffResponse(User user)
+    {
+        return new UpdateStaffResponse
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Address = user.Address,
+            Ward = user.Ward,
+            Province = user.Province,
+            Identity = user.Identity
+        };
+    }
 }

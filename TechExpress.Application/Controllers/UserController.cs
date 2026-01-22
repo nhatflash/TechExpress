@@ -177,5 +177,27 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToStaffDetailResponseFromUser(staff);
             return Ok(ApiResponse<StaffDetailResponse>.OkResponse(response));
         }
+
+        //======================= Update Staff Profile =======================//
+        [HttpPut("staffs/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateStaffDetails(Guid id, [FromBody] UpdateStaffRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "Invalid request"
+                });
+            }
+
+            var updatedUser = await _serviceProvider.UserService
+                .HandleUpdateStaffDetails(id, request.FirstName, request.LastName, request.Phone, request.Address, request.Ward, request.Province, request.Identity);
+
+            return Ok(ApiResponse<UpdateStaffResponse>.OkResponse(
+                ResponseMapper.MapToUpdateStaffResponse(updatedUser)
+            ));
+        }
     }
 }

@@ -7,6 +7,10 @@ namespace TechExpress.Application.Dtos.Requests
 {
     public class ResetPasswordRequest
     {
+        [Required(ErrorMessage = "Email không được để trống.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        public string Email { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "OTP là bắt buộc.")]
         public string Otp { get; set; } = string.Empty;
 

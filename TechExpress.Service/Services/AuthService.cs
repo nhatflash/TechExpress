@@ -130,13 +130,12 @@ namespace TechExpress.Service.Services
         }
     
 
-        public async Task HandleForgotPasswordRequestOtp()
+        public async Task HandleForgotPasswordRequestOtp(string email)
         {
-            var userId = _userContext.GetCurrentAuthenticatedUserId();
-            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
+            var user = await _unitOfWork.UserRepository.FindUserByEmailAsync(email) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
 
-            var key = RedisKeyConstant.ForgotPasswordOtpKey(userId);
-            var otp = await _otpUtils.CreateAndStoreResetPasswordOtp(userId);
+            var key = RedisKeyConstant.ForgotPasswordOtpKey(user.Id);
+            var otp = await _otpUtils.CreateAndStoreResetPasswordOtp(user.Id);
 
             var subject = "TechExpress - OTP reset password";
             var html = $@"
@@ -150,10 +149,9 @@ namespace TechExpress.Service.Services
             await _emailSender.SendAsync(user.Email.Trim().ToLowerInvariant(), subject, html);
         }
 
-        public async Task HandleResetPassword(string otp, string newPassword, string confirmNewPassword)
+        public async Task HandleResetPassword(string email, string otp, string newPassword, string confirmNewPassword)
         {
-            var userId = _userContext.GetCurrentAuthenticatedUserId();
-            var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
+            var user = await _unitOfWork.UserRepository.FindUserByEmailAsync(email) ?? throw new UnauthorizedException("Không tìm thấy người dùng.");
 
             if (newPassword != confirmNewPassword)
             {
@@ -165,7 +163,7 @@ namespace TechExpress.Service.Services
                 throw new ForbiddenException("Mật khẩu không hợp lệ (tối thiểu 6 ký tự).");
             }
 
-            await _otpUtils.VerifyResetPasswordOtp(userId, otp);
+            await _otpUtils.VerifyResetPasswordOtp(user.Id, otp);
 
             user.PasswordHash = PasswordEncoder.HashPassword(newPassword);
 
