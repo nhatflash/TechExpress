@@ -190,8 +190,10 @@ var redisConnectionString = builder.Configuration.GetConnectionString("RedisConn
 var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString!);
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.ConnectionMultiplexerFactory = () => Task.FromResult((IConnectionMultiplexer)redisConnection);
+    options.Configuration = redisConnectionString;
 });
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
 
 builder.Services.AddScoped<RedisUtils>();
 builder.Services.AddScoped<OtpUtils>();

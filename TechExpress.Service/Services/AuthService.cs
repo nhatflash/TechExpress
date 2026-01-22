@@ -146,7 +146,7 @@ namespace TechExpress.Service.Services
                     <p>Mã có hiệu lực trong <b>15 phút</b>.</p>
                 </div>";
 
-            await _emailSender.SendAsync(user.Email.Trim().ToLowerInvariant(), subject, html);
+            await _emailSender.SendAsync(user.Email.Trim(), subject, html);
         }
 
         public async Task HandleResetPassword(string email, string otp, string newPassword, string confirmNewPassword)
