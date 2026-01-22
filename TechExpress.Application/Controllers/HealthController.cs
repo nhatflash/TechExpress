@@ -28,30 +28,6 @@ namespace TechExpress.Application.Controllers
             return Ok(ApiResponse<string>.OkResponse("Máy chủ đang hoạt động"));
         }
 
-        [HttpGet("redis")]
-        public async Task<IActionResult> CheckRedis()
-        {
-            try
-            {
-                await _cache.SetStringAsync(
-                    "health-check",
-                    "ok",
-                    new DistributedCacheEntryOptions
-                    {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5)
-                    });
-
-                return Ok(ApiResponse<string>.OkResponse("Redis OK"));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    StatusCodes.Status503ServiceUnavailable,
-                    ApiResponse<string>.OkResponse($"Redis DOWN: {ex.Message}")
-                );
-            }
-        }
-
         [HttpGet("db")]
         public async Task<IActionResult> CheckDatabase()
         {
