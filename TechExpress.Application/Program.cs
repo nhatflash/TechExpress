@@ -165,12 +165,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
-        var errors = context.ModelState.Where(e => e.Value?.Errors.Count > 0).ToDictionary(kv => kv.Key, kv => kv.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+        var errors = context.ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList();
 
         var response = new ErrorResponse
         {
             StatusCode = StatusCodes.Status400BadRequest,
-            Message = "Error(s) at model has been found: " + errors
+            Message = "Error(s) at model has been found: " + string.Join(", ", errors)
         };
         return new BadRequestObjectResult(response);
     };
@@ -187,7 +190,7 @@ builder.Services.AddScoped<UserContext>();
 
 // Redis server configuration
 var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
-var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString!);
+var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString! + ",abortConnect=false");
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConnectionString;
