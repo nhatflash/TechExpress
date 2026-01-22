@@ -42,5 +42,21 @@ namespace TechExpress.Repository.Models
 
         public DateTimeOffset CreatedAt { get; } = DateTimeOffset.Now;
 
+
+        public bool IsStaffUser()
+        {
+            return Role == UserRole.Staff;
+        }
+
+        public bool IsAdminUser()
+        {
+            return Role == UserRole.Admin;
+        }
+
+        public bool IsCustomerUser()
+        {
+            return Role == UserRole.Customer;
+        }
+
     }
 }

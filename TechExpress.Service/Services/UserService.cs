@@ -321,6 +321,17 @@ public class UserService
             PageSize = pageSize,
             TotalCount = totalCount,
         };
+    }    
+    
+    // ======================= Staff_Details=======================//
+    public async Task<User> HandleGetStaffDetails(Guid staffId)
+    {
+        var staff = await _unitOfWork.UserRepository.FindUserByIdAsync(staffId) ?? throw new NotFoundException("Không tìm thấy nhân viên.");
+        if (!staff.IsStaffUser())
+        {
+            throw new BadRequestException("Người dùng không phải là nhân viên.");
+        }
+        return staff;
     }
 
 }

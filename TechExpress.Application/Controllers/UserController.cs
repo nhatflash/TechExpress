@@ -167,5 +167,15 @@ namespace TechExpress.Application.Controllers
 
             return Ok( ApiResponse<Pagination<UserResponse>>.OkResponse(response));
         }
+
+
+        [HttpGet("staffs/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetStaffDetails(Guid id)
+        {
+            var staff = await _serviceProvider.UserService.HandleGetStaffDetails(id);
+            var response = ResponseMapper.MapToStaffDetailResponseFromUser(staff);
+            return Ok(ApiResponse<StaffDetailResponse>.OkResponse(response));
+        }
     }
 }
