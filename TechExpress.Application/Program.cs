@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -186,10 +187,12 @@ builder.Services.AddScoped<UserContext>();
 
 // Redis server configuration
 var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString!);
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = redisConnectionString;
+    options.ConnectionMultiplexerFactory = () => Task.FromResult((IConnectionMultiplexer)redisConnection);
 });
+
 builder.Services.AddScoped<RedisUtils>();
 builder.Services.AddScoped<OtpUtils>();
 builder.Services.AddScoped<SmtpEmailSender>();
