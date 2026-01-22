@@ -7,6 +7,7 @@ using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service;
+using TechExpress.Service.Services;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Application.Controllers
@@ -227,5 +228,15 @@ namespace TechExpress.Application.Controllers
                 ResponseMapper.MapToUpdateStaffResponse(updatedUser)
             ));
         }
+
+        //======================= Remove Staff =======================//
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("staff/{staffId}")]
+        public async Task<IActionResult> RemoveStaff(Guid staffId)
+        {
+            await _serviceProvider.UserService.RemoveStaffAsync(staffId);
+            return Ok(new { message = $"Xóa thành công nhân viên:  {staffId}"});
+        }
+
     }
 }
