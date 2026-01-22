@@ -22,6 +22,25 @@ namespace TechExpress.Application.Controllers
             _serviceProvider = serviceProvider;
         }
 
+        [HttpGet("me/profile")]
+        [Authorize]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            var profile = await _serviceProvider.UserService.HandleGetProfile();
+            var response = ResponseMapper.MapToUserResponseFromUser(profile);
+            return Ok(ApiResponse<UserResponse>.OkResponse(response));
+        }
+
+
+        [HttpPut("me/profile")]
+        [Authorize(Roles = "Customer, Admin")]
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileRequest request)
+        {
+            var updated = await _serviceProvider.UserService.HandleUpdateProfile(request.Phone, request.Gender, request.Province, request.Ward, request.StreetAddress);
+            var response = ResponseMapper.MapToUserResponseFromUser(updated);
+            return Ok(ApiResponse<UserResponse>.OkResponse(response));
+        }
+
         /// <summary>
         /// Lấy danh sách tất cả user (chỉ Admin)
         /// </summary>
