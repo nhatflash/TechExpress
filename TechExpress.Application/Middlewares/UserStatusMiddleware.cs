@@ -21,7 +21,7 @@ namespace TechExpress.Application.Middlewares
                 {
                     var userId = Guid.Parse(userIdClaim.Value);
 
-                    var user = await unitOfWork.UserRepository.FindUserByIdFreshAsync(userId);
+                    var user = await unitOfWork.UserRepository.FindUserByIdWithNoTrackingAsync(userId);
 
                     if (user == null || user.Status != UserStatus.Active)
                     {

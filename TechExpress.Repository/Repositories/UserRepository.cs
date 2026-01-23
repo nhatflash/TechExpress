@@ -31,10 +31,10 @@ namespace TechExpress.Repository.Repositories
             return await _context.Users.AsTracking().FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<User?> FindUserByIdFreshAsync(Guid id)
+        public async Task<User?> FindUserByIdWithNoTrackingAsync(Guid id)
         {
             return await _context.Users
-                .AsNoTracking() // 🔥 QUAN TRỌNG
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
