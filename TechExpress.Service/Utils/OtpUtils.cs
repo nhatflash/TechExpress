@@ -23,8 +23,8 @@ public class OtpUtils
         string otp = GenerateNumericOtp(6);
         var key = RedisKeyConstant.ForgotPasswordOtpKey(userId);
 
-        otp = PasswordEncoder.HashPassword(otp);
-        await _redisUtils.StoreStringData(key, otp, ResetPasswordOtpExpiryDuration);
+        string hashedOtp = PasswordEncoder.HashPassword(otp);
+        await _redisUtils.StoreStringData(key, hashedOtp, ResetPasswordOtpExpiryDuration);
 
         return otp;
     }

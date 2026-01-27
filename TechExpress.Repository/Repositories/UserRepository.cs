@@ -31,6 +31,13 @@ namespace TechExpress.Repository.Repositories
             return await _context.Users.AsTracking().FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<User?> FindUserByIdWithNoTrackingAsync(Guid id)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
         public async Task<User?> FindUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);

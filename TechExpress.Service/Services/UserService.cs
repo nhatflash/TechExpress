@@ -393,5 +393,24 @@ public class UserService
         await _unitOfWork.SaveChangesAsync();
         return user;
     }
+
+    //================= Remove Staff =================//
+    public async Task RemoveStaffAsync(Guid staffId)
+    {
+        var user = await _unitOfWork.UserRepository
+            .FindUserByIdWithTrackingAsync(staffId)
+            ?? throw new NotFoundException("Nhân viên không tồn tại");
+
+        if (!user.IsStaffUser())
+            throw new BadRequestException("Chỉ có thể xóa tài khoản staff");
+
+        if (user.Status == UserStatus.Deleted)
+            return;
+
+        user.Status = UserStatus.Deleted;
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
 }
 

@@ -10,11 +10,11 @@ namespace TechExpress.Repository.Models
     {
         public Guid Id { get; set; }
 
-        public string Email { get; set; } = string.Empty;
+        public required string Email { get; set; }
 
-        public string PasswordHash { get; set; } = string.Empty;
+        public required string PasswordHash { get; set; }
 
-        public UserRole Role { get; set; }
+        public required UserRole Role { get; set; }
 
         public string? FirstName { get; set; }
 
@@ -38,7 +38,7 @@ namespace TechExpress.Repository.Models
 
         public decimal? Salary { get; set;  }
 
-        public UserStatus Status { get; set; }
+        public required UserStatus Status { get; set; }
 
         public DateTimeOffset CreatedAt { get; } = DateTimeOffset.Now;
 
