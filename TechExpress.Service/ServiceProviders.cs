@@ -16,10 +16,13 @@ namespace TechExpress.Service
         public AuthService AuthService { get; }
         public UserService UserService { get; }
 
+        public CategoryService CategoryService { get; }
+
         public ServiceProviders(UnitOfWork unitOfWork, SmtpEmailSender emailSender, JwtUtils jwtUtils, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, OtpUtils otpUtils)
         {
             AuthService = new AuthService(unitOfWork, jwtUtils, userContext, otpUtils, emailSender);
             UserService = new UserService(unitOfWork, webHostEnvironment, httpContextAccessor, userContext);
+            CategoryService = new CategoryService(unitOfWork);
         }
     }
 }
