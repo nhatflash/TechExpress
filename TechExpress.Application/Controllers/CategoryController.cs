@@ -5,6 +5,7 @@ using TechExpress.Application.Common;
 using TechExpress.Application.DTOs.Requests;
 using TechExpress.Application.DTOs.Responses;
 using TechExpress.Service;
+using TechExpress.Service.Utils;
 
 
 namespace TechExpress.Application.Controllers
@@ -34,6 +35,34 @@ namespace TechExpress.Application.Controllers
 
             var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
             return Ok(ApiResponse<CategoryResponse>.OkResponse(response));
+        }
+
+
+        //=======================================Category List Controller =======================================//
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetList([FromQuery] CategoryFilterRequest filter)
+        {
+            var pagination = await _serviceProvider.CategoryService.HandleGetCategories(
+                filter.SearchName,
+                filter.ParentId,
+                filter.Status,
+                filter.Page
+            );
+
+            var responseItems = pagination.Items
+                .Select(ResponseMapper.MapToCategoryResponseFromCategory)
+                .ToList();
+
+            var response = new Pagination<CategoryResponse>
+            {
+                Items = responseItems,
+                TotalCount = pagination.TotalCount,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
+
+            return Ok(ApiResponse<Pagination<CategoryResponse>>.OkResponse(response));
         }
     }
 }

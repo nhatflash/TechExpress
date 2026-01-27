@@ -35,5 +35,10 @@ namespace TechExpress.Repository.Repositories
         public async Task<Category?> FindCategoryByIdWithTrackingAsync(Guid id)
             => await _context.Categories.AsTracking().FirstOrDefaultAsync(c => c.Id == id);
 
+
+        public IQueryable<Category> GetCategoriesQueryable()
+        {
+            return _context.Categories.AsNoTracking().AsQueryable();
+        }
     }
 }
