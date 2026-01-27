@@ -35,5 +35,24 @@ namespace TechExpress.Repository.Repositories
         public async Task<Category?> FindCategoryByIdWithTrackingAsync(Guid id)
             => await _context.Categories.AsTracking().FirstOrDefaultAsync(c => c.Id == id);
 
+
+        //không phân biệt cấp cha con. do bên DB nó set Uni que nên chỉ cần check tên toàn cục
+        public async Task<bool> IsNameGlobalExistsAsync(Guid id, string name)
+        {
+            // Kiểm tra xem có danh mục nào khác (khác ID hiện tại) trùng tên này không
+            return await _context.Categories.AnyAsync(c =>
+                c.Id != id &&
+                c.Name.ToLower() == name.ToLower());
+        }
+
+        public async Task<List<Guid>> GetChildCategoryIdsAsync(Guid parentId)
+        {
+            // Lấy tất cả ID của các danh mục con trực tiếp
+            return await _context.Categories
+                .Where(c => c.ParentCategoryId == parentId)
+                .Select(c => c.Id)
+                .ToListAsync();
+        }
+
     }
 }

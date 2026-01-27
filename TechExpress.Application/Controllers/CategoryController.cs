@@ -21,7 +21,7 @@ namespace TechExpress.Application.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin, Staff")]
+        //[Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Create([FromBody] CreateCategoryRequest request)
         {
             // Lấy từng field từ request để truyền vào Service
@@ -30,6 +30,23 @@ namespace TechExpress.Application.Controllers
                 request.Description,
                 request.ParentCategoryId,
                 request.ImageUrl
+            );
+
+            var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
+            return Ok(ApiResponse<CategoryResponse>.OkResponse(response));
+        }
+
+        [HttpPatch("update{id}")]
+        //[Authorize(Roles = "Admin")] //  Chỉ Admin mới có quyền cập nhật
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateCategoryRequest request)
+        {
+            var category = await _serviceProvider.CategoryService.HandleUpdateCategory(
+                id,
+                request.Name,
+                request.Description,
+                request.ParentCategoryId,
+                request.ImageUrl,
+                request.Status
             );
 
             var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
