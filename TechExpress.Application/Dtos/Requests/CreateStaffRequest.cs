@@ -40,7 +40,8 @@ public class CreateStaffRequest
     [StringLength(20, ErrorMessage = "Mã bưu điện không được vượt quá 20 ký tự.")]
     public string? PostalCode { get; set; }
 
-    public IFormFile? AvatarImage { get; set; }
+    [StringLength(2048, ErrorMessage = "URL ảnh đại diện không được vượt quá 2048 ký tự.")]
+    public string? AvatarImage { get; set; }
 
     [StringLength(20, ErrorMessage = "Số CMND/CCCD không được vượt quá 20 ký tự.")]
     public string? Identity { get; set; }

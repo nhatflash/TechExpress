@@ -13,11 +13,13 @@ namespace TechExpress.Repository
         private readonly ApplicationDbContext _context;
 
         public UserRepository UserRepository { get; }
+        public SpecDefinitionRepository SpecDefinitionRepository { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             UserRepository = new UserRepository(context);
+            SpecDefinitionRepository = new SpecDefinitionRepository(context);
         }
 
         public async Task SaveChangesAsync()
