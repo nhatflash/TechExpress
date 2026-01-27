@@ -1,5 +1,6 @@
 ﻿using System;
 using TechExpress.Application.Dtos.Responses;
+using TechExpress.Application.DTOs.Responses;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
 
@@ -114,6 +115,21 @@ public class ResponseMapper
             user.Ward,
             user.Province,
             user.Identity
+        );
+    }
+
+    // ======================= Map Category Response từ model => Application.Dtos.response =======================//
+    public static CategoryResponse MapToCategoryResponseFromCategory(Category category)
+    {
+        return new CategoryResponse(
+            category.Id,
+            category.Name,
+            category.ParentCategoryId,
+            category.Description,
+            category.ImageUrl,
+            category.IsDeleted,
+            category.CreatedAt,
+            category.UpdatedAt
         );
     }
 }
