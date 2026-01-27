@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TechExpress.Application.Common;
+using TechExpress.Application.DTOs.Requests;
 using TechExpress.Application.DTOs.Responses;
 using TechExpress.Service;
-using TechExpress.Service.DTOs.Requests;
+
 
 namespace TechExpress.Application.Controllers
 {
@@ -12,18 +13,25 @@ namespace TechExpress.Application.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ServiceProviders _service;
+        private readonly ServiceProviders _serviceProvider;
 
         public CategoryController(ServiceProviders serviceProviders)
         {
-            _service = serviceProviders;
+            _serviceProvider = serviceProviders;
         }
 
-        [HttpPost("create")]
-        [Authorize(Roles = "Admin,Staff")]
-        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
+        [HttpPost]
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Create([FromBody] CreateCategoryRequest request)
         {
-            var category = await _service.CategoryService.HandleCreateCategory(request);
+            // Lấy từng field từ request để truyền vào Service
+            var category = await _serviceProvider.CategoryService.HandleCreateCategory(
+                request.Name,
+                request.Description,
+                request.ParentCategoryId,
+                request.ImageUrl
+            );
+
             var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
             return Ok(ApiResponse<CategoryResponse>.OkResponse(response));
         }

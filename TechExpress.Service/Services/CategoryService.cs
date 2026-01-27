@@ -4,7 +4,7 @@ using System.Text;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Models;
-using TechExpress.Service.DTOs.Requests;
+
 
 namespace TechExpress.Service.Services
 {
@@ -16,30 +16,35 @@ namespace TechExpress.Service.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<Category> HandleCreateCategory(CreateCategoryRequest request)
+        public async Task<Category> HandleCreateCategory(
+            string name,
+            string description,
+            Guid? parentCategoryId,
+            string? imageUrl)
         {
             // 1. Kiểm tra danh mục cha (nếu có)
-            if (request.ParentCategoryId.HasValue)
+            if (parentCategoryId.HasValue)
             {
-                var parent = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(request.ParentCategoryId.Value);
+                var parent = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(parentCategoryId.Value);
                 if (parent == null) throw new NotFoundException("Danh mục cha không tồn tại");
             }
 
-            // 2. Tạo đối tượng Model
+            // 2. Khởi tạo và gán từng thuộc tính
+            // Lưu ý: 'Name' và 'Description' là 'required' nên phải gán ngay lúc 'new'
             var category = new Category
             {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                ParentCategoryId = request.ParentCategoryId,
-                Description = request.Description,
-                ImageUrl = request.ImageUrl,
-
-                // Mặc định luôn là Active khi tạo mới (IsDeleted = false)
-                IsDeleted = false,
-                UpdatedAt = DateTimeOffset.Now
+                Name = name,
+                Description = description
             };
 
-            // 3. Lưu vào database
+            // Gán các thuộc tính còn lại từng dòng một
+            category.Id = Guid.NewGuid();
+            category.ParentCategoryId = parentCategoryId;
+            category.ImageUrl = imageUrl;
+            category.IsDeleted = false; // Luôn mặc định là Active (IsDeleted = false)
+            category.UpdatedAt = DateTimeOffset.Now;
+
+            // 3. Lưu vào database thông qua Repository và UnitOfWork
             await _unitOfWork.CategoryRepository.AddCategoryAsync(category);
             await _unitOfWork.SaveChangesAsync();
 
