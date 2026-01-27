@@ -2,6 +2,7 @@ using System;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using StackExchange.Redis;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
@@ -17,13 +18,15 @@ public class UserService
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserContext _userContext;
+    private readonly IConnectionMultiplexer _redis;
 
-    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext)
+    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, IConnectionMultiplexer redis)
     {
         _unitOfWork = unitOfWork;
         _webHostEnvironment = webHostEnvironment;
         _httpContextAccessor = httpContextAccessor;
         _userContext = userContext;
+        _redis = redis;
     }
 
     public async Task<List<User>> HandleGetAllUsers()
@@ -397,19 +400,21 @@ public class UserService
     //================= Remove Staff =================//
     public async Task RemoveStaffAsync(Guid staffId)
     {
-        var user = await _unitOfWork.UserRepository
-            .FindUserByIdWithTrackingAsync(staffId)
-            ?? throw new NotFoundException("Nhân viên không tồn tại");
+        // 1. Tìm và cập nhật Database
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(staffId)
+                   ?? throw new NotFoundException("Nhân viên không tồn tại");
 
         if (!user.IsStaffUser())
             throw new BadRequestException("Chỉ có thể xóa tài khoản staff");
 
-        if (user.Status == UserStatus.Deleted)
-            return;
+        if (user.Status == UserStatus.Deleted) return;
 
         user.Status = UserStatus.Deleted;
-
         await _unitOfWork.SaveChangesAsync();
+
+        // 2. Xóa Cache Redis ngay lập tức để Middleware check lại DB và chặn Staff ngay
+        var db = _redis.GetDatabase();
+        await db.KeyDeleteAsync($"user_status:{staffId}");
     }
 
 }

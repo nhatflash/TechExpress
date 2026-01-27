@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using StackExchange.Redis;
 using TechExpress.Repository;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Contexts;
@@ -16,10 +17,10 @@ namespace TechExpress.Service
         public AuthService AuthService { get; }
         public UserService UserService { get; }
 
-        public ServiceProviders(UnitOfWork unitOfWork, SmtpEmailSender emailSender, JwtUtils jwtUtils, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, OtpUtils otpUtils)
+        public ServiceProviders(UnitOfWork unitOfWork, SmtpEmailSender emailSender, JwtUtils jwtUtils, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, OtpUtils otpUtils, IConnectionMultiplexer redis)
         {
             AuthService = new AuthService(unitOfWork, jwtUtils, userContext, otpUtils, emailSender);
-            UserService = new UserService(unitOfWork, webHostEnvironment, httpContextAccessor, userContext);
+            UserService = new UserService(unitOfWork, webHostEnvironment, httpContextAccessor, userContext, redis);
         }
     }
 }
