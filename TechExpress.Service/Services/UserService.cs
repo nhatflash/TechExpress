@@ -112,7 +112,7 @@ public class UserService
             var httpContext = _httpContextAccessor.HttpContext;
             var baseUrl = httpContext != null
                 ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
-                : "https://localhost:7194"; // Fallback if HttpContext is not available
+                : "https://localhost:7194"; 
 
             avatarImagePath = $"{baseUrl}/uploads/avatars/{fileName}";
         }
