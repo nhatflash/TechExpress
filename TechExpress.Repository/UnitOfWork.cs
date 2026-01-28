@@ -16,6 +16,7 @@ namespace TechExpress.Repository
         public CategoryRepository CategoryRepository { get; }
 
         public ProductRepository ProductRepository { get; } 
+        public SpecDefinitionRepository SpecDefinitionRepository { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -23,6 +24,7 @@ namespace TechExpress.Repository
             UserRepository = new UserRepository(context);
             CategoryRepository = new CategoryRepository(context);
             ProductRepository = new ProductRepository(context);
+            SpecDefinitionRepository = new SpecDefinitionRepository(context);
         }
 
         public async Task SaveChangesAsync()

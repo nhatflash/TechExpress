@@ -16,6 +16,7 @@ namespace TechExpress.Service
     {
         public AuthService AuthService { get; }
         public UserService UserService { get; }
+        public SpecDefinitionService SpecDefinitionService { get; }
 
         public CategoryService CategoryService { get; }
 
@@ -24,6 +25,7 @@ namespace TechExpress.Service
             AuthService = new AuthService(unitOfWork, jwtUtils, userContext, otpUtils, emailSender);
             UserService = new UserService(unitOfWork, webHostEnvironment, httpContextAccessor, userContext, redis);
             CategoryService = new CategoryService(unitOfWork);
+            SpecDefinitionService = new SpecDefinitionService(unitOfWork);
         }
     }
 }
