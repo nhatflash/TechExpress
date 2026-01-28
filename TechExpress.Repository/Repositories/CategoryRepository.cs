@@ -54,5 +54,10 @@ namespace TechExpress.Repository.Repositories
                 .ToListAsync();
         }
 
+
+        public IQueryable<Category> GetCategoriesQueryable()
+        {
+            return _context.Categories.AsNoTracking().AsQueryable();
+        }
     }
 }
