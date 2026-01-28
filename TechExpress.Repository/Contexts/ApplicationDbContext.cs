@@ -210,6 +210,10 @@ namespace TechExpress.Repository.Contexts
                 sd.HasIndex(s => s.Name)
                     .HasDatabaseName("idx_spec_name")
                     .IsUnique();
+
+                sd.HasIndex(s => s.Code)
+                    .HasDatabaseName("idx_spec_code")
+                    .IsUnique();
                 
                 sd.HasIndex(s => s.CategoryId)
                     .HasDatabaseName("idx_spec_category");
