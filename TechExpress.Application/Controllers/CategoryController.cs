@@ -39,7 +39,7 @@ namespace TechExpress.Application.Controllers
         // Path: TechExpress.Application/Controllers/CategoryController.cs
 
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")] 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             // Gọi logic xử lý từ Service
