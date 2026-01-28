@@ -35,5 +35,17 @@ namespace TechExpress.Repository.Repositories
         public async Task<Category?> FindCategoryByIdWithTrackingAsync(Guid id)
             => await _context.Categories.AsTracking().FirstOrDefaultAsync(c => c.Id == id);
 
+
+        public async Task<bool> AnyChildCategoriesAsync(Guid id)
+        {
+            // Kiểm tra xem có danh mục nào đang nhận ID này làm cha không
+            return await _context.Categories.AnyAsync(c => c.ParentCategoryId == id);
+        }
+
+        public void Remove(Category entity)
+        {
+            // Sử dụng DbSet của EF Core để xóa
+            _context.Categories.Remove(entity);
+        }
     }
 }

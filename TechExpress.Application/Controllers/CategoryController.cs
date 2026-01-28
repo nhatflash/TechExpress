@@ -35,5 +35,18 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
             return Ok(ApiResponse<CategoryResponse>.OkResponse(response));
         }
+        //======================== =======Category Controller Delete Handling===============================
+        // Path: TechExpress.Application/Controllers/CategoryController.cs
+
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin")] 
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            // Gọi logic xử lý từ Service
+            var resultMessage = await _serviceProvider.CategoryService.HandleDeleteCategory(id);
+
+            // Trả về thông báo xác nhận thành công
+            return Ok(ApiResponse<string>.OkResponse(resultMessage));
+        }
     }
 }
