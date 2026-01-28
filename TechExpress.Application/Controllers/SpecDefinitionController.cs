@@ -100,4 +100,15 @@ public class SpecDefinitionController : ControllerBase
         await _serviceProvider.SpecDefinitionService.HandleDeleteAsync(id);
         return Ok(ApiResponse<string>.OkResponse("Định nghĩa thông số đã được xóa thành công."));
     }
+
+    [HttpGet("category/{categoryId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> FindSpecDefinitionsOnCategory([FromRoute] Guid categoryId, [FromQuery] int pageNumber)
+    {
+        var pagedSpecs =
+            await _serviceProvider.SpecDefinitionService.HandleFindSpecDefinitionsOnCategoryIdAsync(categoryId,
+                pageNumber);
+        var response = ResponseMapper.MapToSpecDefinitionResponsePaginationFromSpecDefinitionPagination(pagedSpecs);
+        return Ok(ApiResponse<Pagination<SpecDefinitionResponse>>.OkResponse(response));
+    }
 }

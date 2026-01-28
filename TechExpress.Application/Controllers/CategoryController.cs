@@ -94,5 +94,14 @@ namespace TechExpress.Application.Controllers
             // Trả về thông báo xác nhận thành công
             return Ok(ApiResponse<string>.OkResponse(resultMessage));
         }
+        
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> FindCategoryDetails([FromRoute] Guid id)
+        {
+            var category = await _serviceProvider.CategoryService.HandleFindCategoryDetailsByIdAsync(id);
+            var response = ResponseMapper.MapToCategoryResponseFromCategory(category);
+            return Ok(ApiResponse<CategoryResponse>.OkResponse(response));
+        }
     }
 }
