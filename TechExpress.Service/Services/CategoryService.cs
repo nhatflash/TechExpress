@@ -204,5 +204,12 @@ namespace TechExpress.Service.Services
                 return "Danh mục chưa có dữ liệu liên kết nên đã được xóa vĩnh viễn khỏi hệ thống.";
             }
         }
+
+        public async Task<Category> HandleFindCategoryDetailsByIdAsync(Guid id)
+        {
+            var category = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(id) ??
+                                throw new NotFoundException($"Không tìm thấy danh mục {id}");
+            return category;
+        }
     }
 }

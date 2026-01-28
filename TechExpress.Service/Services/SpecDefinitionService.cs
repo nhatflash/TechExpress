@@ -162,4 +162,20 @@ public class SpecDefinitionService
 
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task<Pagination<SpecDefinition>> HandleFindSpecDefinitionsOnCategoryIdAsync(Guid categoryId,
+        int pageNumber = 1)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        (List<SpecDefinition> specs, int totalCount) =
+            await _unitOfWork.SpecDefinitionRepository.FindByCategoryIdWithPagingAsync(categoryId, pageNumber);
+
+        return new Pagination<SpecDefinition>
+        {
+            Items = specs,
+            PageNumber = pageNumber,
+            PageSize = 20,
+            TotalCount = totalCount
+        };
+    }
 }

@@ -12,19 +12,29 @@ public class SpecDefinitionRepository
         _context = context;
     }
 
-    public async Task<SpecDefinition?> FindByIdAsync(Guid id)
+    public async Task<SpecDefinition?> FindByIdIncludeCategoryAsync(Guid id)
     {
         return await _context.SpecDefinitions
             .Include(s => s.Category)
             .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
     }
 
-    public async Task<SpecDefinition?> FindByIdWithTrackingAsync(Guid id)
+    public async Task<SpecDefinition?> FindByIdAsync(Guid id)
+    {
+        return await _context.SpecDefinitions.FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<SpecDefinition?> FindByIdIncludeCategoryWithTrackingAsync(Guid id)
     {
         return await _context.SpecDefinitions
             .AsTracking()
             .Include(s => s.Category)
             .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<SpecDefinition?> FindByIdWithTrackingAsync(Guid id)
+    {
+        return await _context.SpecDefinitions.AsTracking().FirstOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task<(List<SpecDefinition> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
@@ -91,5 +101,22 @@ public class SpecDefinitionRepository
     {
         return await _context.Categories
             .AnyAsync(c => c.Id == categoryId && !c.IsDeleted);
+    }
+
+    
+    public async Task<List<SpecDefinition>> FindByCategoryIdAsync(Guid categoryId)
+    {
+        return await _context.SpecDefinitions.Where(s => s.CategoryId == categoryId).OrderByDescending(s => s.CreatedAt).ToListAsync();
+    }
+
+    public async Task<(List<SpecDefinition>, int)> FindByCategoryIdWithPagingAsync(Guid categoryId, int pageNumber)
+    {
+        int pageSize = 20;
+        var query = _context.SpecDefinitions.Where(s => s.CategoryId == categoryId);
+        var totalCount = await query.CountAsync();
+        var specs = await query.OrderByDescending(s => s.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        
+        return (specs, totalCount);
     }
 }

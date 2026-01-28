@@ -160,6 +160,11 @@ namespace TechExpress.Repository.Contexts
 
                 sd.Property(s => s.Name)
                     .HasColumnName("name")
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                sd.Property(s => s.Code)
+                    .HasColumnName("code")
                     .HasMaxLength(100)
                     .IsRequired();
 
