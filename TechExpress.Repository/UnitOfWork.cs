@@ -15,11 +15,23 @@ namespace TechExpress.Repository
         public UserRepository UserRepository { get; }
         public CategoryRepository CategoryRepository { get; }
 
+        public ProductRepository ProductRepository { get; }
+
+        public SpecDefinitionRepository SpecDefinitionRepository { get; }
+
+        public ProductImageRepository ProductImageRepository { get; }
+
+        public ProductSpecValueRepository ProductSpecValueRepository { get; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
+            ProductRepository = new ProductRepository(context);
             UserRepository = new UserRepository(context);
             CategoryRepository = new CategoryRepository(context);
+            SpecDefinitionRepository = new SpecDefinitionRepository(context);
+            ProductImageRepository = new ProductImageRepository(context);
+            ProductSpecValueRepository = new ProductSpecValueRepository(context);
         }
 
         public async Task SaveChangesAsync()

@@ -1,6 +1,7 @@
 ﻿using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
+using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
 
@@ -132,4 +133,95 @@ public class ResponseMapper
             category.UpdatedAt
         );
     }
+
+    // ======================= Map ProductListResponse =======================//
+    public static Pagination<ProductListResponse>
+    MapToProductListResponsePaginationFromProductPagination(
+        Pagination<Product> productPagination)
+    {
+        var productResponses = productPagination.Items
+            .Select(product =>
+            {
+                var firstImageUrl = product.Images
+                    .OrderBy(i => i.Id)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault();
+
+                return new ProductListResponse(
+                    product.Id,
+                    product.Name,
+                    product.Sku,
+                    product.CategoryId,
+                    product.Category?.Name ?? string.Empty,
+                    product.Price,
+                    product.Stock,
+                    product.Status,
+                    firstImageUrl,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
+            })
+            .ToList();
+
+        return new Pagination<ProductListResponse>
+        {
+            Items = productResponses,
+            PageNumber = productPagination.PageNumber,
+            PageSize = productPagination.PageSize,
+            TotalCount = productPagination.TotalCount
+        };
+    }
+
+    public static ProductDetailResponse MapToProductDetailResponseFromProduct(Product product)
+    {
+        var thumbnailUrl = product.Images
+            .OrderBy(i => i.Id)
+            .Select(i => i.ImageUrl)
+            .FirstOrDefault();
+
+        var specResponses = product.SpecValues
+            .OrderBy(sv => sv.Id)
+            .Select(sv =>
+            {
+                var def = sv.SpecDefinition;
+
+                string value = def.AcceptValueType switch
+                {
+                    SpecAcceptValueType.Text => sv.TextValue ?? string.Empty,
+                    SpecAcceptValueType.Number => sv.NumberValue?.ToString() ?? string.Empty,
+                    SpecAcceptValueType.Decimal => sv.DecimalValue?.ToString() ?? string.Empty,
+                    SpecAcceptValueType.Bool => sv.BoolValue?.ToString() ?? string.Empty,
+                    _ => string.Empty
+                };
+
+                return new ProductSpecValueResponse(
+                    def.Id,
+                    def.Name,
+                    def.Unit,
+                    def.AcceptValueType,
+                    value
+                );
+            })
+            .ToList();
+
+        return new ProductDetailResponse(
+            product.Id,
+            product.Name,
+            product.Sku,
+            product.CategoryId,
+            product.Category?.Name ?? string.Empty,
+            product.Price,
+            product.Stock,
+            product.Status,
+            product.Description,
+            thumbnailUrl,
+            product.CreatedAt,
+            product.UpdatedAt,
+            specResponses
+        );
+    }
+
+
+
+
 }

@@ -410,7 +410,7 @@ namespace TechExpress.Repository.Contexts
                 
                 psv.HasOne(p => p.Product)
                     .WithMany(p => p.SpecValues)
-                    .HasForeignKey(p => p.SpecDefinitionId)
+                    .HasForeignKey(p => p.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 psv.HasOne(p => p.SpecDefinition)
