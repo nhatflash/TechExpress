@@ -37,7 +37,12 @@ public class SpecDefinitionRepository
         return await _context.SpecDefinitions.AsTracking().FirstOrDefaultAsync(s => s.Id == id);
     }
 
-    public async Task<(List<SpecDefinition> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
+    public async Task<(List<SpecDefinition> Items, int TotalCount)> GetPagedAsync(
+        int pageNumber,
+        int pageSize,
+        string? searchName,
+        DateTimeOffset? createdFrom,
+        DateTimeOffset? createdTo)
     {
         var query = _context.SpecDefinitions
             .Where(s => !s.IsDeleted)
