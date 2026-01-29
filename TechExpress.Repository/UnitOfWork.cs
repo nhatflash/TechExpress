@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,6 +15,7 @@ namespace TechExpress.Repository
         public UserRepository UserRepository { get; }
         public CategoryRepository CategoryRepository { get; }
 
+
         public ProductRepository ProductRepository { get; }
 
         public SpecDefinitionRepository SpecDefinitionRepository { get; }
@@ -22,6 +23,9 @@ namespace TechExpress.Repository
         public ProductImageRepository ProductImageRepository { get; }
 
         public ProductSpecValueRepository ProductSpecValueRepository { get; }
+
+        public BrandRepository BrandRepository { get; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -32,6 +36,8 @@ namespace TechExpress.Repository
             SpecDefinitionRepository = new SpecDefinitionRepository(context);
             ProductImageRepository = new ProductImageRepository(context);
             ProductSpecValueRepository = new ProductSpecValueRepository(context);
+            BrandRepository = new BrandRepository(context);
+
         }
 
         public async Task SaveChangesAsync()

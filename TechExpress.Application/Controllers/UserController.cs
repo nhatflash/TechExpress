@@ -70,8 +70,7 @@ namespace TechExpress.Application.Controllers
         /// </summary>
         [HttpPost("create-staff")]
         [Authorize(Roles = "Admin")]
-        [Consumes("multipart/form-data")]
-        public async Task<ActionResult<ApiResponse<UserResponse>>> CreateStaff([FromForm] CreateStaffRequest request)
+        public async Task<ActionResult<ApiResponse<UserResponse>>> CreateStaff([FromBody] CreateStaffRequest request)
         {
             var user = await _serviceProvider.UserService.HandleCreateStaff(
                 request.Email.Trim(),

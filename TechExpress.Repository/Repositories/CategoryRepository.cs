@@ -59,5 +59,17 @@ namespace TechExpress.Repository.Repositories
         {
             return _context.Categories.AsNoTracking().AsQueryable();
         }
+
+        public async Task<bool> AnyChildCategoriesAsync(Guid id)
+        {
+            // Kiểm tra xem có danh mục nào đang nhận ID này làm cha không
+            return await _context.Categories.AnyAsync(c => c.ParentCategoryId == id);
+        }
+
+        public void Remove(Category entity)
+        {
+            // Sử dụng DbSet của EF Core để xóa
+            _context.Categories.Remove(entity);
+        }
     }
 }

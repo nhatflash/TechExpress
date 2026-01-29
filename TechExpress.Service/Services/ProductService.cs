@@ -504,5 +504,8 @@ namespace TechExpress.Service.Services
 
 
     }
+
+    //#Add-Migration Init -StartupProject TechExpress.Application -Project TechExpress.Repository
+//Update-Database -StartupProject TechExpress.Application -Project TechExpress.Repository
 }
-    
+

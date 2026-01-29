@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
 using TechExpress.Repository.Enums;
@@ -198,6 +198,7 @@ public class ResponseMapper
                     def.Id,
                     def.Name,
                     def.Unit,
+                    def.Code,
                     def.AcceptValueType,
                     value
                 );
@@ -224,4 +225,66 @@ public class ResponseMapper
 
 
 
+    //======================= Map SpecDefinition Response =======================//
+    public static SpecDefinitionResponse MapToSpecDefinitionResponseFromSpecDefinition(SpecDefinition specDefinition)
+    {
+        return new SpecDefinitionResponse
+        (
+            specDefinition.Id,
+            specDefinition.Code,
+            specDefinition.Name,
+            specDefinition.CategoryId,
+            specDefinition.Category?.Name ?? string.Empty,
+            specDefinition.Unit,
+            specDefinition.AcceptValueType,
+            specDefinition.Description,
+            specDefinition.IsRequired,
+            specDefinition.IsDeleted,
+            specDefinition.CreatedAt,
+            specDefinition.UpdatedAt
+        );
+    }
+
+    public static List<SpecDefinitionResponse> MapToSpecDefinitionResponseListFromSpecDefinitionList(List<SpecDefinition> specDefinitions)
+    {
+        return specDefinitions.Select(MapToSpecDefinitionResponseFromSpecDefinition).ToList();
+    }
+
+    public static Pagination<SpecDefinitionResponse> MapToSpecDefinitionResponsePaginationFromSpecDefinitionPagination(Pagination<SpecDefinition> specDefinitionPagination)
+    {
+        var specDefinitionResponses = specDefinitionPagination.Items.Select(MapToSpecDefinitionResponseFromSpecDefinition).ToList();
+
+        return new Pagination<SpecDefinitionResponse>
+        {
+            Items = specDefinitionResponses,
+            PageNumber = specDefinitionPagination.PageNumber,
+            PageSize = specDefinitionPagination.PageSize,
+            TotalCount = specDefinitionPagination.TotalCount
+        };
+    }
+
+    public static BrandResponse MapToBrandResponseFromBrand(Brand brand)
+    {
+        return new BrandResponse
+        (
+            brand.Id,
+            brand.Name,
+            brand.ImageUrl,
+            brand.CreatedAt,
+            brand.UpdatedAt
+        );
+    }
+
+    public static Pagination<BrandResponse> MapToBrandResponsePaginationFromBrandPagination(Pagination<Brand> brandPagination)
+    {
+        var brandResponses = brandPagination.Items.Select(MapToBrandResponseFromBrand).ToList();
+
+        return new Pagination<BrandResponse>
+        {
+            Items = brandResponses,
+            PageNumber = brandPagination.PageNumber,
+            PageSize = brandPagination.PageSize,
+            TotalCount = brandPagination.TotalCount
+        };
+    }
 }

@@ -20,6 +20,7 @@ namespace TechExpress.Application.Dtos.Responses
     Guid SpecDefinitionId,
     string SpecName,
     string Unit,
+    string Code,
     SpecAcceptValueType DataType,
     string Value
 );

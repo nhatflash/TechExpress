@@ -12,6 +12,7 @@ namespace TechExpress.Repository.Repositories
     {
         private readonly ApplicationDbContext _context;
 
+
         public ProductRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -118,8 +119,8 @@ namespace TechExpress.Repository.Repositories
         //}
 
         //
-//Add-Migration Init -StartupProject TechExpress.Application -Project TechExpress.Repository
-//Update-Database -StartupProject TechExpress.Application -Project TechExpress.Repository
+        //Add-Migration Init -StartupProject TechExpress.Application -Project TechExpress.Repository
+        //Update-Database -StartupProject TechExpress.Application -Project TechExpress.Repository
 
         public async Task HardDeleteProductByIdAsync(Guid productId)
         {
@@ -130,6 +131,14 @@ namespace TechExpress.Repository.Repositories
                 _context.Products.Remove(product);
         }
 
+
+
+
+        public async Task<bool> AnyProductsInCategoryAsync(Guid id)
+        {
+            // Kiểm tra xem có sản phẩm nào đang thuộc danh mục này không
+            return await _context.Products.AnyAsync(p => p.CategoryId == id);
+        }
 
     }
 }

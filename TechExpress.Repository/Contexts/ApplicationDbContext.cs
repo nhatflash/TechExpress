@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Security.Authentication;
@@ -160,6 +160,11 @@ namespace TechExpress.Repository.Contexts
 
                 sd.Property(s => s.Name)
                     .HasColumnName("name")
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                sd.Property(s => s.Code)
+                    .HasColumnName("code")
                     .HasMaxLength(100)
                     .IsRequired();
 
@@ -204,6 +209,10 @@ namespace TechExpress.Repository.Contexts
 
                 sd.HasIndex(s => s.Name)
                     .HasDatabaseName("idx_spec_name")
+                    .IsUnique();
+
+                sd.HasIndex(s => s.Code)
+                    .HasDatabaseName("idx_spec_code")
                     .IsUnique();
                 
                 sd.HasIndex(s => s.CategoryId)
