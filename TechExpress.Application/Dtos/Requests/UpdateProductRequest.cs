@@ -31,9 +31,6 @@ public class UpdateProductRequest
     [StringLength(5000)]
     public string Description { get; set; } = string.Empty;
 
-    public List<IFormFile>? NewImages { get; set; }
-
-    public List<long>? DeletedImageIds { get; set; }
 
     public List<CreateProductSpecValueRequest>? SpecValues { get; set; }
 }

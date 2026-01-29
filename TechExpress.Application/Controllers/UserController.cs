@@ -35,9 +35,18 @@ namespace TechExpress.Application.Controllers
 
         [HttpPut("me")]
         [Authorize(Roles = "Customer, Admin")]
-        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileRequest request)
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateUserRequest request)
         {
-            var updated = await _serviceProvider.UserService.HandleUpdateProfile(request.Phone?.Trim(), request.Gender, request.Province?.Trim(), request.Ward?.Trim(), request.StreetAddress?.Trim());
+            var updated = await _serviceProvider.UserService.HandleUpdateProfile(
+                request.FirstName?.Trim(),
+                request.LastName?.Trim(),
+                request.Phone?.Trim(),
+                request.Gender,
+                request.Address?.Trim(),
+                request.Ward?.Trim(),
+                request.Province?.Trim(),
+                request.PostalCode?.Trim(),
+                request.AvatarImage);
             var response = ResponseMapper.MapToUserResponseFromUser(updated);
             return Ok(ApiResponse<UserResponse>.OkResponse(response));
         }

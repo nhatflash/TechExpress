@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 using TechExpress.Repository.Enums;
 
 namespace TechExpress.Application.Dtos.Requests;
@@ -31,7 +31,7 @@ public class CreateProductRequest
     [StringLength(5000, ErrorMessage = "Description không được vượt quá 5000 ký tự.")]
     public string Description { get; set; } = string.Empty;
 
-    public List<IFormFile>? Images { get; set; }
+    public List<string>? Images { get; set; }
 
     public List<CreateProductSpecValueRequest>? SpecValues { get; set; }
 }

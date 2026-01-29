@@ -34,7 +34,7 @@ namespace TechExpress.Application.Dtos.Responses
         int StockQty,
         ProductStatus Status,
         string Description,
-        string? ThumbnailUrl,
+        List<string>? ThumbnailUrl,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt,
         List<ProductSpecValueResponse> SpecValues

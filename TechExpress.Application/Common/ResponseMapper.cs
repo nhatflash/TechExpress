@@ -177,7 +177,7 @@ public class ResponseMapper
         var thumbnailUrl = product.Images
             .OrderBy(i => i.Id)
             .Select(i => i.ImageUrl)
-            .FirstOrDefault();
+            .ToList();
 
         var specResponses = product.SpecValues
             .OrderBy(sv => sv.Id)

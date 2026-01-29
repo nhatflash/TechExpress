@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
@@ -71,7 +73,7 @@ namespace TechExpress.Service.Services
               int stockQty,
               ProductStatus status,
               string description,
-              List<IFormFile>? images,
+              List<string>? imageUrls,
               Dictionary<Guid, string>? specValues)
         {
             //basic validate
@@ -98,10 +100,15 @@ namespace TechExpress.Service.Services
 
             //Validate required specs
             var requiredIds = specDefs.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
-            var providedIds = (specValues ?? new Dictionary<Guid, string>()).Keys.ToHashSet();
 
-            var missing = requiredIds.Except(providedIds).ToList();
-            if (missing.Any())
+            var missingRequired = requiredIds
+                .Where(id =>
+                    specValues == null
+                    || !specValues.TryGetValue(id, out var val)
+                    || string.IsNullOrWhiteSpace(val))
+                .ToList();
+
+            if (missingRequired.Any())
                 throw new BadRequestException("Thiếu thông số bắt buộc cho sản phẩm.");
 
             // Create product 
@@ -118,16 +125,26 @@ namespace TechExpress.Service.Services
                 UpdatedAt = DateTimeOffset.Now
             };
 
-            await using var tx = await _unitOfWork.BeginTransactionAsync();
+            //await using var tx = await _unitOfWork.BeginTransactionAsync();
 
             await _unitOfWork.ProductRepository.AddProductAsync(product);
 
-            // Images
-            if (images != null && images.Count > 0)
+            // Images (URLs)
+            if (imageUrls != null && imageUrls.Count > 0)
             {
-                var imageEntities = await SaveProductImagesAsync(product.Id, images);
-                foreach (var img in imageEntities)
-                    product.Images.Add(img);
+                var imageEntities = imageUrls
+                    .Where(url => !string.IsNullOrWhiteSpace(url))
+                    .Select(url => new ProductImage
+                    {
+                        ProductId = product.Id,
+                        ImageUrl = url.Trim()
+                    })
+                    .ToList();
+
+                if (imageEntities.Count > 0)
+                {
+                    await _unitOfWork.ProductImageRepository.AddRangeAsync(imageEntities);
+                }
             }
 
             // SpecValues
@@ -139,7 +156,8 @@ namespace TechExpress.Service.Services
                     var raw = kv.Value;
 
                     if (!specDefMap.TryGetValue(specId, out var def))
-                        throw new BadRequestException("Có SpecDefinition không hợp lệ hoặc không thuộc Category đã chọn.");
+                        //throw new BadRequestException("Có SpecDefinition không hợp lệ hoặc không thuộc Category đã chọn.");
+                        continue;
 
                     var psv = BuildProductSpecValue(product.Id, def, raw);
                     product.SpecValues.Add(psv);
@@ -147,7 +165,7 @@ namespace TechExpress.Service.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-            await tx.CommitAsync();
+            //await tx.CommitAsync();
 
             // load 
             var created = await _unitOfWork.ProductRepository.FindByIdAsync(product.Id)
@@ -200,61 +218,7 @@ namespace TechExpress.Service.Services
             return sv;
         }
 
-        private async Task<List<ProductImage>> SaveProductImagesAsync(Guid productId, List<IFormFile> images)
-        {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-            const long maxFileSize = 5 * 1024 * 1024;
-
-            var webRootPath = _webHostEnvironment.WebRootPath;
-            if (string.IsNullOrEmpty(webRootPath))
-            {
-                webRootPath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot");
-                if (!Directory.Exists(webRootPath))
-                    Directory.CreateDirectory(webRootPath);
-            }
-
-            var uploadsFolder = Path.Combine(webRootPath, "uploads", "products", productId.ToString());
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
-
-            var httpContext = _httpContextAccessor.HttpContext;
-            var baseUrl = httpContext != null
-                ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
-                : "https://localhost:7194";
-
-            var results = new List<ProductImage>();
-
-            foreach (var file in images)
-            {
-                if (file == null || file.Length == 0) continue;
-
-                var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (!allowedExtensions.Contains(ext))
-                    throw new BadRequestException("Loại ảnh không hợp lệ (jpg, jpeg, png, gif, webp).");
-
-                if (file.Length > maxFileSize)
-                    throw new BadRequestException("Ảnh quá lớn. Tối đa 5MB.");
-
-                var fileName = $"{Guid.NewGuid()}{ext}";
-                var filePath = Path.Combine(uploadsFolder, fileName);
-
-                await using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                var url = $"{baseUrl}/uploads/products/{productId}/{fileName}";
-
-                results.Add(new ProductImage
-                {
-                    ProductId = productId,
-                    ImageUrl = url
-                });
-            }
-
-            return results;
-        }
-
+        
         public async Task<Product> HandleUpdateProduct(
             Guid productId,
             string name,
@@ -264,8 +228,6 @@ namespace TechExpress.Service.Services
             int stockQty,
             ProductStatus status,
             string description,
-            List<IFormFile>? newImages,
-            List<long>? deletedImageIds,
             Dictionary<Guid, string>? specValues)
 
         {
@@ -301,18 +263,18 @@ namespace TechExpress.Service.Services
             // - consider "provided" = keys sent by user + keys already existing in DB
             var requiredIds = specDefs.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
 
-            var providedIds = new HashSet<Guid>();
-            foreach (var id in existingMap.Keys) providedIds.Add(id);
-            if (specValues != null)
-            {
-                foreach (var id in specValues.Keys) providedIds.Add(id);
-            }
+            //var providedIds = new HashSet<Guid>();
+            //foreach (var id in existingMap.Keys) providedIds.Add(id);
+            //if (specValues != null)
+            //{
+            //    foreach (var id in specValues.Keys) providedIds.Add(id);
+            //}
 
-            var missing = requiredIds.Except(providedIds).ToList();
-            if (missing.Any())
-                throw new BadRequestException("Thiếu thông số bắt buộc cho sản phẩm.");
+            //var missing = requiredIds.Except(providedIds).ToList();
+            //if (missing.Any())
+            //    throw new BadRequestException("Thiếu thông số bắt buộc cho sản phẩm.");
 
-            await using var tx = await _unitOfWork.BeginTransactionAsync();
+            //await using var tx = await _unitOfWork.BeginTransactionAsync();
 
             // Update base fields
             product.Name = name;
@@ -324,22 +286,6 @@ namespace TechExpress.Service.Services
             product.Description = description;
 
             product.UpdatedAt = DateTimeOffset.Now;
-
-            if (deletedImageIds != null && deletedImageIds.Count > 0)
-            {
-                await _unitOfWork.ProductImageRepository
-                    .DeleteByIdsAsync(deletedImageIds);
-            }
-
-            if (newImages != null && newImages.Count > 0)
-            {
-                var imageEntities = await SaveProductImagesAsync(productId, newImages);
-
-                if (imageEntities.Count > 0)
-                {
-                    await _unitOfWork.ProductImageRepository.AddRangeAsync(imageEntities);
-                }
-            }
 
             // Upsert spec values (skip nếu spec def không tồn tại / không thuộc category)
             if (specValues != null && specValues.Count > 0)
@@ -365,11 +311,95 @@ namespace TechExpress.Service.Services
                 }
             }
 
+            var specDefIds = specDefs.Select(x => x.Id).ToHashSet();
+            var missingSpecDefIds = specDefIds.Except(existingMap.Keys).ToList();
+
+            if (missingSpecDefIds.Count > 0)
+            {
+                foreach (var specDefId in missingSpecDefIds)
+                {
+                    var def = specDefMap[specDefId];
+
+                    //if (def.IsRequired)
+                    //    throw new BadRequestException($"Thiếu thông số bắt buộc: {def.Name}");
+
+                    var newSv = new ProductSpecValue
+                    {
+                        ProductId = productId,
+                        SpecDefinitionId = def.Id,
+                        UpdatedAt = DateTimeOffset.Now
+                    };
+
+                    switch (def.AcceptValueType)
+                    {
+                        case SpecAcceptValueType.Text:
+                            newSv.TextValue = string.Empty;
+                            break;
+                        case SpecAcceptValueType.Number:
+                            newSv.NumberValue = 0;
+                            break;
+                        case SpecAcceptValueType.Decimal:
+                            newSv.DecimalValue = 0m;
+                            break;
+                        case SpecAcceptValueType.Bool:
+                            newSv.BoolValue = false;
+                            break;
+                        default:
+                            // nếu bạn muốn: throw new BadRequestException(...)
+                            continue;
+                    }
+
+                    await _unitOfWork.ProductSpecValueRepository.AddAsync(newSv);
+                    existingMap[specDefId] = newSv;
+                }
+            }
+
             await _unitOfWork.SaveChangesAsync();
-            await tx.CommitAsync();
+            //await tx.CommitAsync();
 
             var updated = await _unitOfWork.ProductRepository.FindByIdAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm sau khi cập nhật.");
+
+            return updated;
+        }
+
+        public async Task<Product> HandleReplaceProductImagesAsync(
+            Guid productId,
+            List<string>? imageUrls)
+        {
+            var product = await _unitOfWork.ProductRepository
+                .FindByIdWithTrackingAsync(productId)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
+
+            //await using var tx = await _unitOfWork.BeginTransactionAsync();
+
+            await _unitOfWork.ProductImageRepository.DeleteByProductIdAsync(productId);
+
+            if (imageUrls != null && imageUrls.Count > 0)
+            {
+                var images = new List<ProductImage>();
+                foreach (var url in imageUrls)
+                {
+                    if (string.IsNullOrWhiteSpace(url)) continue;
+
+                    images.Add(new ProductImage
+                    {
+                        ProductId = productId,
+                        ImageUrl = url.Trim()
+                    });
+                }
+
+                if (images.Count > 0)
+                {
+                    await _unitOfWork.ProductImageRepository.AddRangeAsync(images);
+                }
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            //await tx.CommitAsync();
+
+            var updated = await _unitOfWork.ProductRepository.FindByIdAsync(productId)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm sau khi cập nhật ảnh.");
 
             return updated;
         }
@@ -446,21 +476,21 @@ namespace TechExpress.Service.Services
         public async Task HandleDeleteProductAsync(Guid productId)
         {
             var product = await _unitOfWork.ProductRepository
-                .FindByIdWithTrackingAsync(productId)
+                .FindByIdWithNoTrackingAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
-            await using var tx = await _unitOfWork.BeginTransactionAsync();
+            //await using var tx = await _unitOfWork.BeginTransactionAsync();
 
             try
             {
                 await _unitOfWork.ProductRepository.HardDeleteProductByIdAsync(productId);
 
                 await _unitOfWork.SaveChangesAsync();
-                await tx.CommitAsync();
+                //await tx.CommitAsync();
             }
             catch (DbUpdateException ex)
             {
-                await tx.RollbackAsync();
+                //await tx.RollbackAsync();
 
                 if (product.Status != ProductStatus.Unavailable)
                 {

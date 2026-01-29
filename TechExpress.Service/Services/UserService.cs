@@ -154,12 +154,56 @@ public class UserService
         return user;
     }
 
-    public async Task<User> HandleUpdateProfile(string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    public async Task<User> HandleUpdateProfile(string? firstName, string? lastName, string? phone, Gender? gender, string? address, string? ward, string? province, string? postalCode, string? avatarImage)
     {
         var userId = _userContext.GetCurrentAuthenticatedUserId();
         var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Người dùng không tồn tại.");
 
-        await UpdateUserWithUpdatedInformation(user, phone, gender, province, ward, streetAddress);
+        if (!string.IsNullOrWhiteSpace(firstName))
+        {
+            user.FirstName = firstName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(lastName))
+        {
+            user.LastName = lastName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
+            {
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+            }
+            user.Phone = phone;
+        }
+
+        if (gender.HasValue)
+        {
+            user.Gender = gender;
+        }
+
+        if (!string.IsNullOrWhiteSpace(province))
+        {
+            user.Province = province;
+        }
+        if (!string.IsNullOrWhiteSpace(ward))
+        {
+            user.Ward = ward;
+        }
+        if (!string.IsNullOrWhiteSpace(address))
+        {
+            user.Address = address;
+        }
+
+        if (!string.IsNullOrWhiteSpace(postalCode))
+        {
+            user.PostalCode = postalCode;
+        }
+        if (!string.IsNullOrWhiteSpace(avatarImage))
+        {
+            user.AvatarImage = avatarImage;
+        }
 
         await _unitOfWork.SaveChangesAsync();
 

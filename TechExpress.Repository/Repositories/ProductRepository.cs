@@ -96,6 +96,12 @@ namespace TechExpress.Repository.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Product?> FindByIdWithNoTrackingAsync(Guid id)
+        {
+            return await _context.Products
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
 
         public async Task<bool> ExistsBySkuAsync(string sku, Guid excludeProductId)
         {

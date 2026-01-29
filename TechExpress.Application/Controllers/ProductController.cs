@@ -65,10 +65,8 @@ namespace TechExpress.Application.Controllers
 
         [HttpPost("create-product")]
         [Authorize(Roles = "Admin")]
-        [Consumes("multipart/form-data")]
-        public async Task<ActionResult<ApiResponse<ProductListResponse>>> CreateProduct([FromForm] CreateProductRequest request)
+        public async Task<ActionResult<ApiResponse<ProductListResponse>>> CreateProduct([FromBody] CreateProductRequest request)
         {
-            // Convert spec values (DTO tầng controller) -> primitive type cho service
             var specDict = request.SpecValues?
                 .Where(x => x != null)
                 .GroupBy(x => x.SpecDefinitionId)
@@ -94,10 +92,9 @@ namespace TechExpress.Application.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        [Consumes("multipart/form-data")]
         public async Task<ActionResult<ApiResponse<ProductDetailResponse>>> UpdateProduct(
         Guid id,
-        [FromForm] UpdateProductRequest request)
+        [FromBody] UpdateProductRequest request)
         {
             var specDict = request.SpecValues?
                 .Where(x => x != null)
@@ -116,8 +113,6 @@ namespace TechExpress.Application.Controllers
                 request.StockQty,
                 request.Status,
                 request.Description.Trim(),
-                request.NewImages,
-                request.DeletedImageIds,
                 specDict
             );
 
@@ -125,6 +120,21 @@ namespace TechExpress.Application.Controllers
             return Ok(ApiResponse<ProductDetailResponse>.OkResponse(response));
         }
 
+
+
+        [HttpPut("images")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ApiResponse<ProductDetailResponse>>> UpdateProductImages(
+            [FromBody] UpdateProductImagesRequest request)
+        {
+            var updated = await _serviceProvider.ProductService.HandleReplaceProductImagesAsync(
+                request.ProductId,
+                request.Images
+            );
+
+            var response = ResponseMapper.MapToProductDetailResponseFromProduct(updated);
+            return Ok(ApiResponse<ProductDetailResponse>.OkResponse(response));
+        }
 
 
         [HttpDelete("{id}")]
