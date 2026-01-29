@@ -16,6 +16,7 @@ public class SpecDefinitionService
     }
 
     public async Task<SpecDefinition> HandleCreateAsync(
+        string code,
         string name,
         Guid categoryId,
         string unit,
@@ -28,6 +29,11 @@ public class SpecDefinitionService
             throw new NotFoundException("Danh mục không tồn tại.");
         }
 
+        if (await _unitOfWork.SpecDefinitionRepository.ExistsByCodeAsync(code.Trim()))
+        {
+            throw new BadRequestException("Code định nghĩa thông số đã tồn tại.");
+        }
+
         if (await _unitOfWork.SpecDefinitionRepository.ExistsByNameAsync(name))
         {
             throw new BadRequestException("Tên định nghĩa thông số đã tồn tại.");
@@ -36,6 +42,7 @@ public class SpecDefinitionService
         var specDefinition = new SpecDefinition
         {
             Id = Guid.NewGuid(),
+            Code = code.Trim(),
             Name = name.Trim(),
             CategoryId = categoryId,
             Unit = unit.Trim(),
@@ -88,6 +95,7 @@ public class SpecDefinitionService
 
     public async Task<SpecDefinition> HandleUpdateAsync(
         Guid id,
+        string? code,
         string? name,
         Guid? categoryId,
         string? unit,
@@ -101,6 +109,15 @@ public class SpecDefinitionService
         if (specDefinition.IsDeleted)
         {
             throw new BadRequestException("Định nghĩa thông số đã bị xóa.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(code))
+        {
+            if (await _unitOfWork.SpecDefinitionRepository.ExistsByCodeExcludingIdAsync(code.Trim(), id))
+            {
+                throw new BadRequestException("Code định nghĩa thông số đã tồn tại.");
+            }
+            specDefinition.Code = code.Trim();
         }
 
         if (!string.IsNullOrWhiteSpace(name))

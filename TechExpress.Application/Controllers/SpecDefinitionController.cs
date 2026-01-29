@@ -27,6 +27,7 @@ public class SpecDefinitionController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateSpecDefinitionRequest request)
     {
         var specDefinition = await _serviceProvider.SpecDefinitionService.HandleCreateAsync(
+            request.Code,
             request.Name,
             request.CategoryId,
             request.Unit,
@@ -89,6 +90,7 @@ public class SpecDefinitionController : ControllerBase
     {
         var specDefinition = await _serviceProvider.SpecDefinitionService.HandleUpdateAsync(
             id,
+            request.Code,
             request.Name,
             request.CategoryId,
             request.Unit,

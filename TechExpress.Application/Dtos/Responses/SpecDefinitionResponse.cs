@@ -5,6 +5,7 @@ namespace TechExpress.Application.Dtos.Responses;
 
 public record SpecDefinitionResponse(
     Guid Id,
+    string Code,
     string Name,
     Guid CategoryId,
     string CategoryName,

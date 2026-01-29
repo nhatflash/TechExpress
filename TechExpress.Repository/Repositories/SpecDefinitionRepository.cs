@@ -112,6 +112,18 @@ public class SpecDefinitionRepository
             .AnyAsync(s => s.Name == name && s.Id != excludeId && !s.IsDeleted);
     }
 
+    public async Task<bool> ExistsByCodeAsync(string code)
+    {
+        return await _context.SpecDefinitions
+            .AnyAsync(s => s.Code == code && !s.IsDeleted);
+    }
+
+    public async Task<bool> ExistsByCodeExcludingIdAsync(string code, Guid excludeId)
+    {
+        return await _context.SpecDefinitions
+            .AnyAsync(s => s.Code == code && s.Id != excludeId && !s.IsDeleted);
+    }
+
     public async Task<bool> HasRelatedProductSpecValuesAsync(Guid specDefinitionId)
     {
         return await _context.ProductSpecValues

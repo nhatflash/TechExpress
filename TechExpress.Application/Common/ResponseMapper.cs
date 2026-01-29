@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
 using TechExpress.Repository.Models;
@@ -139,6 +139,7 @@ public class ResponseMapper
         return new SpecDefinitionResponse
         (
             specDefinition.Id,
+            specDefinition.Code,
             specDefinition.Name,
             specDefinition.CategoryId,
             specDefinition.Category?.Name ?? string.Empty,

@@ -5,6 +5,9 @@ namespace TechExpress.Application.Dtos.Requests;
 
 public class UpdateSpecDefinitionRequest
 {
+    [StringLength(100, ErrorMessage = "Code không được vượt quá 100 ký tự")]
+    public string? Code { get; set; }
+
     [StringLength(100, ErrorMessage = "Tên không được vượt quá 100 ký tự")]
     public string? Name { get; set; }
 

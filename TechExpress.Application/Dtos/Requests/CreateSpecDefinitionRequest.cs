@@ -5,6 +5,10 @@ namespace TechExpress.Application.Dtos.Requests;
 
 public class CreateSpecDefinitionRequest
 {
+    [Required(ErrorMessage = "Code không được để trống")]
+    [StringLength(100, ErrorMessage = "Code không được vượt quá 100 ký tự")]
+    public string Code { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "Tên không được để trống")]
     [StringLength(100, ErrorMessage = "Tên không được vượt quá 100 ký tự")]
     public string Name { get; set; } = string.Empty;
