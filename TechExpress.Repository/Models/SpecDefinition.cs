@@ -6,6 +6,8 @@ namespace TechExpress.Repository.Models;
 public class SpecDefinition
 {
     public Guid Id { get; set; }
+    
+    public string Code { get; set;  } = string.Empty;
 
     public required string Name { get; set; }
 

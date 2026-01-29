@@ -2,6 +2,7 @@ using System;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using StackExchange.Redis;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
@@ -17,13 +18,15 @@ public class UserService
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserContext _userContext;
+    private readonly IConnectionMultiplexer _redis;
 
-    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext)
+    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, IConnectionMultiplexer redis)
     {
         _unitOfWork = unitOfWork;
         _webHostEnvironment = webHostEnvironment;
         _httpContextAccessor = httpContextAccessor;
         _userContext = userContext;
+        _redis = redis;
     }
 
     public async Task<List<User>> HandleGetAllUsers()
@@ -42,7 +45,7 @@ public class UserService
         string? ward,
         string? province,
         string? postalCode,
-        IFormFile? avatarImage,
+        string? avatarImage,
         string? identity,
         decimal? salary)
     {
@@ -67,56 +70,6 @@ public class UserService
             }
         }
 
-        string? avatarImagePath = null;
-        if (avatarImage != null && avatarImage.Length > 0)
-        {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-            var fileExtension = Path.GetExtension(avatarImage.FileName).ToLowerInvariant();
-            if (!allowedExtensions.Contains(fileExtension))
-            {
-                throw new BadRequestException("Loại tệp tin không hợp lệ. Các loại cho phép: jpg, jpeg, png, gif, webp");
-            }
-
-            const long maxFileSize = 5 * 1024 * 1024;
-            if (avatarImage.Length > maxFileSize)
-            {
-                throw new BadRequestException("Tệp tin quá lớn. Kích thước tối đa cho phép là 5MB.");
-            }
-
-            // Ensure wwwroot exists
-            var webRootPath = _webHostEnvironment.WebRootPath;
-            if (string.IsNullOrEmpty(webRootPath))
-            {
-                webRootPath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot");
-                if (!Directory.Exists(webRootPath))
-                {
-                    Directory.CreateDirectory(webRootPath);
-                }
-            }
-
-            var uploadsFolder = Path.Combine(webRootPath, "uploads", "avatars");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            var fileName = $"{Guid.NewGuid()}{fileExtension}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await avatarImage.CopyToAsync(stream);
-            }
-
-            // Get base URL from HttpContext
-            var httpContext = _httpContextAccessor.HttpContext;
-            var baseUrl = httpContext != null
-                ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
-                : "https://localhost:7194"; 
-
-            avatarImagePath = $"{baseUrl}/uploads/avatars/{fileName}";
-        }
-
         var newUser = new User
         {
             Id = Guid.NewGuid(),
@@ -131,7 +84,7 @@ public class UserService
             Ward = ward,
             Province = province,
             PostalCode = postalCode,
-            AvatarImage = avatarImagePath,
+            AvatarImage = !string.IsNullOrWhiteSpace(avatarImage) ? avatarImage.Trim() : null,
             Identity = identity,
             Salary = salary,
             Status = UserStatus.Active,
@@ -397,19 +350,21 @@ public class UserService
     //================= Remove Staff =================//
     public async Task RemoveStaffAsync(Guid staffId)
     {
-        var user = await _unitOfWork.UserRepository
-            .FindUserByIdWithTrackingAsync(staffId)
-            ?? throw new NotFoundException("Nhân viên không tồn tại");
+        // 1. Tìm và cập nhật Database
+        var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(staffId)
+                   ?? throw new NotFoundException("Nhân viên không tồn tại");
 
         if (!user.IsStaffUser())
             throw new BadRequestException("Chỉ có thể xóa tài khoản staff");
 
-        if (user.Status == UserStatus.Deleted)
-            return;
+        if (user.Status == UserStatus.Deleted) return;
 
         user.Status = UserStatus.Deleted;
-
         await _unitOfWork.SaveChangesAsync();
+
+        // 2. Xóa Cache Redis ngay lập tức để Middleware check lại DB và chặn Staff ngay
+        var db = _redis.GetDatabase();
+        await db.KeyDeleteAsync($"user_status:{staffId}");
     }
 
 }

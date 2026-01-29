@@ -1,5 +1,6 @@
 ﻿using System;
 using TechExpress.Application.Dtos.Responses;
+using TechExpress.Application.DTOs.Responses;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
 
@@ -115,5 +116,57 @@ public class ResponseMapper
             user.Province,
             user.Identity
         );
+    }
+
+    // ======================= Map Category Response từ model => Application.Dtos.response =======================//
+    public static CategoryResponse MapToCategoryResponseFromCategory(Category category)
+    {
+        return new CategoryResponse(
+            category.Id,
+            category.Name,
+            category.ParentCategoryId,
+            category.Description,
+            category.ImageUrl,
+            category.IsDeleted,
+            category.CreatedAt,
+            category.UpdatedAt
+        );
+    }
+
+    //======================= Map SpecDefinition Response =======================//
+    public static SpecDefinitionResponse MapToSpecDefinitionResponseFromSpecDefinition(SpecDefinition specDefinition)
+    {
+        return new SpecDefinitionResponse
+        (
+            specDefinition.Id,
+            specDefinition.Name,
+            specDefinition.CategoryId,
+            specDefinition.Category?.Name ?? string.Empty,
+            specDefinition.Unit,
+            specDefinition.AcceptValueType,
+            specDefinition.Description,
+            specDefinition.IsRequired,
+            specDefinition.IsDeleted,
+            specDefinition.CreatedAt,
+            specDefinition.UpdatedAt
+        );
+    }
+
+    public static List<SpecDefinitionResponse> MapToSpecDefinitionResponseListFromSpecDefinitionList(List<SpecDefinition> specDefinitions)
+    {
+        return specDefinitions.Select(MapToSpecDefinitionResponseFromSpecDefinition).ToList();
+    }
+
+    public static Pagination<SpecDefinitionResponse> MapToSpecDefinitionResponsePaginationFromSpecDefinitionPagination(Pagination<SpecDefinition> specDefinitionPagination)
+    {
+        var specDefinitionResponses = specDefinitionPagination.Items.Select(MapToSpecDefinitionResponseFromSpecDefinition).ToList();
+
+        return new Pagination<SpecDefinitionResponse>
+        {
+            Items = specDefinitionResponses,
+            PageNumber = specDefinitionPagination.PageNumber,
+            PageSize = specDefinitionPagination.PageSize,
+            TotalCount = specDefinitionPagination.TotalCount
+        };
     }
 }

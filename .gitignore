@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 
 appsettings.Development.json
 Migrations/
+bin\\Debug/
