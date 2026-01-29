@@ -169,4 +169,29 @@ public class ResponseMapper
             TotalCount = specDefinitionPagination.TotalCount
         };
     }
+
+    public static BrandResponse MapToBrandResponseFromBrand(Brand brand)
+    {
+        return new BrandResponse
+        (
+            brand.Id,
+            brand.Name,
+            brand.ImageUrl,
+            brand.CreatedAt,
+            brand.UpdatedAt
+        );
+    }
+
+    public static Pagination<BrandResponse> MapToBrandResponsePaginationFromBrandPagination(Pagination<Brand> brandPagination)
+    {
+        var brandResponses = brandPagination.Items.Select(MapToBrandResponseFromBrand).ToList();
+
+        return new Pagination<BrandResponse>
+        {
+            Items = brandResponses,
+            PageNumber = brandPagination.PageNumber,
+            PageSize = brandPagination.PageSize,
+            TotalCount = brandPagination.TotalCount
+        };
+    }
 }
