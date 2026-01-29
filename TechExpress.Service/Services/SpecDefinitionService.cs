@@ -52,12 +52,22 @@ public class SpecDefinitionService
         return specDefinition;
     }
 
-    public async Task<Pagination<SpecDefinition>> HandleGetPagedAsync(int pageNumber = 1, int pageSize = 20)
+    public async Task<Pagination<SpecDefinition>> HandleGetPagedAsync(
+        int pageNumber = 1,
+        int pageSize = 20,
+        string? searchName = null,
+        DateTimeOffset? createdFrom = null,
+        DateTimeOffset? createdTo = null)
     {
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-        var (items, totalCount) = await _unitOfWork.SpecDefinitionRepository.GetPagedAsync(pageNumber, pageSize);
+        var (items, totalCount) = await _unitOfWork.SpecDefinitionRepository.GetPagedAsync(
+            pageNumber,
+            pageSize,
+            searchName,
+            createdFrom,
+            createdTo);
 
         return new Pagination<SpecDefinition>
         {

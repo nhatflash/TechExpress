@@ -43,13 +43,24 @@ public class SpecDefinitionController : ControllerBase
     /// </summary>
     /// <param name="pageNumber">Số trang (mặc định: 1)</param>
     /// <param name="pageSize">Kích thước trang (mặc định: 20, tối đa: 100)</param>
+    /// <param name="searchName">Tìm kiếm theo tên (contains)</param>
+    /// <param name="createdFrom">Lọc từ thời điểm tạo (CreatedAt >= createdFrom)</param>
+    /// <param name="createdTo">Lọc đến thời điểm tạo (CreatedAt <= createdTo)</param>
     [HttpGet]
     [Authorize(Roles = "Admin,Staff")]
     public async Task<IActionResult> GetPaged(
         [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20,
+        [FromQuery] string? searchName = null,
+        [FromQuery] DateTimeOffset? createdFrom = null,
+        [FromQuery] DateTimeOffset? createdTo = null)
     {
-        var pagination = await _serviceProvider.SpecDefinitionService.HandleGetPagedAsync(pageNumber, pageSize);
+        var pagination = await _serviceProvider.SpecDefinitionService.HandleGetPagedAsync(
+            pageNumber,
+            pageSize,
+            searchName,
+            createdFrom,
+            createdTo);
         var response = ResponseMapper.MapToSpecDefinitionResponsePaginationFromSpecDefinitionPagination(pagination);
         return Ok(ApiResponse<Pagination<SpecDefinitionResponse>>.OkResponse(response));
     }

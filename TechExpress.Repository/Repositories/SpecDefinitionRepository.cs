@@ -27,12 +27,33 @@ public class SpecDefinitionRepository
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
-    public async Task<(List<SpecDefinition> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
+    public async Task<(List<SpecDefinition> Items, int TotalCount)> GetPagedAsync(
+        int pageNumber,
+        int pageSize,
+        string? searchName,
+        DateTimeOffset? createdFrom,
+        DateTimeOffset? createdTo)
     {
         var query = _context.SpecDefinitions
             .Where(s => !s.IsDeleted)
             .Include(s => s.Category)
             .AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchName))
+        {
+            var keyword = searchName.Trim();
+            query = query.Where(s => EF.Functions.Like(s.Name, $"%{keyword}%"));
+        }
+
+        if (createdFrom.HasValue)
+        {
+            query = query.Where(s => s.CreatedAt >= createdFrom.Value);
+        }
+
+        if (createdTo.HasValue)
+        {
+            query = query.Where(s => s.CreatedAt <= createdTo.Value);
+        }
 
         var totalCount = await query.CountAsync();
 

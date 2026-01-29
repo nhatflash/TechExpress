@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,12 +14,14 @@ namespace TechExpress.Repository
 
         public UserRepository UserRepository { get; }
         public SpecDefinitionRepository SpecDefinitionRepository { get; }
+        public BrandRepository BrandRepository { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             UserRepository = new UserRepository(context);
             SpecDefinitionRepository = new SpecDefinitionRepository(context);
+            BrandRepository = new BrandRepository(context);
         }
 
         public async Task SaveChangesAsync()

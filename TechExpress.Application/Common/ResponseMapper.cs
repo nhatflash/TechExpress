@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
@@ -102,7 +102,6 @@ public class ResponseMapper
             TotalCount = userPagination.TotalCount
         };
     }
-    //======================= Map Update Staff Response =======================//
     public static UpdateStaffResponse MapToUpdateStaffResponse(User user)
     {
         return new UpdateStaffResponse
@@ -117,7 +116,6 @@ public class ResponseMapper
         );
     }
 
-    //======================= Map SpecDefinition Response =======================//
     public static SpecDefinitionResponse MapToSpecDefinitionResponseFromSpecDefinition(SpecDefinition specDefinition)
     {
         return new SpecDefinitionResponse
@@ -151,6 +149,31 @@ public class ResponseMapper
             PageNumber = specDefinitionPagination.PageNumber,
             PageSize = specDefinitionPagination.PageSize,
             TotalCount = specDefinitionPagination.TotalCount
+        };
+    }
+
+    public static BrandResponse MapToBrandResponseFromBrand(Brand brand)
+    {
+        return new BrandResponse
+        (
+            brand.Id,
+            brand.Name,
+            brand.ImageUrl,
+            brand.CreatedAt,
+            brand.UpdatedAt
+        );
+    }
+
+    public static Pagination<BrandResponse> MapToBrandResponsePaginationFromBrandPagination(Pagination<Brand> brandPagination)
+    {
+        var brandResponses = brandPagination.Items.Select(MapToBrandResponseFromBrand).ToList();
+
+        return new Pagination<BrandResponse>
+        {
+            Items = brandResponses,
+            PageNumber = brandPagination.PageNumber,
+            PageSize = brandPagination.PageSize,
+            TotalCount = brandPagination.TotalCount
         };
     }
 }
