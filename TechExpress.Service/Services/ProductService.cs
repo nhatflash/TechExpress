@@ -9,6 +9,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Enums;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services
@@ -46,15 +47,13 @@ namespace TechExpress.Service.Services
             if (page < 1) page = 1;
             if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
-            var (products, totalCount) = await _unitOfWork.ProductRepository
-                .GetProductsPagedAsync(
-                    page,
-                    pageSize,
-                    sortBy,
-                    search,
-                    categoryId,
-                    status
-                );
+            var (products, totalCount) = sortBy switch
+            {
+                ProductSortBy.Price => await _unitOfWork.ProductRepository.FindProductsPagedSortByPriceAsync(page, pageSize, search, categoryId, status),
+                ProductSortBy.CreatedAt => await _unitOfWork.ProductRepository.FindProductsPagedSortByCreatedAtAsync(page, pageSize, search, categoryId, status),
+                ProductSortBy.StockQty => await _unitOfWork.ProductRepository.FindProductsPagedSortByStockQtyAsync(page, pageSize, search, categoryId, status),
+                _ => await _unitOfWork.ProductRepository.FindProductsPagedSortByUpdatedAtAsync(page, pageSize, search, categoryId, status)
+            };
 
             return new Pagination<Product>
             {
@@ -488,7 +487,7 @@ namespace TechExpress.Service.Services
                 await _unitOfWork.SaveChangesAsync();
                 //await tx.CommitAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 //await tx.RollbackAsync();
 

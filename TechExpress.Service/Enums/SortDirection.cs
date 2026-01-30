@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TechExpress.Repository.Enums
+namespace TechExpress.Service.Enums
 {
     public enum SortDirection
     {

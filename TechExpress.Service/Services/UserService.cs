@@ -8,6 +8,7 @@ using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Enums;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services;
@@ -306,9 +307,11 @@ public class UserService
         const int pageSize = 20;
 
         // Lấy dữ liệu từ Repo
-        var staffs = await _unitOfWork.UserRepository
-            .GetStaffListAsync(page, pageSize, sortBy);
-
+        List<User> staffs = sortBy switch {
+            StaffSortBy.Email => await _unitOfWork.UserRepository.FindStaffsSortByEmailAsync(page, pageSize),
+            StaffSortBy.FirstName => await _unitOfWork.UserRepository.FindStaffsSortByFirstNameAsync(page, pageSize),
+            _ => await _unitOfWork.UserRepository.FindStaffsSortBySalaryAsync(page, pageSize)
+        };
         var totalCount = await _unitOfWork.UserRepository.GetTotalStaffCountAsync();
 
         return new Pagination<User>

@@ -110,25 +110,35 @@ namespace TechExpress.Repository.Repositories
         }
 
         // ============= STAFF LIST =================
-        public async Task<List<User>> GetStaffListAsync(int page, int pageSize, StaffSortBy sortBy)
+        private IQueryable<User> BuildStaffQuery()
         {
-            var query = _context.Users
-                .Where(u => u.Role == UserRole.Staff);
+            return _context.Users.Where(u => u.Role == UserRole.Staff);
+        }
 
-            // == OrderBy tăng dần ==
-
-            query = sortBy switch
-            {
-                StaffSortBy.Email => query.OrderBy(u => u.Email),
-                StaffSortBy.FirstName => query.OrderBy(u => u.FirstName),
-                StaffSortBy.Salary => query.OrderBy(u => u.Salary),
-                _ => query.OrderBy(u => u.Email)
-            };
-
+        private async Task<List<User>> ExecutePagedStaffQueryAsync(IQueryable<User> query, int page, int pageSize)
+        {
             return await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public async Task<List<User>> FindStaffsSortByEmailAsync(int page, int pageSize)
+        {
+            var query = BuildStaffQuery().OrderBy(u => u.Email);
+            return await ExecutePagedStaffQueryAsync(query, page, pageSize);
+        }
+
+        public async Task<List<User>> FindStaffsSortByFirstNameAsync(int page, int pageSize)
+        {
+            var query = BuildStaffQuery().OrderBy(u => u.FirstName);
+            return await ExecutePagedStaffQueryAsync(query, page, pageSize);
+        }
+
+        public async Task<List<User>> FindStaffsSortBySalaryAsync(int page, int pageSize)
+        {
+            var query = BuildStaffQuery().OrderBy(u => u.Salary);
+            return await ExecutePagedStaffQueryAsync(query, page, pageSize);
         }
 
         public async Task<int> GetTotalStaffCountAsync()

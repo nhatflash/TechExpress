@@ -45,8 +45,8 @@ public class SpecDefinitionController : ControllerBase
     /// <param name="pageNumber">Số trang (mặc định: 1)</param>
     /// <param name="pageSize">Kích thước trang (mặc định: 20, tối đa: 100)</param>
     /// <param name="searchName">Tìm kiếm theo tên (contains)</param>
-    /// <param name="createdFrom">Lọc từ thời điểm tạo (CreatedAt >= createdFrom)</param>
-    /// <param name="createdTo">Lọc đến thời điểm tạo (CreatedAt <= createdTo)</param>
+    /// <param name="createdFrom">Lọc từ thời điểm tạo (CreatedAt &gt;= createdFrom)</param>
+    /// <param name="createdTo">Lọc đến thời điểm tạo (CreatedAt &lt;= createdTo)</param>
     [HttpGet]
     [Authorize(Roles = "Admin,Staff")]
     public async Task<IActionResult> GetPaged(

@@ -18,17 +18,8 @@ namespace TechExpress.Repository.Repositories
             _context = context;
         }
 
-        public async Task<(List<Product> Products, int TotalCount)> GetProductsPagedAsync(
-            int page,
-            int pageSize,
-            ProductSortBy sortBy,
-            string? search,
-            Guid? categoryId,
-            ProductStatus? status)
+        private IQueryable<Product> BuildFilteredQuery(string? search, Guid? categoryId, ProductStatus? status)
         {
-            if (page < 1) page = 1;
-            if (pageSize < 1) pageSize = 20;
-
             var query = _context.Products
                 .AsNoTracking()
                 .Include(p => p.Category)
@@ -49,16 +40,16 @@ namespace TechExpress.Repository.Repositories
                     p.Sku.ToLower().Contains(s));
             }
 
-            var totalCount = await query.CountAsync();
+            return query;
+        }
 
-            query = sortBy switch
-            {
-                ProductSortBy.Price => query.OrderBy(p => p.Price),
-                ProductSortBy.CreatedAt => query.OrderBy(p => p.CreatedAt),
-                ProductSortBy.StockQty => query.OrderBy(p => p.Stock),
-                ProductSortBy.UpdatedAt => query.OrderBy(p => p.UpdatedAt),
-                _ => query.OrderBy(p => p.UpdatedAt)
-            };
+        private async Task<(List<Product> Products, int TotalCount)> ExecutePagedQueryAsync(
+            IQueryable<Product> query, int page, int pageSize)
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 20;
+
+            var totalCount = await query.CountAsync();
 
             var products = await query
                 .Skip((page - 1) * pageSize)
@@ -66,6 +57,34 @@ namespace TechExpress.Repository.Repositories
                 .ToListAsync();
 
             return (products, totalCount);
+        }
+
+        public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByPriceAsync(
+            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+        {
+            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.Price);
+            return await ExecutePagedQueryAsync(query, page, pageSize);
+        }
+
+        public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByCreatedAtAsync(
+            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+        {
+            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.CreatedAt);
+            return await ExecutePagedQueryAsync(query, page, pageSize);
+        }
+
+        public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByStockQtyAsync(
+            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+        {
+            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.Stock);
+            return await ExecutePagedQueryAsync(query, page, pageSize);
+        }
+
+        public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByUpdatedAtAsync(
+            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+        {
+            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.UpdatedAt);
+            return await ExecutePagedQueryAsync(query, page, pageSize);
         }
 
         public async Task<bool> ExistsBySkuAsync(string sku)

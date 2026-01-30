@@ -1,4 +1,5 @@
 ﻿using TechExpress.Repository.Enums;
+using TechExpress.Service.Enums;
 
 namespace TechExpress.Application.Dtos.Requests
 {
