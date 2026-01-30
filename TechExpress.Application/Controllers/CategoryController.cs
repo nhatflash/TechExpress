@@ -83,7 +83,11 @@ namespace TechExpress.Application.Controllers
         }
         //======================== =======Category Controller Delete Handling===============================
         // Path: TechExpress.Application/Controllers/CategoryController.cs
-
+        /// <summary>
+        /// Xóa category theo ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)

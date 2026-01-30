@@ -66,6 +66,11 @@ namespace TechExpress.Repository.Repositories
             return await _context.Categories.AnyAsync(c => c.ParentCategoryId == id);
         }
 
+        public async Task<bool> AnyActiveChildCategoriesAsync(Guid id)
+        {
+            // Kiểm tra xem có danh mục con nào chưa bị xóa mềm (IsDeleted == false) không
+            return await _context.Categories.AnyAsync(c => c.ParentCategoryId == id && !c.IsDeleted);
+        }
         public void Remove(Category entity)
         {
             // Sử dụng DbSet của EF Core để xóa

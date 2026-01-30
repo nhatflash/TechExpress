@@ -151,7 +151,14 @@ namespace TechExpress.Repository.Repositories
         }
 
 
-
+        public async Task<List<Product>> GetProductsByCategoryIdWithTrackingAsync(Guid categoryId)
+        {
+            // Lấy danh sách sản phẩm thuộc danh mục để chuẩn bị cập nhật trạng thái
+            return await _context.Products
+                .AsTracking()
+                .Where(p => p.CategoryId == categoryId)
+                .ToListAsync();
+        }
 
         public async Task<bool> AnyProductsInCategoryAsync(Guid id)
         {
