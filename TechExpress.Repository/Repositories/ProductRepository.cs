@@ -18,7 +18,10 @@ namespace TechExpress.Repository.Repositories
             _context = context;
         }
 
-        private IQueryable<Product> BuildFilteredQuery(string? search, Guid? categoryId, ProductStatus? status)
+        private IQueryable<Product> BuildFilteredQuery(
+            string? search,
+            List<Guid>? categoryIds,
+            ProductStatus? status)
         {
             var query = _context.Products
                 .AsNoTracking()
@@ -26,8 +29,8 @@ namespace TechExpress.Repository.Repositories
                 .Include(p => p.Images)
                 .AsQueryable();
 
-            if (categoryId.HasValue)
-                query = query.Where(p => p.CategoryId == categoryId.Value);
+            if (categoryIds != null && categoryIds.Count > 0)
+                query = query.Where(p => categoryIds.Contains(p.CategoryId));
 
             if (status.HasValue)
                 query = query.Where(p => p.Status == status.Value);
@@ -42,6 +45,9 @@ namespace TechExpress.Repository.Repositories
 
             return query;
         }
+
+
+
 
         private async Task<(List<Product> Products, int TotalCount)> ExecutePagedQueryAsync(
             IQueryable<Product> query, int page, int pageSize)
@@ -60,32 +66,53 @@ namespace TechExpress.Repository.Repositories
         }
 
         public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByPriceAsync(
-            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+    int page, int pageSize, bool isDescending, string? search, List<Guid>? categoryIds, ProductStatus? status)
         {
-            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.Price);
+            var query = BuildFilteredQuery(search, categoryIds, status);
+
+            query = isDescending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price);
+
             return await ExecutePagedQueryAsync(query, page, pageSize);
         }
+
+
+
 
         public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByCreatedAtAsync(
-            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+    int page, int pageSize, bool isDescending, string? search, List<Guid>? categoryIds, ProductStatus? status)
         {
-            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.CreatedAt);
+            var query = BuildFilteredQuery(search, categoryIds, status);
+
+            query = isDescending ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt);
+
             return await ExecutePagedQueryAsync(query, page, pageSize);
         }
+
+
 
         public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByStockQtyAsync(
-            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+    int page, int pageSize, bool isDescending, string? search, List<Guid>? categoryIds, ProductStatus? status)
         {
-            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.Stock);
+            var query = BuildFilteredQuery(search, categoryIds, status);
+
+            query = isDescending ? query.OrderByDescending(p => p.Stock) : query.OrderBy(p => p.Stock);
+
             return await ExecutePagedQueryAsync(query, page, pageSize);
         }
 
+
+
         public async Task<(List<Product> Products, int TotalCount)> FindProductsPagedSortByUpdatedAtAsync(
-            int page, int pageSize, string? search, Guid? categoryId, ProductStatus? status)
+    int page, int pageSize, bool isDescending, string? search, List<Guid>? categoryIds, ProductStatus? status)
         {
-            var query = BuildFilteredQuery(search, categoryId, status).OrderBy(p => p.UpdatedAt);
+            var query = BuildFilteredQuery(search, categoryIds, status);
+
+            query = isDescending ? query.OrderByDescending(p => p.UpdatedAt) : query.OrderBy(p => p.UpdatedAt);
+
             return await ExecutePagedQueryAsync(query, page, pageSize);
         }
+
+
 
         public async Task<bool> ExistsBySkuAsync(string sku)
         {

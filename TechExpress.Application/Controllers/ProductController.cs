@@ -37,6 +37,7 @@ namespace TechExpress.Application.Controllers
                     request.Page,
                     request.PageSize,
                     request.SortBy,
+                    request.SortDirection,
                     request.Search,
                     request.CategoryId,
                     request.Status
