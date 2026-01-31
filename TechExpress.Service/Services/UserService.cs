@@ -8,6 +8,7 @@ using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Enums;
 using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services;
@@ -45,7 +46,7 @@ public class UserService
         string? ward,
         string? province,
         string? postalCode,
-        IFormFile? avatarImage,
+        string? avatarImage,
         string? identity,
         decimal? salary)
     {
@@ -70,56 +71,6 @@ public class UserService
             }
         }
 
-        string? avatarImagePath = null;
-        if (avatarImage != null && avatarImage.Length > 0)
-        {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-            var fileExtension = Path.GetExtension(avatarImage.FileName).ToLowerInvariant();
-            if (!allowedExtensions.Contains(fileExtension))
-            {
-                throw new BadRequestException("Loại tệp tin không hợp lệ. Các loại cho phép: jpg, jpeg, png, gif, webp");
-            }
-
-            const long maxFileSize = 5 * 1024 * 1024;
-            if (avatarImage.Length > maxFileSize)
-            {
-                throw new BadRequestException("Tệp tin quá lớn. Kích thước tối đa cho phép là 5MB.");
-            }
-
-            // Ensure wwwroot exists
-            var webRootPath = _webHostEnvironment.WebRootPath;
-            if (string.IsNullOrEmpty(webRootPath))
-            {
-                webRootPath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot");
-                if (!Directory.Exists(webRootPath))
-                {
-                    Directory.CreateDirectory(webRootPath);
-                }
-            }
-
-            var uploadsFolder = Path.Combine(webRootPath, "uploads", "avatars");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            var fileName = $"{Guid.NewGuid()}{fileExtension}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await avatarImage.CopyToAsync(stream);
-            }
-
-            // Get base URL from HttpContext
-            var httpContext = _httpContextAccessor.HttpContext;
-            var baseUrl = httpContext != null
-                ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host}"
-                : "https://localhost:7194"; // Fallback if HttpContext is not available
-
-            avatarImagePath = $"{baseUrl}/uploads/avatars/{fileName}";
-        }
-
         var newUser = new User
         {
             Id = Guid.NewGuid(),
@@ -134,7 +85,7 @@ public class UserService
             Ward = ward,
             Province = province,
             PostalCode = postalCode,
-            AvatarImage = avatarImagePath,
+            AvatarImage = !string.IsNullOrWhiteSpace(avatarImage) ? avatarImage.Trim() : null,
             Identity = identity,
             Salary = salary,
             Status = UserStatus.Active,
@@ -154,12 +105,56 @@ public class UserService
         return user;
     }
 
-    public async Task<User> HandleUpdateProfile(string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
+    public async Task<User> HandleUpdateProfile(string? firstName, string? lastName, string? phone, Gender? gender, string? address, string? ward, string? province, string? postalCode, string? avatarImage)
     {
         var userId = _userContext.GetCurrentAuthenticatedUserId();
         var user = await _unitOfWork.UserRepository.FindUserByIdWithTrackingAsync(userId) ?? throw new UnauthorizedException("Người dùng không tồn tại.");
 
-        await UpdateUserWithUpdatedInformation(user, phone, gender, province, ward, streetAddress);
+        if (!string.IsNullOrWhiteSpace(firstName))
+        {
+            user.FirstName = firstName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(lastName))
+        {
+            user.LastName = lastName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
+            {
+                throw new BadRequestException("Số điện thoại đã tồn tại.");
+            }
+            user.Phone = phone;
+        }
+
+        if (gender.HasValue)
+        {
+            user.Gender = gender;
+        }
+
+        if (!string.IsNullOrWhiteSpace(province))
+        {
+            user.Province = province;
+        }
+        if (!string.IsNullOrWhiteSpace(ward))
+        {
+            user.Ward = ward;
+        }
+        if (!string.IsNullOrWhiteSpace(address))
+        {
+            user.Address = address;
+        }
+
+        if (!string.IsNullOrWhiteSpace(postalCode))
+        {
+            user.PostalCode = postalCode;
+        }
+        if (!string.IsNullOrWhiteSpace(avatarImage))
+        {
+            user.AvatarImage = avatarImage;
+        }
 
         await _unitOfWork.SaveChangesAsync();
 
@@ -312,9 +307,11 @@ public class UserService
         const int pageSize = 20;
 
         // Lấy dữ liệu từ Repo
-        var staffs = await _unitOfWork.UserRepository
-            .GetStaffListAsync(page, pageSize, sortBy);
-
+        List<User> staffs = sortBy switch {
+            StaffSortBy.Email => await _unitOfWork.UserRepository.FindStaffsSortByEmailAsync(page, pageSize),
+            StaffSortBy.FirstName => await _unitOfWork.UserRepository.FindStaffsSortByFirstNameAsync(page, pageSize),
+            _ => await _unitOfWork.UserRepository.FindStaffsSortBySalaryAsync(page, pageSize)
+        };
         var totalCount = await _unitOfWork.UserRepository.GetTotalStaffCountAsync();
 
         return new Pagination<User>
