@@ -181,7 +181,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 
 builder.Services.AddProblemDetails();
 
@@ -223,6 +223,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddSwaggerGen(c =>
 {
     c.UseInlineDefinitionsForEnums();
+
 });
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
@@ -232,6 +233,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.ValueCountLimit = int.MaxValue;
     options.KeyLengthLimit = int.MaxValue;
 });
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddHostedService<AdminInitializationTask>();
 
@@ -273,8 +275,7 @@ app.UseAuthentication();
 app.UseMiddleware<UserStatusMiddleware>();
 app.UseAuthorization();
 
-app.UseExceptionHandler();
-
 app.MapControllers();
+app.UseExceptionHandler(options => { });
 
 app.Run();
