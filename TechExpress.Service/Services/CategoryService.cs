@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
+using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
 
@@ -169,39 +170,55 @@ namespace TechExpress.Service.Services
         }
 
         //===============================Category Service Delete Handling===============================
-        // Path: TechExpress.Service/Services/CategoryService.cs
         public async Task<string> HandleDeleteCategory(Guid id)
         {
-            // 1. Kiểm tra tồn tại với Tracking để EF có thể xóa/sửa
+            // 1. Tìm danh mục mục tiêu
             var category = await _unitOfWork.CategoryRepository.FindCategoryByIdWithTrackingAsync(id)
                            ?? throw new NotFoundException("Không tìm thấy danh mục để xóa");
 
-            // 2. Kiểm tra ràng buộc dữ liệu (Validation Usage)
-            bool hasChildCategories = await _unitOfWork.CategoryRepository.AnyChildCategoriesAsync(id);
-            bool hasLinkedProducts = await _unitOfWork.ProductRepository.AnyProductsInCategoryAsync(id);
+            // --- QUY TẮC 1 & 2: KIỂM TRA LỚP CON ACTIVE ---
+            bool hasActiveChildren = await _unitOfWork.CategoryRepository.AnyActiveChildCategoriesAsync(id);
+            if (hasActiveChildren)
+            {
+                throw new BadRequestException("Không thể xóa danh mục cha khi vẫn còn danh mục con đang hoạt động (Active).");
+            }
 
-            // 3. Thực hiện logic xóa
-            if (hasChildCategories || hasLinkedProducts)
+            // Kiểm tra ràng buộc chung (có con Inactive hoặc có sản phẩm)
+            bool hasAnyChildren = await _unitOfWork.CategoryRepository.AnyChildCategoriesAsync(id);
+            bool hasProducts = await _unitOfWork.ProductRepository.AnyProductsInCategoryAsync(id);
+
+            // 2. THỰC HIỆN LOGIC XÓA
+            if (hasAnyChildren || hasProducts)
             {
                 // --- THỰC HIỆN SOFT DELETE (XÓA MỀM) ---
-                // Nếu đã xóa mềm rồi thì không cần làm lại
                 if (category.IsDeleted)
                     throw new BadRequestException("Danh mục này đã ngừng hoạt động từ trước.");
 
-                category.IsDeleted = true; // Chuyển Status sang Inactive
-                category.UpdatedAt = DateTimeOffset.Now; // Ghi nhận thời điểm xóa vào UpdateAt
+                category.IsDeleted = true;
+                category.UpdatedAt = DateTimeOffset.Now;
+
+                // --- QUY TẮC 3: CẬP NHẬT TRẠNG THÁI PRODUCT ---
+                if (hasProducts)
+                {
+                    var products = await _unitOfWork.ProductRepository.GetProductsByCategoryIdWithTrackingAsync(id);
+                    foreach (var product in products)
+                    {
+                        // Chuyển toàn bộ sản phẩm sang trạng thái Unavailable
+                        product.Status = ProductStatus.Unavailable;
+                        product.UpdatedAt = DateTimeOffset.Now;
+                    }
+                }
 
                 await _unitOfWork.SaveChangesAsync();
-                return "Danh mục có dữ liệu liên quan (sản phẩm hoặc con) nên đã được chuyển sang trạng thái Inactive.";
+                return "Danh mục đã chuyển sang Inactive và toàn bộ sản phẩm liên quan đã bị ngắt kích hoạt (Unavailable).";
             }
             else
             {
                 // --- THỰC HIỆN HARD DELETE (XÓA CỨNG) ---
-                // Xóa vĩnh viễn vì không có ràng buộc
                 _unitOfWork.CategoryRepository.Remove(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                return "Danh mục chưa có dữ liệu liên kết nên đã được xóa vĩnh viễn khỏi hệ thống.";
+                return "Danh mục chưa có dữ liệu liên kết nên đã được xóa vĩnh viễn.";
             }
         }
 
