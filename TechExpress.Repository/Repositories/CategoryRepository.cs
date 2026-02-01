@@ -76,5 +76,33 @@ namespace TechExpress.Repository.Repositories
             // Sử dụng DbSet của EF Core để xóa
             _context.Categories.Remove(entity);
         }
+
+        public async Task<List<Guid>> GetDescendantCategoryIdsAsync(Guid parentId)
+        {
+            var result = new List<Guid>();
+            var frontier = new List<Guid> { parentId };
+
+            while (frontier.Count > 0)
+            {
+                var children = await _context.Categories
+                    .AsNoTracking()
+                    .Where(c => c.ParentCategoryId.HasValue && frontier.Contains(c.ParentCategoryId.Value))
+                    .Select(c => c.Id)
+                    .ToListAsync();
+
+                if (children.Count == 0) break;
+
+                foreach (var id in children)
+                {
+                    if (!result.Contains(id))
+                        result.Add(id);
+                }
+
+                frontier = children;
+            }
+
+            return result;
+        }
+
     }
 }

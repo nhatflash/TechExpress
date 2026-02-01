@@ -9,6 +9,9 @@ namespace TechExpress.Application.Dtos.Requests
         public Guid? CategoryId { get; set; }
         public ProductStatus? Status { get; set; }
         public ProductSortBy SortBy { get; set; } = ProductSortBy.UpdatedAt;
+
+        public SortDirection SortDirection { get; set; } = SortDirection.Asc;
+
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 20;
     }

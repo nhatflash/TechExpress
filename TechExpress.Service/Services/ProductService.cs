@@ -37,22 +37,42 @@ namespace TechExpress.Service.Services
 
 
         public async Task<Pagination<Product>> HandleGetProductListWithPaginationAsync(
-            int page,
-            int pageSize,
-            ProductSortBy sortBy,
-            string? search,
-            Guid? categoryId,
-            ProductStatus? status)
+    int page,
+    int pageSize,
+    ProductSortBy sortBy,
+    SortDirection sortDirection,
+    string? search,
+    Guid? categoryId,
+    ProductStatus? status)
         {
             if (page < 1) page = 1;
             if (pageSize < 1 || pageSize > 100) pageSize = 20;
 
+            var isDescending = sortDirection == SortDirection.Desc;
+
+            List<Guid>? categoryIds = null;
+            if (categoryId.HasValue)
+            {
+                var descendants = await _unitOfWork.CategoryRepository
+                    .GetDescendantCategoryIdsAsync(categoryId.Value);
+
+                categoryIds = new List<Guid>(descendants.Count + 1) { categoryId.Value };
+                categoryIds.AddRange(descendants);
+            }
+
             var (products, totalCount) = sortBy switch
             {
-                ProductSortBy.Price => await _unitOfWork.ProductRepository.FindProductsPagedSortByPriceAsync(page, pageSize, search, categoryId, status),
-                ProductSortBy.CreatedAt => await _unitOfWork.ProductRepository.FindProductsPagedSortByCreatedAtAsync(page, pageSize, search, categoryId, status),
-                ProductSortBy.StockQty => await _unitOfWork.ProductRepository.FindProductsPagedSortByStockQtyAsync(page, pageSize, search, categoryId, status),
-                _ => await _unitOfWork.ProductRepository.FindProductsPagedSortByUpdatedAtAsync(page, pageSize, search, categoryId, status)
+                ProductSortBy.Price => await _unitOfWork.ProductRepository
+                    .FindProductsPagedSortByPriceAsync(page, pageSize, isDescending, search, categoryIds, status),
+
+                ProductSortBy.CreatedAt => await _unitOfWork.ProductRepository
+                    .FindProductsPagedSortByCreatedAtAsync(page, pageSize, isDescending, search, categoryIds, status),
+
+                ProductSortBy.StockQty => await _unitOfWork.ProductRepository
+                    .FindProductsPagedSortByStockQtyAsync(page, pageSize, isDescending, search, categoryIds, status),
+
+                _ => await _unitOfWork.ProductRepository
+                    .FindProductsPagedSortByUpdatedAtAsync(page, pageSize, isDescending, search, categoryIds, status)
             };
 
             return new Pagination<Product>
