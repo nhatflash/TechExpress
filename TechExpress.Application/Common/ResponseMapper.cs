@@ -287,4 +287,39 @@ public class ResponseMapper
             TotalCount = brandPagination.TotalCount
         };
     }
+
+    //======================= Map Cart Response =======================//
+    public static CartResponse MapToCartResponseFromCart(Cart cart)
+    {
+        var itemResponses = cart.Items
+            .OrderByDescending(i => i.CreatedAt)
+            .Select(item => new CartItemResponse
+            {
+                Id = item.Id,
+                CartId = item.CartId,
+                ProductId = item.ProductId,
+                ProductName = item.Product?.Name ?? string.Empty,
+                ProductImage = item.Product?.Images?.OrderBy(img => img.Id).FirstOrDefault()?.ImageUrl,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                SubTotal = item.Quantity * item.UnitPrice,
+                AvailableStock = item.Product?.Stock ?? 0,
+                ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
+                CreatedAt = item.CreatedAt,
+                UpdatedAt = item.UpdatedAt
+            })
+            .ToList();
+
+        return new CartResponse
+        {
+            Id = cart.Id,
+            UserId = cart.UserId,
+            Status = cart.Status,
+            TotalPrice = cart.TotalPrice,
+            TotalItems = cart.Items.Sum(i => i.Quantity),
+            Items = itemResponses,
+            CreatedAt = cart.CreatedAt,
+            UpdatedAt = cart.UpdatedAt
+        };
+    }
 }
