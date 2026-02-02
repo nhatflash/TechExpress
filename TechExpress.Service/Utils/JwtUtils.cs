@@ -64,5 +64,25 @@ namespace TechExpress.Service.Utils
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public static string? GetEmailFromToken(string token)
+        {
+            var tokenData = GetJsonTokenFromToken(token);
+            return tokenData?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+        }
+
+        public static Guid? GetUserIdFromToken(string token)
+        {
+            var tokenData = GetJsonTokenFromToken(token);
+            var idString = tokenData?.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (idString == null) return null;
+            return Guid.Parse(idString);
+        }
+
+        private static JwtSecurityToken? GetJsonTokenFromToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            return handler.ReadToken(token) as JwtSecurityToken;
+        }
     }
 }

@@ -89,5 +89,12 @@ namespace TechExpress.Application.Controllers
 
             return Ok(ApiResponse<string>.OkResponse("Đặt lại mật khẩu thành công."));
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshNewToken([FromBody] RefreshNewTokenRequest request)
+        {
+            var response = await _serviceProvider.AuthService.HandleRefreshNewToken(request.RefreshToken);
+            return Ok(ApiResponse<string>.OkResponse(response));
+        }
     }
 }

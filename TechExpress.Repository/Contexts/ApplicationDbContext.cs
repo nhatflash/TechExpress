@@ -462,11 +462,17 @@ namespace TechExpress.Repository.Contexts
             // db-schema for Cart model
             modelBuilder.Entity<Cart>(ct =>
             {
+
                 ct.Property(c => c.Id)
                     .HasColumnName("id");
 
                 ct.Property(c => c.UserId)
                     .HasColumnName("user_id")
+                    .IsRequired();
+
+                ct.Property(c => c.Status)
+                    .HasColumnName("status")
+                    .HasConversion<string>()
                     .IsRequired();
                 
                 ct.Property(c => c.TotalPrice)
@@ -474,7 +480,7 @@ namespace TechExpress.Repository.Contexts
                     .HasPrecision(18, 2)
                     .IsRequired();
 
-                ct.Property(c => c.UpdatedAt)
+                ct.Property(c => c.CreatedAt)
                     .HasColumnName("created_at")
                     .IsRequired();
 
@@ -483,6 +489,9 @@ namespace TechExpress.Repository.Contexts
                     .IsRequired();
 
                 ct.HasKey(c => c.Id);
+
+                ct.HasIndex(c => c.UserId)
+                    .HasDatabaseName("idx_cart_user");
 
                 ct.HasOne(c => c.User)
                     .WithOne()
@@ -494,6 +503,7 @@ namespace TechExpress.Repository.Contexts
             // db-schema for CartItem model
             modelBuilder.Entity<CartItem>(ci =>
             {
+
                 ci.Property(c => c.Id)
                     .HasColumnName("id");
 
@@ -534,6 +544,11 @@ namespace TechExpress.Repository.Contexts
                     .WithMany(c => c.Items)
                     .HasForeignKey(c => c.CartId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                ci.HasOne(c => c.Product)
+                    .WithMany()
+                    .HasForeignKey(c => c.ProductId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
 
@@ -546,5 +561,7 @@ namespace TechExpress.Repository.Contexts
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductSpecValue> ProductSpecValues { get; set; }
         public DbSet<SpecDefinition> SpecDefinitions { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
     }
 }
