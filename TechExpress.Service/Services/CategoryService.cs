@@ -238,5 +238,15 @@ namespace TechExpress.Service.Services
             }
             return categories;
         }
+
+        public async Task<List<Category>> HandleGetParentCategoriesAsync()
+        {
+            var categories = await _unitOfWork.CategoryRepository.FindParentCategoriesAsync();
+            if (categories.Count == 0)
+            {
+                throw new NotFoundException("Hiện không có danh mục cha.");
+            }
+            return categories;
+        }
     }
 }

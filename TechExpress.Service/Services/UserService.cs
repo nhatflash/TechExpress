@@ -16,16 +16,12 @@ namespace TechExpress.Service.Services;
 public class UserService
 {
     private readonly UnitOfWork _unitOfWork;
-    private readonly IWebHostEnvironment _webHostEnvironment;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserContext _userContext;
     private readonly IConnectionMultiplexer _redis;
 
-    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, IConnectionMultiplexer redis)
+    public UserService(UnitOfWork unitOfWork, UserContext userContext, IConnectionMultiplexer redis)
     {
         _unitOfWork = unitOfWork;
-        _webHostEnvironment = webHostEnvironment;
-        _httpContextAccessor = httpContextAccessor;
         _userContext = userContext;
         _redis = redis;
     }

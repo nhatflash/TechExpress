@@ -116,5 +116,14 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToCategoryResponseListFromCategories(categories);
             return Ok(ApiResponse<List<CategoryResponse>>.OkResponse(response));
         }
+
+
+        [HttpGet("parent")]
+        public async Task<IActionResult> GetParentCategories()
+        {
+            var categories = await _serviceProvider.CategoryService.HandleGetParentCategoriesAsync();
+            var response = ResponseMapper.MapToCategoryResponseListFromCategories(categories);
+            return Ok(ApiResponse<List<CategoryResponse>>.OkResponse(response));
+        }
     }
 }

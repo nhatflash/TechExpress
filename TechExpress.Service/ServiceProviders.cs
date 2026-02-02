@@ -22,11 +22,11 @@ namespace TechExpress.Service
         public CategoryService CategoryService { get; }
         public CartService CartService { get; }
 
-        public ServiceProviders(UnitOfWork unitOfWork, SmtpEmailSender emailSender, JwtUtils jwtUtils, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, OtpUtils otpUtils, IConnectionMultiplexer redis)
+        public ServiceProviders(UnitOfWork unitOfWork, SmtpEmailSender emailSender, JwtUtils jwtUtils, UserContext userContext, OtpUtils otpUtils, IConnectionMultiplexer redis)
         {
             AuthService = new AuthService(unitOfWork, jwtUtils, userContext, otpUtils, emailSender);
-            UserService = new UserService(unitOfWork, webHostEnvironment, httpContextAccessor, userContext, redis);
-            ProductService = new ProductService(unitOfWork, webHostEnvironment, httpContextAccessor);
+            UserService = new UserService(unitOfWork, userContext, redis);
+            ProductService = new ProductService(unitOfWork);
             CategoryService = new CategoryService(unitOfWork);
             SpecDefinitionService = new SpecDefinitionService(unitOfWork);
             BrandService = new BrandService(unitOfWork);

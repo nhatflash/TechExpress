@@ -109,5 +109,9 @@ namespace TechExpress.Repository.Repositories
             return await _context.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.CreatedAt).ToListAsync();
         }
 
+        public async Task<List<Category>> FindParentCategoriesAsync()
+        {
+            return await _context.Categories.Where(pc => _context.Categories.Any(c => !c.IsDeleted && c.ParentCategoryId.HasValue && c.ParentCategoryId.Value == pc.Id) || !pc.ParentCategoryId.HasValue).ToListAsync();
+        }
     }
 }

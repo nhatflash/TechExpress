@@ -17,14 +17,10 @@ namespace TechExpress.Service.Services
     public class ProductService
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
+        public ProductService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webHostEnvironment;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Product> HandleGetProductDetailAsync(Guid productId)
