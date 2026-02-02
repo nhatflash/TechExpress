@@ -134,6 +134,11 @@ public class ResponseMapper
         );
     }
 
+    public static List<CategoryResponse> MapToCategoryResponseListFromCategories(List<Category> categories)
+    {
+        return categories.Select(MapToCategoryResponseFromCategory).ToList();
+    }
+
     // ======================= Map ProductListResponse =======================//
     public static Pagination<ProductListResponse>
     MapToProductListResponsePaginationFromProductPagination(

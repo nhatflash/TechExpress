@@ -104,5 +104,10 @@ namespace TechExpress.Repository.Repositories
             return result;
         }
 
+        public async Task<List<Category>> FindAllCategoriesNotDeletedAsync()
+        {
+            return await _context.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.CreatedAt).ToListAsync();
+        }
+
     }
 }
