@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Security.Authentication;
@@ -207,7 +207,7 @@ namespace TechExpress.Repository.Contexts
 
                 sd.HasKey(s => s.Id);
 
-                sd.HasIndex(s => s.Name)
+                sd.HasIndex(s => new { s.Id, s.Name })
                     .HasDatabaseName("idx_spec_name")
                     .IsUnique();
 

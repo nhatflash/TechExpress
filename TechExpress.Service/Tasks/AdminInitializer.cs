@@ -10,16 +10,16 @@ using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Tasks;
 
-public class AdminInitializationTask : IHostedService
+public class AdminInitializer : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<AdminInitializationTask> _logger;
+    private readonly ILogger<AdminInitializer> _logger;
 
-    public AdminInitializationTask(
+    public AdminInitializer(
         IServiceProvider serviceProvider,
         IConfiguration configuration,
-        ILogger<AdminInitializationTask> logger)
+        ILogger<AdminInitializer> logger)
     {
         _serviceProvider = serviceProvider;
         _configuration = configuration;

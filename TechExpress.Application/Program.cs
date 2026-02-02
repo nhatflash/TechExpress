@@ -236,7 +236,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.KeyLengthLimit = int.MaxValue;
 });
 
-builder.Services.AddHostedService<AdminInitializationTask>();
+builder.Services.AddHostedService<AdminInitializer>();
 
 var app = builder.Build();
 
@@ -279,5 +279,12 @@ app.UseAuthorization();
 app.UseExceptionHandler();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await CategoriesInitializer.Init(context);
+    await SpecDefinitionsInitializer.Init(context);
+}   
 
 app.Run();

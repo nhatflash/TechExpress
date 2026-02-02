@@ -109,7 +109,7 @@ namespace TechExpress.Application.Controllers
         }
 
 
-        [HttpGet("/ui")]
+        [HttpGet("ui")]
         public async Task<IActionResult> GetUICategoryList()
         {
             var categories = await _serviceProvider.CategoryService.HandleGetUICategoryListAsync();
