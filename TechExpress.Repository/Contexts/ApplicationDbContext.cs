@@ -332,6 +332,10 @@ namespace TechExpress.Repository.Contexts
                     .HasMaxLength(4096)
                     .IsRequired();
 
+                pd.Property(p => p.WarrantyMonth)
+                    .HasColumnName("warranty_month")
+                    .IsRequired();
+ 
                 pd.Property(p => p.Status)
                     .HasColumnName("status")
                     .HasConversion<string>()

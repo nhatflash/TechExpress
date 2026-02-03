@@ -135,6 +135,7 @@ namespace TechExpress.Service.Services
                 CategoryId = categoryId,
                 Price = price,
                 Stock = stockQty,
+                WarrantyMonth = 1,
                 Status = status,
                 Description = description,
                 UpdatedAt = DateTimeOffset.Now
