@@ -410,5 +410,18 @@ public class UserService
         await db.KeyDeleteAsync($"user_status:{staffId}");
     }
 
+    public async Task<Pagination<User>> GetCustomerUsersAsync(int page)
+    {
+        int pageSize = 20;
+        var customers = await _unitOfWork.UserRepository.FindCustomerUsersAsync(page, pageSize);
+        return new Pagination<User>
+        {
+            Items = customers,
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalCount = await _unitOfWork.UserRepository.CountCustomerUsersAsync()
+        };
+    }
+
 }
 
