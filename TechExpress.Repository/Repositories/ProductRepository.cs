@@ -150,7 +150,7 @@ namespace TechExpress.Repository.Repositories
         }
 
 
-        public async Task<bool> ExistsBySkuAsync(string sku, Guid excludeProductId)
+        public async Task<bool> ExistsBySkuExcludingProductIdAsync(string sku, Guid excludeProductId)
         {
             var s = sku.Trim().ToLower();
 
@@ -190,5 +190,9 @@ namespace TechExpress.Repository.Repositories
             return await _context.Products.AnyAsync(p => p.Name == name);
         }
 
+        public async Task<bool> ExistsByNameExcludingProductIdAsync(string name, Guid excludingId)
+        {
+            return await _context.Products.AnyAsync(p => p.Name == name && p.Id != excludingId);
+        }
     }
 }

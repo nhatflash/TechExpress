@@ -68,21 +68,19 @@ namespace TechExpress.Application.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<ProductListResponse>>> CreateProduct([FromBody] CreateProductRequest request)
         {
-            var specDict = request.SpecValues?
-                .Where(x => x != null)
-                .GroupBy(x => x.SpecDefinitionId)
-                .ToDictionary(g => g.Key, g => g.Last().Value?.Trim() ?? string.Empty);
+            var specValueCmds = RequestMapper.MapToCreateProductSpecValueCommandsFromRequests(request.SpecValues);
 
             var product = await _serviceProvider.ProductService.HandleCreateProduct(
                 request.Name.Trim(),
                 request.Sku.Trim(),
                 request.CategoryId,
+                request.BrandId,
                 request.Price,
-                request.StockQty,
-                request.Status,
+                request.Stock,
+                request.WarrantyMonth,
                 request.Description.Trim(),
                 request.Images,
-                specDict
+                specValueCmds
             );
 
             var response = ResponseMapper.MapToProductDetailResponseFromProduct(product);
@@ -97,24 +95,17 @@ namespace TechExpress.Application.Controllers
         Guid id,
         [FromBody] UpdateProductRequest request)
         {
-            var specDict = request.SpecValues?
-                .Where(x => x != null)
-                .GroupBy(x => x.SpecDefinitionId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Last().Value?.Trim() ?? string.Empty
-                );
-
             var updated = await _serviceProvider.ProductService.HandleUpdateProduct(
                 id,
-                request.Name.Trim(),
-                request.Sku.Trim(),
+                request.Name,
+                request.Sku,
                 request.CategoryId,
+                request.BrandId,
                 request.Price,
-                request.StockQty,
+                request.Stock,
+                request.WarrantyMonth,
                 request.Status,
-                request.Description.Trim(),
-                specDict
+                request.Description
             );
 
             var response = ResponseMapper.MapToProductDetailResponseFromProduct(updated);

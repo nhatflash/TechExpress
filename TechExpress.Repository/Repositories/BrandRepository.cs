@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 using TechExpress.Repository.Contexts;
 using TechExpress.Repository.Models;
 
@@ -88,6 +89,11 @@ public class BrandRepository
     public async Task<bool> HasRelatedBrandCategoriesAsync(Guid brandId)
     {
         return await _context.BrandCategories.AnyAsync(bc => bc.BrandId == brandId);
+    }
+
+    public async Task<bool> ExistsByIdAsync(Guid id)
+    {
+        return await _context.Brands.AnyAsync(b => b.Id == id);
     }
 }
 

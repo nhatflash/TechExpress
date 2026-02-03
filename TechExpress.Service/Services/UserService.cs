@@ -264,38 +264,6 @@ public class UserService
     }
 
 
-    private async Task UpdateUserWithUpdatedInformation(User user, string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
-    {
-        if (!string.IsNullOrWhiteSpace(phone))
-        {
-            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
-            {
-                throw new BadRequestException("Số điện thoại đã tồn tại.");
-            }
-            user.Phone = phone.Trim();
-        }
-
-        if (gender.HasValue)
-        {
-            user.Gender = gender;
-        }
-
-        if (!string.IsNullOrWhiteSpace(province))
-        {
-            user.Province = province.Trim();
-        }
-
-        if (!string.IsNullOrWhiteSpace(ward))
-        {
-            user.Ward = ward.Trim();
-        }
-
-        if (!string.IsNullOrWhiteSpace(streetAddress))
-        {
-            user.Address = streetAddress.Trim();
-        }
-
-    }
 
     // Trả về List<User> (Entity gốc)
     public async Task<Pagination<User>> HandleGetStaffListWithPagination(int page, StaffSortBy sortBy)

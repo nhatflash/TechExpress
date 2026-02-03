@@ -9,6 +9,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Commands;
 using TechExpress.Service.Enums;
 using TechExpress.Service.Utils;
 
@@ -84,43 +85,50 @@ namespace TechExpress.Service.Services
               string name,
               string sku,
               Guid categoryId,
+              Guid brandId,
               decimal price,
               int stockQty,
-              ProductStatus status,
+              int warrantyMonth,
               string description,
-              List<string>? imageUrls,
-              Dictionary<Guid, string>? specValues)
+              List<string> imageUrls,
+              List<CreateProductSpecValueCommand> specValueCommands)
         {
-            //basic validate
-            if (string.IsNullOrWhiteSpace(name)) throw new BadRequestException("Tên sản phẩm không được để trống.");
-            if (string.IsNullOrWhiteSpace(sku)) throw new BadRequestException("SKU không được để trống.");
-            if (price <= 0) throw new BadRequestException("Giá sản phẩm phải lớn hơn 0.");
-            if (stockQty < 0) throw new BadRequestException("Số lượng tồn kho phải >= 0.");
-            if (string.IsNullOrWhiteSpace(description)) throw new BadRequestException("Mô tả không được để trống.");
 
             //check availablity
             if (await _unitOfWork.ProductRepository.ExistsBySkuAsync(sku))
-                throw new BadRequestException("SKU đã tồn tại.");
+                throw new BadRequestException("Mã định danh đã được sử dụng.");
+
+            if (await _unitOfWork.ProductRepository.ExistsByNameAsync(name))
+            {
+                throw new BadRequestException("Tên sản phẩm đã được sử dụng.");
+            }
+
+            if (await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId))
+            {
+                throw new BadRequestException("Không tìm thấy thương hiệu.");
+            }
 
             var category = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(categoryId);
             if (category == null || category.IsDeleted)
                 throw new NotFoundException("Không tìm thấy danh mục.");
 
-            var specDefs = await _unitOfWork.SpecDefinitionRepository.GetByCategoryIdAsync(categoryId);
-            var specDefMap = specDefs.ToDictionary(x => x.Id, x => x);
+            var specDefinitionSet = await _unitOfWork.SpecDefinitionRepository.FindSpecDefinitionSetByCategoryIdAndIsNotDeletedAsync(categoryId);
 
             //Validate required specs
-            var requiredIds = specDefs.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
-
-            var missingRequired = requiredIds
-                .Where(id =>
-                    specValues == null
-                    || !specValues.TryGetValue(id, out var val)
-                    || string.IsNullOrWhiteSpace(val))
-                .ToList();
-
-            if (missingRequired.Any())
-                throw new BadRequestException("Thiếu thông số bắt buộc cho sản phẩm.");
+            var requiredSpecIds = specDefinitionSet.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
+            
+            if (requiredSpecIds.Count > 0)
+            {
+                if (specValueCommands.Count == 0)
+                {
+                    throw new BadRequestException("Danh mục có chứa thông số bắt buộc, giá trị phải được định nghĩa khi khởi tạo sản phẩm.");
+                }
+                var requestedSpecIds = specValueCommands.Select(s => s.SpecDefinitionId).ToHashSet();
+                if (!requiredSpecIds.SetEquals(requestedSpecIds))
+                {
+                    throw new BadRequestException("Thiếu thông số bắt buộc của sản phẩm.");
+                }
+            }
 
             // Create product 
             var product = new Product
@@ -129,70 +137,51 @@ namespace TechExpress.Service.Services
                 Name = name,
                 Sku = sku,
                 CategoryId = categoryId,
+                BrandId = brandId,
                 Price = price,
                 Stock = stockQty,
-                WarrantyMonth = 1,
-                Status = status,
-                Description = description,
-                UpdatedAt = DateTimeOffset.Now
+                WarrantyMonth = warrantyMonth,
+                Status = ProductStatus.Available,
+                Description = description
             };
 
-            //await using var tx = await _unitOfWork.BeginTransactionAsync();
-
-            await _unitOfWork.ProductRepository.AddProductAsync(product);
-
             // Images (URLs)
-            if (imageUrls != null && imageUrls.Count > 0)
+            if (imageUrls.Count > 0)
             {
-                var imageEntities = imageUrls
-                    .Where(url => !string.IsNullOrWhiteSpace(url))
-                    .Select(url => new ProductImage
+                foreach (var imageUrl in imageUrls)
+                {
+                    product.Images.Add(new ProductImage
                     {
                         ProductId = product.Id,
-                        ImageUrl = url.Trim()
-                    })
-                    .ToList();
-
-                if (imageEntities.Count > 0)
-                {
-                    await _unitOfWork.ProductImageRepository.AddRangeAsync(imageEntities);
+                        ImageUrl = imageUrl.Trim(),
+                    });
                 }
             }
 
             // SpecValues
-            if (specValues != null && specValues.Count > 0)
+            if (specValueCommands.Count > 0)
             {
-                foreach (var kv in specValues)
+                var categorySpecIds = specDefinitionSet.Select(s => s.Id).ToHashSet();
+                foreach (var command in specValueCommands)
                 {
-                    var specId = kv.Key;
-                    var raw = kv.Value;
-
-                    if (!specDefMap.TryGetValue(specId, out var def))
-                        //throw new BadRequestException("Có SpecDefinition không hợp lệ hoặc không thuộc Category đã chọn.");
-                        continue;
-
-                    var psv = BuildProductSpecValue(product.Id, def, raw);
+                    if (!categorySpecIds.Contains(command.SpecDefinitionId))
+                    {
+                        throw new BadRequestException($"Thông số {command.SpecDefinitionId} không tồn tại trong danh mục {category.Name}");
+                    }
+                    var def = specDefinitionSet.FirstOrDefault(s => s.Id == command.SpecDefinitionId) ?? throw new NotFoundException($"Không tìm thấy thông số {command.SpecDefinitionId} trong thông số kỹ thuật của danh mục");
+                    var psv = BuildProductSpecValue(product.Id, def, command.Value);
                     product.SpecValues.Add(psv);
                 }
             }
+            await _unitOfWork.ProductRepository.AddProductAsync(product);
+            await _unitOfWork.SaveChangesAsync();;
 
-            await _unitOfWork.SaveChangesAsync();
-            //await tx.CommitAsync();
-
-            // load 
-            var created = await _unitOfWork.ProductRepository.FindByIdAsync(product.Id)
-                ?? throw new NotFoundException("Không tìm thấy sản phẩm vừa tạo.");
-
-            return created;
+            return product;
         }
 
         private ProductSpecValue BuildProductSpecValue(Guid productId, SpecDefinition def, string rawValue)
         {
-            rawValue = (rawValue ?? "").Trim();
-            if (string.IsNullOrWhiteSpace(rawValue))
-                throw new BadRequestException($"Giá trị '{def.Name}' không được để trống.");
-
-            var sv = new ProductSpecValue
+            var specValue = new ProductSpecValue
             {
                 ProductId = productId,
                 SpecDefinitionId = def.Id,
@@ -202,177 +191,104 @@ namespace TechExpress.Service.Services
             switch (def.AcceptValueType)
             {
                 case SpecAcceptValueType.Text:
-                    sv.TextValue = rawValue;
+                    specValue.TextValue = rawValue;
                     break;
 
                 case SpecAcceptValueType.Number:
-                    if (!int.TryParse(rawValue, out var i))
+                    if (!int.TryParse(rawValue, out var n))
                         throw new BadRequestException($"'{def.Name}' phải là số nguyên.");
-                    sv.NumberValue = i;
+                    specValue.NumberValue = n;
                     break;
 
                 case SpecAcceptValueType.Decimal:
                     if (!decimal.TryParse(rawValue, out var d))
                         throw new BadRequestException($"'{def.Name}' phải là số thập phân.");
-                    sv.DecimalValue = d;
+                    specValue.DecimalValue = d;
                     break;
 
                 case SpecAcceptValueType.Bool:
                     if (!bool.TryParse(rawValue, out var b))
                         throw new BadRequestException($"'{def.Name}' phải là true/false.");
-                    sv.BoolValue = b;
+                    specValue.BoolValue = b;
                     break;
 
                 default:
                     throw new BadRequestException($"Kiểu dữ liệu '{def.AcceptValueType}' chưa được hỗ trợ.");
             }
 
-            return sv;
+            return specValue;
         }
 
-        
+
         public async Task<Product> HandleUpdateProduct(
             Guid productId,
-            string name,
-            string sku,
-            Guid categoryId,
-            decimal price,
-            int stockQty,
-            ProductStatus status,
-            string description,
-            Dictionary<Guid, string>? specValues)
-
+            string? name,
+            string? sku,
+            Guid? categoryId,
+            Guid? brandId,
+            decimal? price,
+            int? stock,
+            int? warrantyMonth,
+            ProductStatus? status,
+            string? description)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new BadRequestException("Tên sản phẩm không được để trống.");
-            if (string.IsNullOrWhiteSpace(sku)) throw new BadRequestException("SKU không được để trống.");
-            if (price <= 0) throw new BadRequestException("Giá sản phẩm phải lớn hơn 0.");
-            if (stockQty < 0) throw new BadRequestException("Số lượng tồn kho phải >= 0.");
-            if (string.IsNullOrWhiteSpace(description)) throw new BadRequestException("Mô tả không được để trống.");
-
-            name = name.Trim();
-            sku = sku.Trim();
-            description = description.Trim();
 
             var product = await _unitOfWork.ProductRepository.FindByIdWithTrackingAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
-            if (await _unitOfWork.ProductRepository.ExistsBySkuAsync(sku, excludeProductId: productId))
-                throw new BadRequestException("SKU đã tồn tại.");
+            if (!string.IsNullOrWhiteSpace(sku)) { 
+                if (await _unitOfWork.ProductRepository.ExistsBySkuExcludingProductIdAsync(sku, excludeProductId: productId))
+                {
+                    throw new BadRequestException("Mã định danh đã tồn tại.");
+                }
+                product.Sku = sku.Trim();
+            }
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                if (await _unitOfWork.ProductRepository.ExistsByNameExcludingProductIdAsync(name, productId))
+                {
+                    throw new BadRequestException("Tên sản phẩm đã tồn tại.");
+                }
+                product.Name = name.Trim();
+            }
 
-            var category = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(categoryId);
-            if (category == null || category.IsDeleted)
-                throw new NotFoundException("Không tìm thấy danh mục.");
+            if (categoryId != null)
+            {
+                if (!await _unitOfWork.CategoryRepository.ExistByIdAndIsNotDeleted(categoryId.Value))
+                {
+                    throw new NotFoundException($"Không tìm thấy danh mục {categoryId}");
+                }
+                product.CategoryId = categoryId.Value;
+            }
 
-            var specDefs = await _unitOfWork.SpecDefinitionRepository.GetByCategoryIdAsync(categoryId);
-            var specDefMap = specDefs.ToDictionary(x => x.Id, x => x);
-
-            var existingSpecValues = await _unitOfWork.ProductSpecValueRepository
-                .GetByProductIdWithTrackingAsync(productId);
-
-            var existingMap = existingSpecValues.ToDictionary(x => x.SpecDefinitionId, x => x);
-
-            // Validate required specs:
-            // - consider "provided" = keys sent by user + keys already existing in DB
-            var requiredIds = specDefs.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
-
-            //var providedIds = new HashSet<Guid>();
-            //foreach (var id in existingMap.Keys) providedIds.Add(id);
-            //if (specValues != null)
-            //{
-            //    foreach (var id in specValues.Keys) providedIds.Add(id);
-            //}
-
-            //var missing = requiredIds.Except(providedIds).ToList();
-            //if (missing.Any())
-            //    throw new BadRequestException("Thiếu thông số bắt buộc cho sản phẩm.");
-
-            //await using var tx = await _unitOfWork.BeginTransactionAsync();
-
-            // Update base fields
-            product.Name = name;
-            product.Sku = sku;
-            product.CategoryId = categoryId;
-            product.Price = price;
-            product.Stock = stockQty;
-            product.Status = status;
-            product.Description = description;
+            if (price.HasValue)
+            {
+                product.Price = price.Value;
+            }
+            if (stock.HasValue)
+            {
+                product.Stock = stock.Value;
+            }
+            if (status.HasValue && product.Status != status)
+            {
+                product.Status = status.Value;
+            }
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                product.Description = description;
+            }
+            if (warrantyMonth.HasValue)
+            {
+                product.WarrantyMonth = warrantyMonth.Value;
+            }
+             
 
             product.UpdatedAt = DateTimeOffset.Now;
 
-            // Upsert spec values (skip nếu spec def không tồn tại / không thuộc category)
-            if (specValues != null && specValues.Count > 0)
-            {
-                foreach (var kv in specValues)
-                {
-                    var specId = kv.Key;
-                    var raw = kv.Value;
-
-                    if (!specDefMap.TryGetValue(specId, out var def))
-                        continue;
-
-                    if (existingMap.TryGetValue(specId, out var current))
-                    {
-                        ApplyTypedValue(current, def, raw);
-                        current.UpdatedAt = DateTimeOffset.Now;
-                    }
-                    else
-                    {
-                        var created = BuildProductSpecValue(productId, def, raw);
-                        await _unitOfWork.ProductSpecValueRepository.AddAsync(created);
-                    }
-                }
-            }
-
-            var specDefIds = specDefs.Select(x => x.Id).ToHashSet();
-            var missingSpecDefIds = specDefIds.Except(existingMap.Keys).ToList();
-
-            if (missingSpecDefIds.Count > 0)
-            {
-                foreach (var specDefId in missingSpecDefIds)
-                {
-                    var def = specDefMap[specDefId];
-
-                    //if (def.IsRequired)
-                    //    throw new BadRequestException($"Thiếu thông số bắt buộc: {def.Name}");
-
-                    var newSv = new ProductSpecValue
-                    {
-                        ProductId = productId,
-                        SpecDefinitionId = def.Id,
-                        UpdatedAt = DateTimeOffset.Now
-                    };
-
-                    switch (def.AcceptValueType)
-                    {
-                        case SpecAcceptValueType.Text:
-                            newSv.TextValue = string.Empty;
-                            break;
-                        case SpecAcceptValueType.Number:
-                            newSv.NumberValue = 0;
-                            break;
-                        case SpecAcceptValueType.Decimal:
-                            newSv.DecimalValue = 0m;
-                            break;
-                        case SpecAcceptValueType.Bool:
-                            newSv.BoolValue = false;
-                            break;
-                        default:
-                            // nếu bạn muốn: throw new BadRequestException(...)
-                            continue;
-                    }
-
-                    await _unitOfWork.ProductSpecValueRepository.AddAsync(newSv);
-                    existingMap[specDefId] = newSv;
-                }
-            }
 
             await _unitOfWork.SaveChangesAsync();
-            //await tx.CommitAsync();
 
-            var updated = await _unitOfWork.ProductRepository.FindByIdAsync(productId)
-                ?? throw new NotFoundException("Không tìm thấy sản phẩm sau khi cập nhật.");
-
-            return updated;
+            return product;
         }
 
         public async Task<Product> HandleReplaceProductImagesAsync(
@@ -382,8 +298,6 @@ namespace TechExpress.Service.Services
             var product = await _unitOfWork.ProductRepository
                 .FindByIdWithTrackingAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
-
-            //await using var tx = await _unitOfWork.BeginTransactionAsync();
 
             await _unitOfWork.ProductImageRepository.DeleteByProductIdAsync(productId);
 
@@ -408,7 +322,6 @@ namespace TechExpress.Service.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
-            //await tx.CommitAsync();
 
             var updated = await _unitOfWork.ProductRepository.FindByIdAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm sau khi cập nhật ảnh.");
@@ -416,74 +329,6 @@ namespace TechExpress.Service.Services
             return updated;
         }
 
-        private void ApplyTypedValue(ProductSpecValue sv, SpecDefinition def, string rawValue)
-        {
-            rawValue = (rawValue ?? "").Trim();
-            if (string.IsNullOrWhiteSpace(rawValue))
-                throw new BadRequestException($"Giá trị '{def.Name}' không được để trống.");
-
-            sv.TextValue = null;
-            sv.NumberValue = null;
-            sv.DecimalValue = null;
-            sv.BoolValue = null;
-
-            switch (def.AcceptValueType)
-            {
-                case SpecAcceptValueType.Text:
-                    sv.TextValue = rawValue;
-                    break;
-
-                case SpecAcceptValueType.Number:
-                    if (!int.TryParse(rawValue, out var i))
-                        throw new BadRequestException($"'{def.Name}' phải là số nguyên.");
-                    sv.NumberValue = i;
-                    break;
-
-                case SpecAcceptValueType.Decimal:
-                    if (!decimal.TryParse(rawValue, out var d))
-                        throw new BadRequestException($"'{def.Name}' phải là số thập phân.");
-                    sv.DecimalValue = d;
-                    break;
-
-                case SpecAcceptValueType.Bool:
-                    if (!bool.TryParse(rawValue, out var b))
-                        throw new BadRequestException($"'{def.Name}' phải là true/false.");
-                    sv.BoolValue = b;
-                    break;
-
-                default:
-                    throw new BadRequestException($"Kiểu dữ liệu '{def.AcceptValueType}' chưa được hỗ trợ.");
-            }
-        }
-
-        //public async Task HandleDeleteProductAsync(Guid productId)
-        //{
-        //    var product = await _unitOfWork.ProductRepository.FindByIdWithTrackingAsync(productId)
-        //        ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
-
-        //    var isUsed = await _unitOfWork.ProductRepository.IsProductUsedAsync(productId);
-
-        //    await using var tx = await _unitOfWork.BeginTransactionAsync();
-
-        //    if (isUsed)
-        //    {
-
-        //        if (product.Status == ProductStatus.Unavailable)
-        //            return;
-
-        //        product.Status = ProductStatus.Unavailable;
-        //        product.UpdatedAt = DateTimeOffset.Now;
-
-        //        // product.DeletedAt = DateTimeOffset.Now;
-        //    }
-        //    else
-        //    {
-        //        await _unitOfWork.ProductRepository.HardDeleteProductByIdAsync(productId);
-        //    }
-
-        //    await _unitOfWork.SaveChangesAsync();
-        //    await tx.CommitAsync();
-        //}
 
         public async Task HandleDeleteProductAsync(Guid productId)
         {
@@ -491,18 +336,14 @@ namespace TechExpress.Service.Services
                 .FindByIdWithNoTrackingAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
-            //await using var tx = await _unitOfWork.BeginTransactionAsync();
-
             try
             {
                 await _unitOfWork.ProductRepository.HardDeleteProductByIdAsync(productId);
 
                 await _unitOfWork.SaveChangesAsync();
-                //await tx.CommitAsync();
             }
             catch (DbUpdateException)
             {
-                //await tx.RollbackAsync();
 
                 if (product.Status != ProductStatus.Unavailable)
                 {
@@ -517,7 +358,5 @@ namespace TechExpress.Service.Services
 
     }
 
-    //#Add-Migration Init -StartupProject TechExpress.Application -Project TechExpress.Repository
-//Update-Database -StartupProject TechExpress.Application -Project TechExpress.Repository
 }
 

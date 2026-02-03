@@ -113,5 +113,10 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Categories.Where(pc => _context.Categories.Any(c => !c.IsDeleted && c.ParentCategoryId.HasValue && c.ParentCategoryId.Value == pc.Id) || !pc.ParentCategoryId.HasValue).ToListAsync();
         }
+
+        public async Task<bool> ExistByIdAndIsNotDeleted(Guid id)
+        {
+            return await _context.Categories.AnyAsync(c => c.Id == id && !c.IsDeleted);
+        }
     }
 }
