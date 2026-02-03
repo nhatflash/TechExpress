@@ -303,7 +303,8 @@ public class UserService
         const int pageSize = 20;
 
         // Lấy dữ liệu từ Repo
-        List<User> staffs = sortBy switch {
+        List<User> staffs = sortBy switch
+        {
             StaffSortBy.Email => await _unitOfWork.UserRepository.FindStaffsSortByEmailAsync(page, pageSize),
             StaffSortBy.FirstName => await _unitOfWork.UserRepository.FindStaffsSortByFirstNameAsync(page, pageSize),
             _ => await _unitOfWork.UserRepository.FindStaffsSortBySalaryAsync(page, pageSize)
@@ -317,8 +318,8 @@ public class UserService
             PageSize = pageSize,
             TotalCount = totalCount,
         };
-    }    
-    
+    }
+
     // ======================= Staff_Details=======================//
     public async Task<User> HandleGetStaffDetails(Guid staffId)
     {
@@ -328,10 +329,10 @@ public class UserService
             throw new BadRequestException("Người dùng không phải là nhân viên.");
         }
         return staff;
-    }    
+    }
 
     //================ Update Staff Profile =================//
-    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity)
+    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity, string? salary)
     {
         var user = await _unitOfWork.UserRepository
             .FindUserByIdWithTrackingAsync(staffId)
@@ -344,7 +345,7 @@ public class UserService
         // ========= PHONE =========
         if (!string.IsNullOrWhiteSpace(phone))
         {
-            if (user.Phone != null && phone != user.Phone &&await _unitOfWork.UserRepository
+            if (user.Phone != null && phone != user.Phone && await _unitOfWork.UserRepository
                 .UserExistByPhoneAsync(phone))
             {
                 throw new BadRequestException("Số điện thoại đã tồn tại.");
@@ -385,6 +386,17 @@ public class UserService
         {
             user.Province = province;
         }
+        // ========= SALARY =========
+        if (!string.IsNullOrWhiteSpace(salary))
+        {
+            if (!decimal.TryParse(salary, out var parsedSalary))
+            {
+                throw new BadRequestException("Lương không hợp lệ.");
+            }
+
+            user.Salary = parsedSalary;
+        }
+
 
         await _unitOfWork.SaveChangesAsync();
         return user;
