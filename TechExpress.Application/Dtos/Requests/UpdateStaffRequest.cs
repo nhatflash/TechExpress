@@ -9,5 +9,7 @@
         public string? Ward { get; set; }
         public string? Province { get; set; }
         public string? Identity { get; set; }
+
+        public decimal? Salary { get; set; }
     }
 }

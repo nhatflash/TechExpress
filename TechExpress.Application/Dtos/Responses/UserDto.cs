@@ -55,5 +55,6 @@ public record UpdateStaffResponse(
     string? Address,
     string? Ward,
     string? Province,
-    string? Identity
+    string? Identity,
+    decimal? Salary
 );
