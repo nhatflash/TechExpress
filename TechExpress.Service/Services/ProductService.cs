@@ -98,10 +98,6 @@ namespace TechExpress.Service.Services
             if (stockQty < 0) throw new BadRequestException("Số lượng tồn kho phải >= 0.");
             if (string.IsNullOrWhiteSpace(description)) throw new BadRequestException("Mô tả không được để trống.");
 
-            name = name.Trim();
-            sku = sku.Trim();
-            description = description.Trim();
-
             //check availablity
             if (await _unitOfWork.ProductRepository.ExistsBySkuAsync(sku))
                 throw new BadRequestException("SKU đã tồn tại.");
