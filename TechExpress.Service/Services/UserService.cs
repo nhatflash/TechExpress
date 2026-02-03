@@ -332,7 +332,7 @@ public class UserService
     }
 
     //================ Update Staff Profile =================//
-    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity, string? salary)
+    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity, decimal? salary)
     {
         var user = await _unitOfWork.UserRepository
             .FindUserByIdWithTrackingAsync(staffId)
@@ -387,16 +387,10 @@ public class UserService
             user.Province = province;
         }
         // ========= SALARY =========
-        if (!string.IsNullOrWhiteSpace(salary))
+        if (salary.HasValue)
         {
-            if (!decimal.TryParse(salary, out var parsedSalary))
-            {
-                throw new BadRequestException("Lương không hợp lệ.");
-            }
-
-            user.Salary = parsedSalary;
+            user.Salary = salary;
         }
-
 
         await _unitOfWork.SaveChangesAsync();
         return user;

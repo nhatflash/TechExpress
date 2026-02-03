@@ -10,6 +10,6 @@
         public string? Province { get; set; }
         public string? Identity { get; set; }
 
-        public string? Salary { get; set; }
+        public decimal? Salary { get; set; }
     }
 }

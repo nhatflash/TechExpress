@@ -115,7 +115,8 @@ public class ResponseMapper
             user.Address,
             user.Ward,
             user.Province,
-            user.Identity
+            user.Identity,
+            user.Salary
         );
     }
 

@@ -231,8 +231,8 @@ namespace TechExpress.Application.Controllers
                     request.Address?.Trim(), 
                     request.Ward?.Trim(), 
                     request.Province?.Trim(),
-                    request.Salary?.Trim(),
-                    request.Identity);
+                    request.Identity,
+                    request.Salary);
 
             return Ok(ApiResponse<UpdateStaffResponse>.OkResponse(
                 ResponseMapper.MapToUpdateStaffResponse(updatedUser)
