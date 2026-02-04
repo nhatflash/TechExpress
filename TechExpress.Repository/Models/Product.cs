@@ -23,6 +23,8 @@ public class Product
 
     public ICollection<ProductSpecValue> SpecValues { get; set; } = [];
 
+    public required int WarrantyMonth { get; set; }
+
     public required ProductStatus Status { get; set; }
 
     public ICollection<ProductImage> Images { get; set; } = [];

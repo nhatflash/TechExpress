@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,6 +152,20 @@ namespace TechExpress.Repository.Repositories
         public async Task<bool> UserExistByIdentityAsync(string identity)
         {
             return await _context.Users.AnyAsync(u => u.Identity == identity);
+        }
+
+        public async Task<List<User>> FindCustomerUsersAsync(int page, int pageSize)
+        {
+            return await _context.Users.Where(u => u.Role == UserRole.Customer)
+                                        .OrderByDescending(c => c.CreatedAt)
+                                        .Skip((page - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .ToListAsync();
+        }
+
+        public async Task<int> CountCustomerUsersAsync()
+        {
+            return await _context.Users.Where(u => u.Role == UserRole.Customer).CountAsync();
         }
     }
 }

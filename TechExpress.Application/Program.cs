@@ -238,7 +238,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
 });
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddHostedService<AdminInitializationTask>();
+builder.Services.AddHostedService<AdminInitializer>();
 
 var app = builder.Build();
 
@@ -280,5 +280,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.UseExceptionHandler(options => { });
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await CategoriesInitializer.Init(context);
+    await SpecDefinitionsInitializer.Init(context);
+    await BrandsInitializer.Init(context);
+    await ProductsInitializer.Init(context);
+}   
 
 app.Run();

@@ -115,7 +115,8 @@ public class ResponseMapper
             user.Address,
             user.Ward,
             user.Province,
-            user.Identity
+            user.Identity,
+            user.Salary
         );
     }
 
@@ -132,6 +133,11 @@ public class ResponseMapper
             category.CreatedAt,
             category.UpdatedAt
         );
+    }
+
+    public static List<CategoryResponse> MapToCategoryResponseListFromCategories(List<Category> categories)
+    {
+        return categories.Select(MapToCategoryResponseFromCategory).ToList();
     }
 
     // ======================= Map ProductListResponse =======================//
@@ -152,9 +158,11 @@ public class ResponseMapper
                     product.Name,
                     product.Sku,
                     product.CategoryId,
+                    product.BrandId,
                     product.Category?.Name ?? string.Empty,
                     product.Price,
                     product.Stock,
+                    product.WarrantyMonth,
                     product.Status,
                     firstImageUrl,
                     product.CreatedAt,
@@ -210,9 +218,11 @@ public class ResponseMapper
             product.Name,
             product.Sku,
             product.CategoryId,
+            product.BrandId,
             product.Category?.Name ?? string.Empty,
             product.Price,
             product.Stock,
+            product.WarrantyMonth,
             product.Status,
             product.Description,
             thumbnailUrl,
@@ -285,6 +295,41 @@ public class ResponseMapper
             PageNumber = brandPagination.PageNumber,
             PageSize = brandPagination.PageSize,
             TotalCount = brandPagination.TotalCount
+        };
+    }
+
+    //======================= Map Cart Response =======================//
+    public static CartResponse MapToCartResponseFromCart(Cart cart)
+    {
+        var itemResponses = cart.Items
+            .OrderByDescending(i => i.CreatedAt)
+            .Select(item => new CartItemResponse
+            {
+                Id = item.Id,
+                CartId = item.CartId,
+                ProductId = item.ProductId,
+                ProductName = item.Product?.Name ?? string.Empty,
+                ProductImage = item.Product?.Images?.OrderBy(img => img.Id).FirstOrDefault()?.ImageUrl,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                SubTotal = item.Quantity * item.UnitPrice,
+                AvailableStock = item.Product?.Stock ?? 0,
+                ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
+                CreatedAt = item.CreatedAt,
+                UpdatedAt = item.UpdatedAt
+            })
+            .ToList();
+
+        return new CartResponse
+        {
+            Id = cart.Id,
+            UserId = cart.UserId,
+            Status = cart.Status,
+            TotalPrice = cart.TotalPrice,
+            TotalItems = cart.Items.Sum(i => i.Quantity),
+            Items = itemResponses,
+            CreatedAt = cart.CreatedAt,
+            UpdatedAt = cart.UpdatedAt
         };
     }
 }

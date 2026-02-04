@@ -228,5 +228,25 @@ namespace TechExpress.Service.Services
                                 throw new NotFoundException($"Không tìm thấy danh mục {id}");
             return category;
         }
+
+        public async Task<List<Category>> HandleGetUICategoryListAsync()
+        {
+            var categories = await _unitOfWork.CategoryRepository.FindAllCategoriesNotDeletedAsync();
+            if (categories.Count == 0)
+            {
+                throw new NotFoundException("Hiện không có danh mục đang hoạt động");
+            }
+            return categories;
+        }
+
+        public async Task<List<Category>> HandleGetParentCategoriesAsync()
+        {
+            var categories = await _unitOfWork.CategoryRepository.FindParentCategoriesAsync();
+            if (categories.Count == 0)
+            {
+                throw new NotFoundException("Hiện không có danh mục cha.");
+            }
+            return categories;
+        }
     }
 }

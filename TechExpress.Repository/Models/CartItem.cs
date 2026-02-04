@@ -4,7 +4,7 @@ namespace TechExpress.Repository.Models;
 
 public class CartItem
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     public required Guid CartId { get; set; }
 
@@ -21,5 +21,4 @@ public class CartItem
     public Cart Cart { get; set; } = null!;
 
     public Product Product { get; set; } = null!;
-
 }

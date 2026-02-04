@@ -150,23 +150,15 @@ namespace TechExpress.Repository.Repositories
         }
 
 
-        public async Task<bool> ExistsBySkuAsync(string sku, Guid excludeProductId)
+        public async Task<bool> ExistsBySkuExcludingProductIdAsync(string sku, Guid excludeProductId)
         {
             var s = sku.Trim().ToLower();
 
             return await _context.Products.AnyAsync(p =>
                 p.Id != excludeProductId &&
-                p.Sku.ToLower() == s
+                p.Sku == s
             );
         }
-        //public Task<bool> IsProductUsedAsync(Guid productId)
-        //{
-        //    return Task.FromResult(true);
-        //}
-
-        //
-        //Add-Migration Init -StartupProject TechExpress.Application -Project TechExpress.Repository
-        //Update-Database -StartupProject TechExpress.Application -Project TechExpress.Repository
 
         public async Task HardDeleteProductByIdAsync(Guid productId)
         {
@@ -191,6 +183,16 @@ namespace TechExpress.Repository.Repositories
         {
             // Kiểm tra xem có sản phẩm nào đang thuộc danh mục này không
             return await _context.Products.AnyAsync(p => p.CategoryId == id);
+        }
+
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.Products.AnyAsync(p => p.Name == name);
+        }
+
+        public async Task<bool> ExistsByNameExcludingProductIdAsync(string name, Guid excludingId)
+        {
+            return await _context.Products.AnyAsync(p => p.Name == name && p.Id != excludingId);
         }
 
     }

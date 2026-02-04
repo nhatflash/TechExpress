@@ -153,10 +153,17 @@ public class SpecDefinitionRepository
         return (specs, totalCount);
     }
 
-    public async Task<List<SpecDefinition>> GetByCategoryIdAsync(Guid categoryId)
-        {
-            return await _context.SpecDefinitions
-                .Where(s => s.CategoryId == categoryId && !s.IsDeleted)
-                .ToListAsync();
-        }
+    public async Task<List<SpecDefinition>> FindSpecDefinitionListByCategoryIdAndIsNotDeletedAsync(Guid categoryId)
+    {
+        return await _context.SpecDefinitions
+            .Where(s => s.CategoryId == categoryId && !s.IsDeleted)
+            .ToListAsync();
+    }
+
+    public async Task<HashSet<SpecDefinition>> FindSpecDefinitionSetByCategoryIdAndIsNotDeletedAsync(Guid categoryId)
+    {
+        return await _context.SpecDefinitions.Where(s => s.CategoryId == categoryId && !s.IsDeleted && s.IsRequired).ToHashSetAsync();
+    }
+
+
 }

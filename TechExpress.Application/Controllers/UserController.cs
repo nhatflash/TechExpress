@@ -230,8 +230,9 @@ namespace TechExpress.Application.Controllers
                     request.Phone?.Trim(), 
                     request.Address?.Trim(), 
                     request.Ward?.Trim(), 
-                    request.Province?.Trim(), 
-                    request.Identity);
+                    request.Province?.Trim(),
+                    request.Identity,
+                    request.Salary);
 
             return Ok(ApiResponse<UpdateStaffResponse>.OkResponse(
                 ResponseMapper.MapToUpdateStaffResponse(updatedUser)
@@ -240,11 +241,20 @@ namespace TechExpress.Application.Controllers
 
         //======================= Remove Staff =======================//
         [Authorize(Roles = "Admin")]
-        [HttpDelete("staff/{staffId}")]
+        [HttpDelete("staffs/{staffId}")]
         public async Task<IActionResult> RemoveStaff(Guid staffId)
         {
             await _serviceProvider.UserService.RemoveStaffAsync(staffId);
             return Ok(new { message = $"Xóa thành công nhân viên:  {staffId}"});
+        }
+
+        [HttpGet("customers")]
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> GetCustomerUsers([FromQuery] int page)
+        {
+            var result = await _serviceProvider.UserService.GetCustomerUsersAsync(page);
+            var response = ResponseMapper.MapToUserResponsePaginationFromUserPagination(result);
+            return Ok(ApiResponse<Pagination<UserResponse>>.OkResponse(response));
         }
 
     }

@@ -169,5 +169,18 @@ namespace TechExpress.Service.Services
 
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task<string> HandleRefreshNewToken(string refreshToken)
+        {
+            var userId = JwtUtils.GetUserIdFromToken(refreshToken);
+            if (userId == null)
+            {
+                throw new NotFoundException("Token không hợp lệ");
+            }
+
+            var user = await _unitOfWork.UserRepository.FindUserByIdAsync(userId.Value) ??
+                       throw new NotFoundException("Không tìm thấy người dùng");
+            return _jwtUtils.GenerateAccessToken(user);
+        }
     }
 }

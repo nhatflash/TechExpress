@@ -16,16 +16,12 @@ namespace TechExpress.Service.Services;
 public class UserService
 {
     private readonly UnitOfWork _unitOfWork;
-    private readonly IWebHostEnvironment _webHostEnvironment;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserContext _userContext;
     private readonly IConnectionMultiplexer _redis;
 
-    public UserService(UnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, UserContext userContext, IConnectionMultiplexer redis)
+    public UserService(UnitOfWork unitOfWork, UserContext userContext, IConnectionMultiplexer redis)
     {
         _unitOfWork = unitOfWork;
-        _webHostEnvironment = webHostEnvironment;
-        _httpContextAccessor = httpContextAccessor;
         _userContext = userContext;
         _redis = redis;
     }
@@ -268,38 +264,6 @@ public class UserService
     }
 
 
-    private async Task UpdateUserWithUpdatedInformation(User user, string? phone, Gender? gender, string? province, string? ward, string? streetAddress)
-    {
-        if (!string.IsNullOrWhiteSpace(phone))
-        {
-            if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone) && user.Phone != null && phone != user.Phone)
-            {
-                throw new BadRequestException("Số điện thoại đã tồn tại.");
-            }
-            user.Phone = phone.Trim();
-        }
-
-        if (gender.HasValue)
-        {
-            user.Gender = gender;
-        }
-
-        if (!string.IsNullOrWhiteSpace(province))
-        {
-            user.Province = province.Trim();
-        }
-
-        if (!string.IsNullOrWhiteSpace(ward))
-        {
-            user.Ward = ward.Trim();
-        }
-
-        if (!string.IsNullOrWhiteSpace(streetAddress))
-        {
-            user.Address = streetAddress.Trim();
-        }
-
-    }
 
     // Trả về List<User> (Entity gốc)
     public async Task<Pagination<User>> HandleGetStaffListWithPagination(int page, StaffSortBy sortBy)
@@ -307,7 +271,8 @@ public class UserService
         const int pageSize = 20;
 
         // Lấy dữ liệu từ Repo
-        List<User> staffs = sortBy switch {
+        List<User> staffs = sortBy switch
+        {
             StaffSortBy.Email => await _unitOfWork.UserRepository.FindStaffsSortByEmailAsync(page, pageSize),
             StaffSortBy.FirstName => await _unitOfWork.UserRepository.FindStaffsSortByFirstNameAsync(page, pageSize),
             _ => await _unitOfWork.UserRepository.FindStaffsSortBySalaryAsync(page, pageSize)
@@ -321,8 +286,8 @@ public class UserService
             PageSize = pageSize,
             TotalCount = totalCount,
         };
-    }    
-    
+    }
+
     // ======================= Staff_Details=======================//
     public async Task<User> HandleGetStaffDetails(Guid staffId)
     {
@@ -332,10 +297,10 @@ public class UserService
             throw new BadRequestException("Người dùng không phải là nhân viên.");
         }
         return staff;
-    }    
+    }
 
     //================ Update Staff Profile =================//
-    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity)
+    public async Task<User> HandleUpdateStaffDetails(Guid staffId, string? firstName, string? lastName, string? phone, string? address, string? ward, string? province, string? identity, decimal? salary)
     {
         var user = await _unitOfWork.UserRepository
             .FindUserByIdWithTrackingAsync(staffId)
@@ -348,7 +313,7 @@ public class UserService
         // ========= PHONE =========
         if (!string.IsNullOrWhiteSpace(phone))
         {
-            if (user.Phone != null && phone != user.Phone &&await _unitOfWork.UserRepository
+            if (user.Phone != null && phone != user.Phone && await _unitOfWork.UserRepository
                 .UserExistByPhoneAsync(phone))
             {
                 throw new BadRequestException("Số điện thoại đã tồn tại.");
@@ -389,6 +354,11 @@ public class UserService
         {
             user.Province = province;
         }
+        // ========= SALARY =========
+        if (salary.HasValue)
+        {
+            user.Salary = salary;
+        }
 
         await _unitOfWork.SaveChangesAsync();
         return user;
@@ -412,6 +382,19 @@ public class UserService
         // 2. Xóa Cache Redis ngay lập tức để Middleware check lại DB và chặn Staff ngay
         var db = _redis.GetDatabase();
         await db.KeyDeleteAsync($"user_status:{staffId}");
+    }
+
+    public async Task<Pagination<User>> GetCustomerUsersAsync(int page)
+    {
+        int pageSize = 20;
+        var customers = await _unitOfWork.UserRepository.FindCustomerUsersAsync(page, pageSize);
+        return new Pagination<User>
+        {
+            Items = customers,
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalCount = await _unitOfWork.UserRepository.CountCustomerUsersAsync()
+        };
     }
 
 }

@@ -14,17 +14,12 @@ namespace TechExpress.Repository
 
         public UserRepository UserRepository { get; }
         public CategoryRepository CategoryRepository { get; }
-
-
         public ProductRepository ProductRepository { get; }
-
         public SpecDefinitionRepository SpecDefinitionRepository { get; }
-
         public ProductImageRepository ProductImageRepository { get; }
-
         public ProductSpecValueRepository ProductSpecValueRepository { get; }
-
         public BrandRepository BrandRepository { get; }
+        public CartRepository CartRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -37,7 +32,7 @@ namespace TechExpress.Repository
             ProductImageRepository = new ProductImageRepository(context);
             ProductSpecValueRepository = new ProductSpecValueRepository(context);
             BrandRepository = new BrandRepository(context);
-
+            CartRepository = new CartRepository(context);
         }
 
         public async Task SaveChangesAsync()
