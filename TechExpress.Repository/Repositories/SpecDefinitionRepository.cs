@@ -164,4 +164,6 @@ public class SpecDefinitionRepository
     {
         return await _context.SpecDefinitions.Where(s => s.CategoryId == categoryId && !s.IsDeleted && s.IsRequired).ToHashSetAsync();
     }
+
+
 }

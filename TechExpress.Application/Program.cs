@@ -285,6 +285,8 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await CategoriesInitializer.Init(context);
     await SpecDefinitionsInitializer.Init(context);
+    await BrandsInitializer.Init(context);
+    await ProductsInitializer.Init(context);
 }   
 
 app.Run();

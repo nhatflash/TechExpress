@@ -13,7 +13,7 @@ namespace TechExpress.Repository.Repositories
             _context = context;
         }
 
-        public async Task<List<ProductSpecValue>> GetByProductIdWithTrackingAsync(Guid productId)
+        public async Task<List<ProductSpecValue>> FindByProductIdWithTrackingAsync(Guid productId)
         {
             return await _context.ProductSpecValues
                 .AsTracking()
@@ -24,6 +24,11 @@ namespace TechExpress.Repository.Repositories
         public async Task AddAsync(ProductSpecValue entity)
         {
             await _context.ProductSpecValues.AddAsync(entity);
+        }
+
+        public async Task RemoveRangeProductSpec(List<ProductSpecValue> specValues)
+        {
+            _context.ProductSpecValues.RemoveRange(specValues);
         }
     }
 }

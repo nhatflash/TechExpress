@@ -95,6 +95,7 @@ namespace TechExpress.Application.Controllers
         Guid id,
         [FromBody] UpdateProductRequest request)
         {
+            var specValueCmds = RequestMapper.MapToCreateProductSpecValueCommandsFromRequests(request.SpecValues);
             var updated = await _serviceProvider.ProductService.HandleUpdateProduct(
                 id,
                 request.Name,
@@ -105,7 +106,8 @@ namespace TechExpress.Application.Controllers
                 request.Stock,
                 request.WarrantyMonth,
                 request.Status,
-                request.Description
+                request.Description,
+                specValueCmds
             );
 
             var response = ResponseMapper.MapToProductDetailResponseFromProduct(updated);

@@ -194,5 +194,6 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Products.AnyAsync(p => p.Name == name && p.Id != excludingId);
         }
+
     }
 }
