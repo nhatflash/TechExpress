@@ -162,7 +162,7 @@ public class SpecDefinitionRepository
 
     public async Task<HashSet<SpecDefinition>> FindSpecDefinitionSetByCategoryIdAndIsNotDeletedAsync(Guid categoryId)
     {
-        return await _context.SpecDefinitions.Where(s => s.CategoryId == categoryId && !s.IsDeleted && s.IsRequired).ToHashSetAsync();
+        return await _context.SpecDefinitions.Where(s => s.CategoryId == categoryId && !s.IsDeleted).ToHashSetAsync();
     }
 
 
