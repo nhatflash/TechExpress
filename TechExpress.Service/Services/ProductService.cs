@@ -383,6 +383,7 @@ namespace TechExpress.Service.Services
                     throw new BadRequestException($"Thông số {command.SpecDefinitionId} không tồn tại trong ${categoryId}");
                 }
                 var psv = BuildProductSpecValue(product.Id, def, command.Value);
+                product.SpecValues.Add(psv);
             }
         }
 
