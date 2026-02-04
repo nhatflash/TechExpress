@@ -27,7 +27,7 @@ namespace TechExpress.Service.Services
 
         public async Task<Product> HandleGetProductDetailAsync(Guid productId)
         {
-            var product = await _unitOfWork.ProductRepository.FindByIdAsync(productId)
+            var product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
             return product;
