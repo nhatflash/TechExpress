@@ -64,7 +64,7 @@ namespace TechExpress.Application.Controllers
         }
 
 
-        [HttpPost("create-product")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<ProductListResponse>>> CreateProduct([FromBody] CreateProductRequest request)
         {

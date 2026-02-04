@@ -69,7 +69,7 @@ namespace TechExpress.Application.Controllers
         /// <summary>
         /// Tạo staff mới (chỉ Admin)
         /// </summary>
-        [HttpPost("create-staff")]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ApiResponse<UserResponse>>> CreateStaff([FromBody] CreateStaffRequest request)
         {
