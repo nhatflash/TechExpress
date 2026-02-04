@@ -31,6 +31,9 @@ public static class ProductsInitializer
         // ============= RAM PRODUCTS =============
         await InitRamProducts(context, allSpecValues, allProductImages);
 
+        // ============= STORAGE PRODUCTS =============
+        await InitStorageProducts(context, allSpecValues, allProductImages);
+
         context.ProductSpecValues.AddRange(allSpecValues);
         context.ProductImages.AddRange(allProductImages);
 
@@ -1906,5 +1909,239 @@ public static class ProductsInitializer
 
         var latencySpec = specs.FirstOrDefault(s => s.Code == "ram_latency");
         if (latencySpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = latencySpec.Id, NumberValue = latency });
+    }
+
+    private static async Task InitStorageProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var storageCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Ổ cứng")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Ổ cứng");
+
+        var storageSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == storageCategory.Id)
+            .ToListAsync();
+
+        // Load storage brands
+        var samsungBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Samsung")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Samsung");
+        var wdBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Western Digital")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Western Digital");
+        var crucialBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Crucial")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Crucial");
+        var skHynixBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "SK Hynix")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu SK Hynix");
+        var kingstonBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Kingston")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Kingston");
+        var seagateBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Seagate")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Seagate");
+
+        // ============= SAMSUNG SSDs =============
+
+        // Samsung 990 Pro 2TB
+        var samsung990Pro2TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = samsung990Pro2TBId,
+            Name = "Samsung 990 Pro 2TB NVMe M.2 SSD",
+            Sku = "SSD-SAMSUNG-990PRO-2TB",
+            CategoryId = storageCategory.Id,
+            BrandId = samsungBrand.Id,
+            Price = 4500000,
+            Stock = 50,
+            Description = "Ổ cứng SSD Samsung 990 Pro 2TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 7450/6900 MB/s. Thiết kế tản nhiệt hiệu quả, công nghệ V-NAND thế hệ mới. Lý tưởng cho gaming và workstation chuyên nghiệp.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, samsung990Pro2TBId, type: "NVMe", capacity: 2000, interfaceType: "M.2", readSpeed: 7450, writeSpeed: 6900);
+        productImages.Add(new ProductImage { ProductId = samsung990Pro2TBId, ImageUrl = "https://images.samsung.com/is/image/samsung/p6pim/uk/mz-v9p2t0bw/gallery/uk-990-pro-nvme-m2-ssd-mz-v9p2t0bw-thumb-534862489" });
+
+        // Samsung 980 Pro 1TB
+        var samsung980Pro1TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = samsung980Pro1TBId,
+            Name = "Samsung 980 Pro 1TB NVMe M.2 SSD",
+            Sku = "SSD-SAMSUNG-980PRO-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = samsungBrand.Id,
+            Price = 2500000,
+            Stock = 80,
+            Description = "Ổ cứng SSD Samsung 980 Pro 1TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 7000/5000 MB/s. Bộ điều khiển Elpis 8nm, công nghệ Intelligent TurboWrite. Tương thích PlayStation 5.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, samsung980Pro1TBId, type: "NVMe", capacity: 1000, interfaceType: "M.2", readSpeed: 7000, writeSpeed: 5000);
+        productImages.Add(new ProductImage { ProductId = samsung980Pro1TBId, ImageUrl = "https://images.samsung.com/is/image/samsung/p6pim/uk/mz-v8p1t0bw/gallery/uk-980-pro-nvme-m2-ssd-mz-v8p1t0bw-thumb-368338925" });
+
+        // Samsung 870 EVO 1TB SATA
+        var samsung870Evo1TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = samsung870Evo1TBId,
+            Name = "Samsung 870 EVO 1TB SATA SSD",
+            Sku = "SSD-SAMSUNG-870EVO-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = samsungBrand.Id,
+            Price = 2300000,
+            Stock = 100,
+            Description = "Ổ cứng SSD Samsung 870 EVO 1TB SATA III 2.5 inch, tốc độ đọc/ghi lên đến 560/530 MB/s. Công nghệ V-NAND, bộ điều khiển MKX, độ bền cao với TBW 600TB. Nâng cấp hoàn hảo cho laptop và PC.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, samsung870Evo1TBId, type: "SATA SSD", capacity: 1000, interfaceType: "2.5\"", readSpeed: 560, writeSpeed: 530);
+        productImages.Add(new ProductImage { ProductId = samsung870Evo1TBId, ImageUrl = "https://images.samsung.com/is/image/samsung/p6pim/uk/mz-77e1t0b-eu/gallery/uk-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-thumb-368338546" });
+
+        // ============= WESTERN DIGITAL SSDs =============
+
+        // WD Black SN850X 2TB
+        var wdSn850x2TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = wdSn850x2TBId,
+            Name = "WD Black SN850X 2TB NVMe M.2 SSD",
+            Sku = "SSD-WD-SN850X-2TB",
+            CategoryId = storageCategory.Id,
+            BrandId = wdBrand.Id,
+            Price = 4300000,
+            Stock = 45,
+            Description = "Ổ cứng SSD WD Black SN850X 2TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 7300/6600 MB/s. Game Mode 2.0, tối ưu cho gaming với độ trễ cực thấp. Tương thích PlayStation 5.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, wdSn850x2TBId, type: "NVMe", capacity: 2000, interfaceType: "M.2", readSpeed: 7300, writeSpeed: 6600);
+        productImages.Add(new ProductImage { ProductId = wdSn850x2TBId, ImageUrl = "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-sn850x-nvme-ssd/gallery/wd-black-sn850x-nvme-ssd-hero.png" });
+
+        // WD Black SN770 1TB
+        var wdSn7701TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = wdSn7701TBId,
+            Name = "WD Black SN770 1TB NVMe M.2 SSD",
+            Sku = "SSD-WD-SN770-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = wdBrand.Id,
+            Price = 1800000,
+            Stock = 120,
+            Description = "Ổ cứng SSD WD Black SN770 1TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 5150/4900 MB/s. Thiết kế không cần heatsink, tiết kiệm năng lượng. Lựa chọn tầm trung xuất sắc cho gaming.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, wdSn7701TBId, type: "NVMe", capacity: 1000, interfaceType: "M.2", readSpeed: 5150, writeSpeed: 4900);
+        productImages.Add(new ProductImage { ProductId = wdSn7701TBId, ImageUrl = "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-sn770-nvme-ssd/gallery/wd-black-sn770-nvme-ssd-hero.png" });
+
+        // ============= CRUCIAL SSDs =============
+
+        // Crucial T700 2TB Gen5
+        var crucialT7002TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = crucialT7002TBId,
+            Name = "Crucial T700 2TB Gen5 NVMe M.2 SSD",
+            Sku = "SSD-CRUCIAL-T700-2TB",
+            CategoryId = storageCategory.Id,
+            BrandId = crucialBrand.Id,
+            Price = 6200000,
+            Stock = 25,
+            Description = "Ổ cứng SSD Crucial T700 2TB NVMe M.2 PCIe Gen 5.0 x4, tốc độ đọc/ghi lên đến 12400/11800 MB/s. SSD Gen5 nhanh nhất thế giới, công nghệ Micron 232-layer NAND. Dành cho enthusiast và workstation cao cấp.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, crucialT7002TBId, type: "NVMe", capacity: 2000, interfaceType: "M.2", readSpeed: 12400, writeSpeed: 11800);
+        productImages.Add(new ProductImage { ProductId = crucialT7002TBId, ImageUrl = "https://content.crucial.com/content/dam/crucial/ssd-products/t700/images/in-use/crucial-t700-ssd-image.png" });
+
+        // Crucial P3 Plus 1TB
+        var crucialP3Plus1TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = crucialP3Plus1TBId,
+            Name = "Crucial P3 Plus 1TB NVMe M.2 SSD",
+            Sku = "SSD-CRUCIAL-P3PLUS-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = crucialBrand.Id,
+            Price = 1500000,
+            Stock = 150,
+            Description = "Ổ cứng SSD Crucial P3 Plus 1TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 5000/4200 MB/s. Giải pháp lưu trữ tốc độ cao với giá cả phải chăng, phù hợp cho người dùng phổ thông và gaming.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, crucialP3Plus1TBId, type: "NVMe", capacity: 1000, interfaceType: "M.2", readSpeed: 5000, writeSpeed: 4200);
+        productImages.Add(new ProductImage { ProductId = crucialP3Plus1TBId, ImageUrl = "https://content.crucial.com/content/dam/crucial/ssd-products/p3-plus/images/in-use/crucial-p3plus-ssd-image.png" });
+
+        // ============= SK HYNIX SSD =============
+
+        // SK Hynix Platinum P41 1TB
+        var skHynixP411TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = skHynixP411TBId,
+            Name = "SK Hynix Platinum P41 1TB NVMe M.2 SSD",
+            Sku = "SSD-SKHYNIX-P41-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = skHynixBrand.Id,
+            Price = 2300000,
+            Stock = 60,
+            Description = "Ổ cứng SSD SK Hynix Platinum P41 1TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 7000/6500 MB/s. Công nghệ 176-layer NAND của SK Hynix, bộ điều khiển ARIES. Hiệu năng đỉnh cao cho gaming và sáng tạo nội dung.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, skHynixP411TBId, type: "NVMe", capacity: 1000, interfaceType: "M.2", readSpeed: 7000, writeSpeed: 6500);
+        productImages.Add(new ProductImage { ProductId = skHynixP411TBId, ImageUrl = "https://ssd.skhynix.com/wp-content/uploads/2022/06/platinum_p41_image.png" });
+
+        // ============= KINGSTON SSD =============
+
+        // Kingston NV2 1TB
+        var kingstonNv21TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = kingstonNv21TBId,
+            Name = "Kingston NV2 1TB NVMe M.2 SSD",
+            Sku = "SSD-KINGSTON-NV2-1TB",
+            CategoryId = storageCategory.Id,
+            BrandId = kingstonBrand.Id,
+            Price = 1300000,
+            Stock = 200,
+            Description = "Ổ cứng SSD Kingston NV2 1TB NVMe M.2 PCIe Gen 4.0 x4, tốc độ đọc/ghi lên đến 3500/2100 MB/s. Thiết kế mỏng nhẹ form factor 2280, tiêu thụ điện năng thấp. Lựa chọn kinh tế cho nâng cấp hệ thống.",
+            WarrantyMonth = 36,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, kingstonNv21TBId, type: "NVMe", capacity: 1000, interfaceType: "M.2", readSpeed: 3500, writeSpeed: 2100);
+        productImages.Add(new ProductImage { ProductId = kingstonNv21TBId, ImageUrl = "https://media.kingston.com/kingston/product/ktc-product-ssd-snv2-1-background-zm-lg.jpg" });
+
+        // ============= SEAGATE HDD =============
+
+        // Seagate Barracuda 2TB HDD
+        var seagateBarracuda2TBId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = seagateBarracuda2TBId,
+            Name = "Seagate Barracuda 2TB 7200RPM HDD",
+            Sku = "HDD-SEAGATE-BARRACUDA-2TB",
+            CategoryId = storageCategory.Id,
+            BrandId = seagateBrand.Id,
+            Price = 1300000,
+            Stock = 180,
+            Description = "Ổ cứng HDD Seagate Barracuda 2TB 3.5 inch SATA III, tốc độ quay 7200RPM, cache 256MB. Công nghệ Multi-Tier Caching tối ưu hiệu suất. Dung lượng lớn với giá thành hợp lý cho lưu trữ dữ liệu.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddStorageSpecs(specValues, storageSpecs, seagateBarracuda2TBId, type: "HDD", capacity: 2000, interfaceType: "3.5\"", readSpeed: 190, writeSpeed: 190);
+        productImages.Add(new ProductImage { ProductId = seagateBarracuda2TBId, ImageUrl = "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/product-content/barracuda-background-drives/barracuda-background-drives-lineup-background/barracuda-background-drives-lineup-background-background-image.png" });
+    }
+
+    private static void AddStorageSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string type, int capacity, string interfaceType, int readSpeed, int writeSpeed)
+    {
+        var typeSpec = specs.FirstOrDefault(s => s.Code == "stor_type");
+        if (typeSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = typeSpec.Id, TextValue = type });
+
+        var capacitySpec = specs.FirstOrDefault(s => s.Code == "stor_capacity");
+        if (capacitySpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = capacitySpec.Id, NumberValue = capacity });
+
+        var interfaceSpec = specs.FirstOrDefault(s => s.Code == "stor_interface");
+        if (interfaceSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = interfaceSpec.Id, TextValue = interfaceType });
+
+        var readSpeedSpec = specs.FirstOrDefault(s => s.Code == "stor_read_speed");
+        if (readSpeedSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = readSpeedSpec.Id, NumberValue = readSpeed });
+
+        var writeSpeedSpec = specs.FirstOrDefault(s => s.Code == "stor_write_speed");
+        if (writeSpeedSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = writeSpeedSpec.Id, NumberValue = writeSpeed });
     }
 }
