@@ -104,10 +104,11 @@ namespace TechExpress.Service.Services
                 throw new BadRequestException("Tên sản phẩm đã được sử dụng.");
             }
 
-            if (await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId))
+            if (!await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId))
             {
                 throw new BadRequestException("Không tìm thấy thương hiệu.");
             }
+
 
             var category = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(categoryId);
             if (category == null || category.IsDeleted)
@@ -148,6 +149,8 @@ namespace TechExpress.Service.Services
             }
             await _unitOfWork.ProductRepository.AddProductAsync(product);
             await _unitOfWork.SaveChangesAsync();;
+
+            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
 
             return product;
         }
@@ -249,7 +252,7 @@ namespace TechExpress.Service.Services
 
             if (brandId.HasValue)
             {
-                if (await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId.Value))
+                if (!await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId.Value))
                 {
                     throw new NotFoundException($"Không tìm thấy thương hiệu {brandId.Value}");
                 }
@@ -278,11 +281,9 @@ namespace TechExpress.Service.Services
             }
 
             product.UpdatedAt = DateTimeOffset.Now;
-
- 
-
-
             await _unitOfWork.SaveChangesAsync();
+
+            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
 
             return product;
         }

@@ -125,15 +125,19 @@ namespace TechExpress.Repository.Repositories
             await _context.Products.AddAsync(product);
         }
 
-        public async Task<Product?> FindByIdAsync(Guid id)
+        public async Task<Product?> FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(Guid id)
         {
             return await _context.Products
-                .AsNoTracking()
                 .Include(p => p.Category)
                 .Include(p => p.Images)
                 .Include(p => p.SpecValues)
                     .ThenInclude(sv => sv.SpecDefinition)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Product?> FindByIdAsync(Guid id)
+        {
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Product?> FindByIdWithTrackingAsync(Guid id)
