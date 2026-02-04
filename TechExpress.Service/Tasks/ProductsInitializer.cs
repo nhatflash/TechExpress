@@ -34,6 +34,12 @@ public static class ProductsInitializer
         // ============= STORAGE PRODUCTS =============
         await InitStorageProducts(context, allSpecValues, allProductImages);
 
+        // ============= PSU PRODUCTS =============
+        await InitPsuProducts(context, allSpecValues, allProductImages);
+
+        // ============= CASE PRODUCTS =============
+        await InitCaseProducts(context, allSpecValues, allProductImages);
+
         context.ProductSpecValues.AddRange(allSpecValues);
         context.ProductImages.AddRange(allProductImages);
 
@@ -2143,5 +2149,495 @@ public static class ProductsInitializer
 
         var writeSpeedSpec = specs.FirstOrDefault(s => s.Code == "stor_write_speed");
         if (writeSpeedSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = writeSpeedSpec.Id, NumberValue = writeSpeed });
+    }
+
+    private static async Task InitPsuProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var psuCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Nguồn máy tính")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Nguồn máy tính");
+
+        var psuSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == psuCategory.Id)
+            .ToListAsync();
+
+        // Load PSU brands
+        var corsairBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Corsair")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Corsair");
+        var seasonicBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Seasonic")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Seasonic");
+        var beQuietBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "be quiet!")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu be quiet!");
+        var msiBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "MSI")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu MSI");
+        var coolerMasterBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Cooler Master")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Cooler Master");
+        var nzxtBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "NZXT")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu NZXT");
+        var thermaltakeBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Thermaltake")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Thermaltake");
+        var superFlowerBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Super Flower")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Super Flower");
+
+        // ============= HIGH-END PSUs (1000W+) =============
+
+        // Corsair RM1000x 2021
+        var corsairRm1000xId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairRm1000xId,
+            Name = "Corsair RM1000x 2021 1000W 80+ Gold",
+            Sku = "PSU-CORSAIR-RM1000X",
+            CategoryId = psuCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 4500000,
+            Stock = 30,
+            Description = "Nguồn máy tính Corsair RM1000x 2021 công suất 1000W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt 135mm Zero RPM Mode hoạt động êm ái. Tụ điện 100% Nhật Bản, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, corsairRm1000xId, wattage: 1000, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = corsairRm1000xId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/PSU/CP-9020201-NA/Gallery/RM1000x_01.webp" });
+
+        // Seasonic Prime TX-1000 Titanium
+        var seasonicPrimeTx1000Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = seasonicPrimeTx1000Id,
+            Name = "Seasonic Prime TX-1000 1000W 80+ Titanium",
+            Sku = "PSU-SEASONIC-PRIME-TX1000",
+            CategoryId = psuCategory.Id,
+            BrandId = seasonicBrand.Id,
+            Price = 7500000,
+            Stock = 15,
+            Description = "Nguồn máy tính Seasonic Prime TX-1000 công suất 1000W, chứng nhận 80+ Titanium hiệu suất cao nhất. Thiết kế Full Modular với công nghệ Hybrid Silent Fan Control. Tụ điện Nhật Bản cao cấp, bảo hành 12 năm.",
+            WarrantyMonth = 144,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, seasonicPrimeTx1000Id, wattage: 1000, efficiency: "80+ Titanium", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = seasonicPrimeTx1000Id, ImageUrl = "https://seasonic.com/pub/media/catalog/product/cache/8e5d6667a57342f0251089c50cb9df32/p/r/prime-tx-1000-side-connector.jpg" });
+
+        // be quiet! Dark Power Pro 12 1200W
+        var beQuietDpp12Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = beQuietDpp12Id,
+            Name = "be quiet! Dark Power Pro 12 1200W 80+ Titanium",
+            Sku = "PSU-BEQUIET-DPP12-1200W",
+            CategoryId = psuCategory.Id,
+            BrandId = beQuietBrand.Id,
+            Price = 8900000,
+            Stock = 10,
+            Description = "Nguồn máy tính be quiet! Dark Power Pro 12 công suất 1200W, chứng nhận 80+ Titanium. Thiết kế Full Modular với quạt Silent Wings 135mm cực kỳ êm ái. Hỗ trợ chuẩn ATX 3.0 và PCIe 5.0, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, beQuietDpp12Id, wattage: 1200, efficiency: "80+ Titanium", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = beQuietDpp12Id, ImageUrl = "https://www.bequiet.com/admin/ImageServer.php?ID=7b9e9e42a26@be-quiet.net&omitaliases=true" });
+
+        // ============= MID-HIGH PSUs (850W) =============
+
+        // Corsair RM850x 2021
+        var corsairRm850xId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairRm850xId,
+            Name = "Corsair RM850x 2021 850W 80+ Gold",
+            Sku = "PSU-CORSAIR-RM850X",
+            CategoryId = psuCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 3200000,
+            Stock = 50,
+            Description = "Nguồn máy tính Corsair RM850x 2021 công suất 850W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt 135mm Magnetic Levitation hoạt động êm ái. Tụ điện 100% Nhật Bản, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, corsairRm850xId, wattage: 850, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = corsairRm850xId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/PSU/CP-9020200-NA/Gallery/RM850x_01.webp" });
+
+        // Seasonic Focus GX-850
+        var seasonicFocusGx850Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = seasonicFocusGx850Id,
+            Name = "Seasonic Focus GX-850 850W 80+ Gold",
+            Sku = "PSU-SEASONIC-FOCUS-GX850",
+            CategoryId = psuCategory.Id,
+            BrandId = seasonicBrand.Id,
+            Price = 2900000,
+            Stock = 45,
+            Description = "Nguồn máy tính Seasonic Focus GX-850 công suất 850W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt Fluid Dynamic Bearing 120mm. Tụ điện Nhật Bản, Hybrid Silent Fan Control, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, seasonicFocusGx850Id, wattage: 850, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = seasonicFocusGx850Id, ImageUrl = "https://seasonic.com/pub/media/catalog/product/cache/8e5d6667a57342f0251089c50cb9df32/f/o/focus-gx-850-side-connector.jpg" });
+
+        // MSI MPG A850GF
+        var msiA850gfId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = msiA850gfId,
+            Name = "MSI MPG A850GF 850W 80+ Gold",
+            Sku = "PSU-MSI-MPG-A850GF",
+            CategoryId = psuCategory.Id,
+            BrandId = msiBrand.Id,
+            Price = 2700000,
+            Stock = 40,
+            Description = "Nguồn máy tính MSI MPG A850GF công suất 850W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt 140mm Silent FDB hoạt động êm ái. Tụ điện 100% Nhật Bản, đáp ứng chuẩn 80 PLUS Gold, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, msiA850gfId, wattage: 850, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = msiA850gfId, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1623138505a71f6a3c6c19a1c1c7e4e3e5c1e5e4.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+
+        // ============= MID-RANGE PSUs (750W) =============
+
+        // Cooler Master MWE Gold 750 V2
+        var cmMweGold750Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = cmMweGold750Id,
+            Name = "Cooler Master MWE Gold 750 V2 750W 80+ Gold",
+            Sku = "PSU-CM-MWE-GOLD-750-V2",
+            CategoryId = psuCategory.Id,
+            BrandId = coolerMasterBrand.Id,
+            Price = 2100000,
+            Stock = 60,
+            Description = "Nguồn máy tính Cooler Master MWE Gold 750 V2 công suất 750W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt HDB 120mm êm ái. Cáp phẳng dễ đi dây, bảo vệ đầy đủ OVP/OPP/SCP/UVP/OCP/OTP.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, cmMweGold750Id, wattage: 750, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = cmMweGold750Id, ImageUrl = "https://cdn.coolermaster.com/media/assets/1048/mwe-gold-750-v2-full-modular-gallery-1-zoom.png" });
+
+        // NZXT C750 Gold
+        var nzxtC750Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = nzxtC750Id,
+            Name = "NZXT C750 Gold 750W 80+ Gold",
+            Sku = "PSU-NZXT-C750-GOLD",
+            CategoryId = psuCategory.Id,
+            BrandId = nzxtBrand.Id,
+            Price = 2400000,
+            Stock = 35,
+            Description = "Nguồn máy tính NZXT C750 Gold công suất 750W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt Fluid Dynamic Bearing 120mm. Chế độ Zero RPM Mode, tụ điện Nhật Bản, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, nzxtC750Id, wattage: 750, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = nzxtC750Id, ImageUrl = "https://nzxt.com/assets/cms/34299/1632330799-c750-hero-gold.png" });
+
+        // Super Flower Leadex III Gold 750W
+        var sfLeadex3Gold750Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = sfLeadex3Gold750Id,
+            Name = "Super Flower Leadex III Gold 750W 80+ Gold",
+            Sku = "PSU-SF-LEADEX3-GOLD-750W",
+            CategoryId = psuCategory.Id,
+            BrandId = superFlowerBrand.Id,
+            Price = 2300000,
+            Stock = 40,
+            Description = "Nguồn máy tính Super Flower Leadex III Gold công suất 750W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt FDB 130mm êm ái. Tụ điện Nhật Bản 105°C, chế độ Eco Mode tiết kiệm điện, bảo hành 7 năm.",
+            WarrantyMonth = 84,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, sfLeadex3Gold750Id, wattage: 750, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = sfLeadex3Gold750Id, ImageUrl = "https://www.super-flower.com/images/product/Leadex_III_Gold/Leadex_III_Gold_750W.png" });
+
+        // ============= BUDGET PSUs (650W) =============
+
+        // Thermaltake Toughpower GF1 650W
+        var ttToughpowerGf1650Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = ttToughpowerGf1650Id,
+            Name = "Thermaltake Toughpower GF1 650W 80+ Gold",
+            Sku = "PSU-TT-TOUGHPOWER-GF1-650W",
+            CategoryId = psuCategory.Id,
+            BrandId = thermaltakeBrand.Id,
+            Price = 1800000,
+            Stock = 70,
+            Description = "Nguồn máy tính Thermaltake Toughpower GF1 650W, chứng nhận 80+ Gold. Thiết kế Full Modular với quạt 140mm Hydraulic Bearing êm ái. Smart Zero Fan Mode, tụ điện Nhật Bản, bảo hành 10 năm.",
+            WarrantyMonth = 120,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, ttToughpowerGf1650Id, wattage: 650, efficiency: "80+ Gold", modular: "Full Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = ttToughpowerGf1650Id, ImageUrl = "https://www.thermaltake.com/media/catalog/product/cache/36a91ccfb2a23eaa18b14da3adc33e51/t/o/toughpower_gf1_650w_1.jpg" });
+
+        // Corsair CV650 Bronze
+        var corsairCv650Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairCv650Id,
+            Name = "Corsair CV650 650W 80+ Bronze",
+            Sku = "PSU-CORSAIR-CV650",
+            CategoryId = psuCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 1200000,
+            Stock = 100,
+            Description = "Nguồn máy tính Corsair CV650 công suất 650W, chứng nhận 80+ Bronze. Thiết kế Non-Modular với quạt 120mm Thermally Controlled. Giải pháp nguồn ổn định với giá cả phải chăng, bảo hành 3 năm.",
+            WarrantyMonth = 36,
+            Status = ProductStatus.Available,
+        });
+        AddPsuSpecs(specValues, psuSpecs, corsairCv650Id, wattage: 650, efficiency: "80+ Bronze", modular: "Non-Modular", formFactor: "ATX");
+        productImages.Add(new ProductImage { ProductId = corsairCv650Id, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/PSU/CP-9020211-NA/Gallery/CV650_01.webp" });
+    }
+
+    private static void AddPsuSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, int wattage, string efficiency, string modular, string formFactor)
+    {
+        var wattageSpec = specs.FirstOrDefault(s => s.Code == "psu_wattage");
+        if (wattageSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = wattageSpec.Id, NumberValue = wattage });
+
+        var efficiencySpec = specs.FirstOrDefault(s => s.Code == "psu_efficiency");
+        if (efficiencySpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = efficiencySpec.Id, TextValue = efficiency });
+
+        var modularSpec = specs.FirstOrDefault(s => s.Code == "psu_modular");
+        if (modularSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = modularSpec.Id, TextValue = modular });
+
+        var formFactorSpec = specs.FirstOrDefault(s => s.Code == "psu_form_factor");
+        if (formFactorSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = formFactorSpec.Id, TextValue = formFactor });
+    }
+
+    private static async Task InitCaseProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var caseCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Vỏ máy tính")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Vỏ máy tính");
+
+        var caseSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == caseCategory.Id)
+            .ToListAsync();
+
+        // Load Case brands
+        var lianLiBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Lian Li")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Lian Li");
+        var nzxtBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "NZXT")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu NZXT");
+        var corsairBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Corsair")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Corsair");
+        var phanteksBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Phanteks")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Phanteks");
+        var fractalBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Fractal Design")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Fractal Design");
+        var beQuietBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "be quiet!")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu be quiet!");
+        var coolerMasterBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Cooler Master")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Cooler Master");
+        var montechBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Montech")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Montech");
+        var thermaltakeBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Thermaltake")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Thermaltake");
+        var jonsboBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Jonsbo")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Jonsbo");
+
+        // ============= HIGH-END CASES =============
+
+        // Lian Li O11 Dynamic EVO
+        var lianLiO11EvoId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = lianLiO11EvoId,
+            Name = "Lian Li O11 Dynamic EVO",
+            Sku = "CASE-LIANLI-O11-DYNAMIC-EVO",
+            CategoryId = caseCategory.Id,
+            BrandId = lianLiBrand.Id,
+            Price = 4500000,
+            Stock = 25,
+            Description = "Vỏ case Lian Li O11 Dynamic EVO với thiết kế dual-chamber iconic. Hỗ trợ ATX/mATX/ITX, kính cường lực 2 mặt. Khả năng lắp đặt tản nhiệt nước custom loop tuyệt vời với không gian cho radiator 360mm ở nhiều vị trí. Thiết kế modular linh hoạt.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, lianLiO11EvoId, formFactor: "ATX,mATX,ITX", maxGpuLength: 422, maxCoolerHeight: 167, psuFormFactor: "ATX", driveBays25: 6, driveBays35: 3);
+        productImages.Add(new ProductImage { ProductId = lianLiO11EvoId, ImageUrl = "https://lian-li.com/wp-content/uploads/2022/01/O11-EVO-1.jpg" });
+
+        // NZXT H7 Flow
+        var nzxtH7FlowId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = nzxtH7FlowId,
+            Name = "NZXT H7 Flow",
+            Sku = "CASE-NZXT-H7-FLOW",
+            CategoryId = caseCategory.Id,
+            BrandId = nzxtBrand.Id,
+            Price = 3500000,
+            Stock = 30,
+            Description = "Vỏ case NZXT H7 Flow với thiết kế airflow tối ưu qua mặt lưới phía trước. Hỗ trợ ATX/mATX/ITX, kính cường lực bên hông. Cable management xuất sắc với không gian rộng phía sau. Hỗ trợ radiator 360mm phía trước và trên.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, nzxtH7FlowId, formFactor: "ATX,mATX,ITX", maxGpuLength: 400, maxCoolerHeight: 185, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = nzxtH7FlowId, ImageUrl = "https://nzxt.com/assets/cms/34299/1663791631-h7-flow-white-hero.png" });
+
+        // Fractal Design North
+        var fractalNorthId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = fractalNorthId,
+            Name = "Fractal Design North",
+            Sku = "CASE-FRACTAL-NORTH",
+            CategoryId = caseCategory.Id,
+            BrandId = fractalBrand.Id,
+            Price = 3800000,
+            Stock = 20,
+            Description = "Vỏ case Fractal Design North với thiết kế Scandinavian độc đáo, mặt trước gỗ óc chó tự nhiên. Hỗ trợ ATX/mATX/ITX, airflow tuyệt vời qua lưới gỗ. Kính cường lực bên hông, cable management tốt. Thiết kế nội thất cao cấp.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, fractalNorthId, formFactor: "ATX,mATX,ITX", maxGpuLength: 355, maxCoolerHeight: 170, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = fractalNorthId, ImageUrl = "https://www.fractal-design.com/app/uploads/2022/09/North-Charcoal-Black-TG-Dark-Left-Front-Angled-scaled.jpg" });
+
+        // ============= MID-RANGE CASES =============
+
+        // Corsair 4000D Airflow
+        var corsair4000dId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsair4000dId,
+            Name = "Corsair 4000D Airflow",
+            Sku = "CASE-CORSAIR-4000D-AIRFLOW",
+            CategoryId = caseCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 2500000,
+            Stock = 45,
+            Description = "Vỏ case Corsair 4000D Airflow với mặt lưới thép tối ưu luồng khí. Hỗ trợ ATX/mATX/ITX, kính cường lực bên hông. RapidRoute cable management system tiện lợi. Hỗ trợ radiator 360mm, đi kèm 2 quạt 120mm AirGuide.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, corsair4000dId, formFactor: "ATX,mATX,ITX", maxGpuLength: 360, maxCoolerHeight: 170, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = corsair4000dId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Cases/CC-9011200-WW/Gallery/4000D_AF_BLK_01.webp" });
+
+        // Phanteks Eclipse G360A
+        var phanteksG360aId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = phanteksG360aId,
+            Name = "Phanteks Eclipse G360A",
+            Sku = "CASE-PHANTEKS-G360A",
+            CategoryId = caseCategory.Id,
+            BrandId = phanteksBrand.Id,
+            Price = 2200000,
+            Stock = 40,
+            Description = "Vỏ case Phanteks Eclipse G360A với mặt lưới Ultra-fine Performance Mesh. Hỗ trợ ATX/mATX/ITX, kính cường lực bên hông. Đi kèm 3 quạt D-RGB 120mm phía trước. Hỗ trợ radiator 360mm, cable management tốt.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, phanteksG360aId, formFactor: "ATX,mATX,ITX", maxGpuLength: 400, maxCoolerHeight: 163, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = phanteksG360aId, ImageUrl = "https://phanteks.com/images/product/Eclipse-G360A/Eclipse-G360A-1.jpg" });
+
+        // be quiet! Pure Base 500DX
+        var beQuietPureBase500dxId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = beQuietPureBase500dxId,
+            Name = "be quiet! Pure Base 500DX",
+            Sku = "CASE-BEQUIET-PURE-BASE-500DX",
+            CategoryId = caseCategory.Id,
+            BrandId = beQuietBrand.Id,
+            Price = 2800000,
+            Stock = 35,
+            Description = "Vỏ case be quiet! Pure Base 500DX với thiết kế cân bằng giữa airflow và độ êm. Hỗ trợ ATX/mATX/ITX, kính cường lực bên hông. Đi kèm 3 quạt Pure Wings 2 140mm. ARGB LED tích hợp, hỗ trợ radiator 360mm.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, beQuietPureBase500dxId, formFactor: "ATX,mATX,ITX", maxGpuLength: 369, maxCoolerHeight: 190, psuFormFactor: "ATX", driveBays25: 5, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = beQuietPureBase500dxId, ImageUrl = "https://www.bequiet.com/admin/ImageServer.php?ID=a8da9a52a26@be-quiet.net&omitaliases=true" });
+
+        // ============= BUDGET CASES =============
+
+        // Cooler Master MasterBox TD500 Mesh
+        var cmTd500MeshId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = cmTd500MeshId,
+            Name = "Cooler Master MasterBox TD500 Mesh",
+            Sku = "CASE-CM-TD500-MESH",
+            CategoryId = caseCategory.Id,
+            BrandId = coolerMasterBrand.Id,
+            Price = 2000000,
+            Stock = 50,
+            Description = "Vỏ case Cooler Master MasterBox TD500 Mesh với mặt lưới polygonal 3D độc đáo. Hỗ trợ ATX/mATX/ITX, kính cường lực bên hông. Đi kèm 3 quạt ARGB 120mm. Hỗ trợ radiator 360mm, thiết kế airflow tốt với giá phải chăng.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, cmTd500MeshId, formFactor: "ATX,mATX,ITX", maxGpuLength: 410, maxCoolerHeight: 165, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = cmTd500MeshId, ImageUrl = "https://cdn.coolermaster.com/media/assets/1035/td500-mesh-gallery-1-image.png" });
+
+        // Montech Air 903 Max
+        var montechAir903MaxId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = montechAir903MaxId,
+            Name = "Montech Air 903 Max",
+            Sku = "CASE-MONTECH-AIR-903-MAX",
+            CategoryId = caseCategory.Id,
+            BrandId = montechBrand.Id,
+            Price = 1800000,
+            Stock = 55,
+            Description = "Vỏ case Montech Air 903 Max với thiết kế airflow mở tối đa. Hỗ trợ ATX/mATX/ITX, mặt lưới phía trước và trên. Đi kèm 3 quạt ARGB 140mm. Hỗ trợ radiator 360mm, giá cực kỳ cạnh tranh cho tính năng cao cấp.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, montechAir903MaxId, formFactor: "ATX,mATX,ITX", maxGpuLength: 400, maxCoolerHeight: 175, psuFormFactor: "ATX", driveBays25: 4, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = montechAir903MaxId, ImageUrl = "https://www.montech.co/wp-content/uploads/2023/05/AIR-903-MAX-Black-1.png" });
+
+        // Thermaltake S100 TG
+        var ttS100TgId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = ttS100TgId,
+            Name = "Thermaltake S100 TG Snow Edition",
+            Sku = "CASE-TT-S100-TG-SNOW",
+            CategoryId = caseCategory.Id,
+            BrandId = thermaltakeBrand.Id,
+            Price = 1500000,
+            Stock = 60,
+            Description = "Vỏ case Thermaltake S100 TG Snow Edition dạng Micro-ATX màu trắng. Hỗ trợ mATX/ITX, kính cường lực bên hông. Thiết kế nhỏ gọn với airflow tốt. Hỗ trợ radiator 280mm, phù hợp cho build compact.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, ttS100TgId, formFactor: "mATX,ITX", maxGpuLength: 330, maxCoolerHeight: 165, psuFormFactor: "ATX", driveBays25: 3, driveBays35: 2);
+        productImages.Add(new ProductImage { ProductId = ttS100TgId, ImageUrl = "https://www.thermaltake.com/media/catalog/product/cache/36a91ccfb2a23eaa18b14da3adc33e51/s/1/s100_tg_snow_1.jpg" });
+
+        // ============= COMPACT/SFF CASES =============
+
+        // Jonsbo D31 Mesh
+        var jonsboD31MeshId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = jonsboD31MeshId,
+            Name = "Jonsbo D31 Mesh",
+            Sku = "CASE-JONSBO-D31-MESH",
+            CategoryId = caseCategory.Id,
+            BrandId = jonsboBrand.Id,
+            Price = 1600000,
+            Stock = 45,
+            Description = "Vỏ case Jonsbo D31 Mesh dạng Micro-ATX với thiết kế mesh airflow. Hỗ trợ mATX/ITX, hỗ trợ đặt mainboard nằm ngang hoặc đứng. Kính cường lực bên hông, hỗ trợ radiator 240mm. Thiết kế compact đẹp mắt.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCaseSpecs(specValues, caseSpecs, jonsboD31MeshId, formFactor: "mATX,ITX", maxGpuLength: 325, maxCoolerHeight: 168, psuFormFactor: "ATX,SFX", driveBays25: 2, driveBays35: 1);
+        productImages.Add(new ProductImage { ProductId = jonsboD31MeshId, ImageUrl = "https://www.jonsbo.com/Public/Uploads/uploadfile/images/20221014/D31%20MESH-01.jpg" });
+    }
+
+    private static void AddCaseSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string formFactor, int maxGpuLength, int maxCoolerHeight, string psuFormFactor, int driveBays25, int driveBays35)
+    {
+        var formFactorSpec = specs.FirstOrDefault(s => s.Code == "case_form_factor");
+        if (formFactorSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = formFactorSpec.Id, TextValue = formFactor });
+
+        var maxGpuLengthSpec = specs.FirstOrDefault(s => s.Code == "case_max_gpu_length");
+        if (maxGpuLengthSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = maxGpuLengthSpec.Id, NumberValue = maxGpuLength });
+
+        var maxCoolerHeightSpec = specs.FirstOrDefault(s => s.Code == "case_max_cooler_height");
+        if (maxCoolerHeightSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = maxCoolerHeightSpec.Id, NumberValue = maxCoolerHeight });
+
+        var psuFormFactorSpec = specs.FirstOrDefault(s => s.Code == "case_psu_form_factor");
+        if (psuFormFactorSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = psuFormFactorSpec.Id, TextValue = psuFormFactor });
+
+        var driveBays25Spec = specs.FirstOrDefault(s => s.Code == "case_drive_bays_25");
+        if (driveBays25Spec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = driveBays25Spec.Id, NumberValue = driveBays25 });
+
+        var driveBays35Spec = specs.FirstOrDefault(s => s.Code == "case_drive_bays_35");
+        if (driveBays35Spec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = driveBays35Spec.Id, NumberValue = driveBays35 });
     }
 }
