@@ -144,7 +144,7 @@ namespace TechExpress.Service.Services
             // SpecValues
             if (specValueCommands.Count > 0)
             {
-                await CreateNewProductSpecValue(categoryId, specValueCommands, product, false);
+                await BuildNewProductSpecValues(categoryId, specValueCommands, product, false);
             }
             await _unitOfWork.ProductRepository.AddProductAsync(product);
             await _unitOfWork.SaveChangesAsync();;
@@ -152,7 +152,7 @@ namespace TechExpress.Service.Services
             return product;
         }
 
-        private ProductSpecValue BuildProductSpecValue(Guid productId, SpecDefinition def, string rawValue)
+        private static ProductSpecValue BuildProductSpecValue(Guid productId, SpecDefinition def, string rawValue)
         {
             var specValue = new ProductSpecValue
             {
@@ -228,9 +228,14 @@ namespace TechExpress.Service.Services
 
             if (categoryId.HasValue)
             {
+                var newCategory = await _unitOfWork.CategoryRepository.FindCategoryByIdAsync(categoryId.Value);
+                if (newCategory == null || newCategory.IsDeleted)
+                {
+                    throw new NotFoundException("Không tìm thấy danh mục.");
+                }
                 if (categoryId.Value != product.CategoryId)
                 {
-                    await CreateNewProductSpecValue(categoryId.Value, specValueCommands, product, true);
+                    await BuildNewProductSpecValues(categoryId.Value, specValueCommands, product, true);
                 }
                 else
                 {
@@ -244,7 +249,7 @@ namespace TechExpress.Service.Services
 
             if (brandId.HasValue)
             {
-                if (!await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId.Value))
+                if (await _unitOfWork.BrandRepository.ExistsByIdAsync(brandId.Value))
                 {
                     throw new NotFoundException($"Không tìm thấy thương hiệu {brandId.Value}");
                 }
@@ -346,26 +351,16 @@ namespace TechExpress.Service.Services
             }
         }
 
-        private async Task BuildNewProductSpecValues(HashSet<Guid> categorySpecIds, Guid specDefinitionId, HashSet<SpecDefinition> specDefinitionSet, Product product, string value)
-        {
-            if (!categorySpecIds.Contains(specDefinitionId))
-            {
-                throw new BadRequestException($"Thông số {specDefinitionId} không tồn tại trong danh mục");
-            }
-            var def = specDefinitionSet.First(s => s.Id == specDefinitionId);
-            var psv = BuildProductSpecValue(product.Id, def, value);
-            product.SpecValues.Add(psv);
-        }
-
-        private async Task CreateNewProductSpecValue(Guid categoryId, List<CreateProductSpecValueCommand> specValueCommands, Product product, bool isEditing)
+        private async Task BuildNewProductSpecValues(Guid categoryId, List<CreateProductSpecValueCommand> specValueCommands, Product product, bool isEditing)
         {
             if (isEditing)
             {
                 var productSpecValues = await _unitOfWork.ProductSpecValueRepository.FindByProductIdWithTrackingAsync(product.Id);
                 await _unitOfWork.ProductSpecValueRepository.RemoveRangeProductSpec(productSpecValues);
+                product.CategoryId = categoryId;
             }
             var specDefinitionSet = await _unitOfWork.SpecDefinitionRepository.FindSpecDefinitionSetByCategoryIdAndIsNotDeletedAsync(categoryId);
-                //Validate required specs
+            var specDefinitionDict = specDefinitionSet.ToDictionary(s => s.Id);
             var requiredSpecIds = specDefinitionSet.Where(x => x.IsRequired).Select(x => x.Id).ToHashSet();
             
             if (requiredSpecIds.Count > 0)
@@ -375,7 +370,7 @@ namespace TechExpress.Service.Services
                     throw new BadRequestException("Danh mục có chứa thông số bắt buộc, giá trị phải được định nghĩa khi khởi tạo sản phẩm.");
                 }
                 var requestedSpecIds = specValueCommands.Select(s => s.SpecDefinitionId).ToHashSet();
-                if (!requiredSpecIds.SetEquals(requestedSpecIds))
+                if (!requiredSpecIds.IsSubsetOf(requestedSpecIds))
                 {
                     throw new BadRequestException("Thiếu thông số bắt buộc của sản phẩm.");
                 }
@@ -383,7 +378,11 @@ namespace TechExpress.Service.Services
             var categorySpecIds = specDefinitionSet.Select(s => s.Id).ToHashSet();
             foreach (var command in specValueCommands)
             {
-                await BuildNewProductSpecValues(categorySpecIds, command.SpecDefinitionId, specDefinitionSet, product, command.Value);
+                if (!specDefinitionDict.TryGetValue(command.SpecDefinitionId, out var def))
+                {
+                    throw new BadRequestException($"Thông số {command.SpecDefinitionId} không tồn tại trong ${categoryId}");
+                }
+                var psv = BuildProductSpecValue(product.Id, def, command.Value);
             }
         }
 
@@ -426,26 +425,31 @@ namespace TechExpress.Service.Services
                 throw new NotFoundException($"Không tìm thấy danh mục {categoryId}");
             }
             product.CategoryId = categoryId;
+
             if (specValueCommands.Count > 0)
             {
                 var specDefinitionSet = await _unitOfWork.SpecDefinitionRepository.FindSpecDefinitionSetByCategoryIdAndIsNotDeletedAsync(categoryId);
-                var categorySpecIds = specDefinitionSet.Select(s => s.Id).ToHashSet();
-                var requestedIds = specValueCommands.Select(s => s.SpecDefinitionId).ToHashSet();
                 var existingSpecValues = await _unitOfWork.ProductSpecValueRepository.FindByProductIdWithTrackingAsync(product.Id);
-                var existingSpecDefinitionIds = existingSpecValues.Select(s => s.SpecDefinitionId).ToHashSet();
-                var newSpecIds = requestedIds.Except(existingSpecDefinitionIds).ToList();
-                var updatedSpecIds = requestedIds.Intersect(existingSpecDefinitionIds).ToList();
-                foreach (var newSpecId in newSpecIds)
+
+                var specDefinitionDict = specDefinitionSet.ToDictionary(s => s.Id);
+                var existingSpecValueDict = existingSpecValues.ToDictionary(s => s.SpecDefinitionId);
+
+                foreach (var command in specValueCommands)
                 {
-                    var newSpec = specValueCommands.First(s => s.SpecDefinitionId == newSpecId);
-                    await BuildNewProductSpecValues(categorySpecIds, newSpecId, specDefinitionSet, product, newSpec.Value);
-                }
-                foreach (var updatedSpecId in updatedSpecIds)
-                {   
-                    var specDef = specDefinitionSet.First(s => s.Id == updatedSpecId);
-                    var updatedSpecValue = existingSpecValues.First(s => s.SpecDefinitionId == updatedSpecId);
-                    var updatedSpec = specValueCommands.First(s => s.SpecDefinitionId == updatedSpecId);
-                    UpdateProductSpecValue(updatedSpecValue, specDef, updatedSpec.Value);
+                    if (!specDefinitionDict.TryGetValue(command.SpecDefinitionId, out var def))
+                    {
+                        throw new NotFoundException($"Thông số {command.SpecDefinitionId} không tồn tại trong danh mục {categoryId}");
+                    }
+                    
+                    if (existingSpecValueDict.TryGetValue(command.SpecDefinitionId, out var productSpecValue))
+                    {
+                        UpdateProductSpecValue(productSpecValue, def, command.Value);
+                    }
+                    else
+                    {
+                        var psv = BuildProductSpecValue(product.Id, def, command.Value);
+                        product.SpecValues.Add(psv);
+                    }
                 }
             }
         }
