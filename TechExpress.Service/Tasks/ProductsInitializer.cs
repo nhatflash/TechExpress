@@ -40,6 +40,15 @@ public static class ProductsInitializer
         // ============= CASE PRODUCTS =============
         await InitCaseProducts(context, allSpecValues, allProductImages);
 
+        // ============= CPU COOLER PRODUCTS =============
+        await InitCoolerProducts(context, allSpecValues, allProductImages);
+
+        // ============= KEYBOARD PRODUCTS =============
+        await InitKeyboardProducts(context, allSpecValues, allProductImages);
+
+        // ============= MOUSE PRODUCTS =============
+        await InitMouseProducts(context, allSpecValues, allProductImages);
+
         context.ProductSpecValues.AddRange(allSpecValues);
         context.ProductImages.AddRange(allProductImages);
 
@@ -2639,5 +2648,712 @@ public static class ProductsInitializer
 
         var driveBays35Spec = specs.FirstOrDefault(s => s.Code == "case_drive_bays_35");
         if (driveBays35Spec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = driveBays35Spec.Id, NumberValue = driveBays35 });
+    }
+
+    private static async Task InitCoolerProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var coolerCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Tản nhiệt CPU")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Tản nhiệt CPU");
+
+        var coolerSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == coolerCategory.Id)
+            .ToListAsync();
+
+        // Load cooler brands
+        var noctuaBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Noctua")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Noctua");
+        var beQuietBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "be quiet!")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu be quiet!");
+        var thermalrightBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Thermalright")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Thermalright");
+        var corsairBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Corsair")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Corsair");
+        var nzxtBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "NZXT")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu NZXT");
+        var deepCoolBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "DeepCool")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu DeepCool");
+        var arcticBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Arctic")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Arctic");
+        var scytheBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Scythe")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Scythe");
+        var coolerMasterBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Cooler Master")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Cooler Master");
+        var idCoolingBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "ID-Cooling")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu ID-Cooling");
+
+        // ============= HIGH-END AIR COOLERS =============
+
+        // Noctua NH-D15 chromax.black
+        var noctuaNhD15Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = noctuaNhD15Id,
+            Name = "Noctua NH-D15 chromax.black",
+            Sku = "COOLER-NOCTUA-NH-D15-BLACK",
+            CategoryId = coolerCategory.Id,
+            BrandId = noctuaBrand.Id,
+            Price = 2800000,
+            Stock = 25,
+            Description = "Tản nhiệt khí Noctua NH-D15 chromax.black cao cấp với dual tower và 2 quạt NF-A15 PWM. Hiệu năng tản nhiệt hàng đầu, hoạt động cực kỳ êm ái. Hỗ trợ đa socket bao gồm LGA1700 và AM5. Thiết kế full black sang trọng.",
+            WarrantyMonth = 72,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, noctuaNhD15Id, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 250, height: 165);
+        productImages.Add(new ProductImage { ProductId = noctuaNhD15Id, ImageUrl = "https://noctua.at/pub/media/catalog/product/cache/74c1057f7991b4edb2bc7bdbd8571f7f/n/h/nh_d15_chromax_black_1_5.jpg" });
+
+        // be quiet! Dark Rock Pro 5
+        var beQuietDarkRockPro5Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = beQuietDarkRockPro5Id,
+            Name = "be quiet! Dark Rock Pro 5",
+            Sku = "COOLER-BEQUIET-DARK-ROCK-PRO-5",
+            CategoryId = coolerCategory.Id,
+            BrandId = beQuietBrand.Id,
+            Price = 2500000,
+            Stock = 30,
+            Description = "Tản nhiệt khí be quiet! Dark Rock Pro 5 với thiết kế dual tower và 7 ống dẫn nhiệt. Trang bị 2 quạt Silent Wings 4, hoạt động cực êm với độ ồn chỉ 24.3 dB(A). Hiệu năng làm mát xuất sắc cho CPU cao cấp.",
+            WarrantyMonth = 36,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, beQuietDarkRockPro5Id, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 270, height: 168);
+        productImages.Add(new ProductImage { ProductId = beQuietDarkRockPro5Id, ImageUrl = "https://www.bequiet.com/admin/ImageServer.php?ID=c5e5a5e5a5e@be-quiet.net&omitaliases=true" });
+
+        // Thermalright Peerless Assassin 120 SE
+        var thermalrightPA120SEId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = thermalrightPA120SEId,
+            Name = "Thermalright Peerless Assassin 120 SE",
+            Sku = "COOLER-THERMALRIGHT-PA120-SE",
+            CategoryId = coolerCategory.Id,
+            BrandId = thermalrightBrand.Id,
+            Price = 850000,
+            Stock = 50,
+            Description = "Tản nhiệt khí Thermalright Peerless Assassin 120 SE với thiết kế dual tower giá rẻ. 6 ống dẫn nhiệt, 2 quạt TL-C12C PWM. Hiệu năng tuyệt vời so với giá tiền, cạnh tranh với các sản phẩm cao cấp hơn nhiều.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, thermalrightPA120SEId, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 230, height: 155);
+        productImages.Add(new ProductImage { ProductId = thermalrightPA120SEId, ImageUrl = "https://www.thermalright.com/wp-content/uploads/2022/01/PA120SE_01.jpg" });
+
+        // ============= HIGH-END AIO COOLERS =============
+
+        // Corsair iCUE H150i Elite LCD XT
+        var corsairH150iId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairH150iId,
+            Name = "Corsair iCUE H150i Elite LCD XT",
+            Sku = "COOLER-CORSAIR-H150I-ELITE-LCD-XT",
+            CategoryId = coolerCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 7500000,
+            Stock = 15,
+            Description = "Tản nhiệt nước AIO Corsair iCUE H150i Elite LCD XT 360mm với màn hình LCD 2.1 inch hiển thị thông tin và GIF. 3 quạt AF120 RGB Elite, đầu bơm thế hệ mới cải tiến. Tích hợp iCUE software điều khiển RGB và hiệu năng.",
+            WarrantyMonth = 60,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, corsairH150iId, coolerType: "AIO Liquid 360mm", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 350, height: 30);
+        productImages.Add(new ProductImage { ProductId = corsairH150iId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Cooling/CW-9060075-WW/Gallery/H150i_ELITE_LCD_XT_01.webp" });
+
+        // NZXT Kraken Z73 RGB
+        var nzxtKrakenZ73Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = nzxtKrakenZ73Id,
+            Name = "NZXT Kraken Z73 RGB",
+            Sku = "COOLER-NZXT-KRAKEN-Z73-RGB",
+            CategoryId = coolerCategory.Id,
+            BrandId = nzxtBrand.Id,
+            Price = 7200000,
+            Stock = 18,
+            Description = "Tản nhiệt nước AIO NZXT Kraken Z73 RGB 360mm với màn hình LCD 2.36 inch tùy chỉnh. 3 quạt F120 RGB Core, đầu bơm Asetek thế hệ 7 mạnh mẽ. Điều khiển qua CAM software, thiết kế premium.",
+            WarrantyMonth = 72,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, nzxtKrakenZ73Id, coolerType: "AIO Liquid 360mm", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 350, height: 30);
+        productImages.Add(new ProductImage { ProductId = nzxtKrakenZ73Id, ImageUrl = "https://nzxt.com/assets/cms/34299/1692822857-kraken-z73-rgb-black-hero.png" });
+
+        // DeepCool LS720
+        var deepCoolLS720Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = deepCoolLS720Id,
+            Name = "DeepCool LS720",
+            Sku = "COOLER-DEEPCOOL-LS720",
+            CategoryId = coolerCategory.Id,
+            BrandId = deepCoolBrand.Id,
+            Price = 3500000,
+            Stock = 25,
+            Description = "Tản nhiệt nước AIO DeepCool LS720 360mm với thiết kế Infinity Mirror ARGB đẹp mắt. 3 quạt FC120 ARGB hiệu năng cao, đầu bơm thế hệ 4 công suất lớn. Giá thành hợp lý cho hiệu năng cao cấp.",
+            WarrantyMonth = 36,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, deepCoolLS720Id, coolerType: "AIO Liquid 360mm", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 320, height: 27);
+        productImages.Add(new ProductImage { ProductId = deepCoolLS720Id, ImageUrl = "https://www.deepcool.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/l/s/ls720_01.jpg" });
+
+        // ============= MID-RANGE COOLERS =============
+
+        // Arctic Liquid Freezer II 280
+        var arcticLF280Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = arcticLF280Id,
+            Name = "Arctic Liquid Freezer II 280",
+            Sku = "COOLER-ARCTIC-LF2-280",
+            CategoryId = coolerCategory.Id,
+            BrandId = arcticBrand.Id,
+            Price = 2800000,
+            Stock = 30,
+            Description = "Tản nhiệt nước AIO Arctic Liquid Freezer II 280mm với quạt VRM tích hợp trên đầu bơm. 2 quạt P14 PWM hiệu năng cao, ống dẫn bọc nylon chống rò rỉ. Hiệu năng làm mát xuất sắc với giá cực kỳ cạnh tranh.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, arcticLF280Id, coolerType: "AIO Liquid 280mm", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 300, height: 38);
+        productImages.Add(new ProductImage { ProductId = arcticLF280Id, ImageUrl = "https://www.arctic.de/media/c0/fd/b7/1610709755/Liquid_Freezer_II_280_G01.png" });
+
+        // Scythe Fuma 3
+        var scytheFuma3Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = scytheFuma3Id,
+            Name = "Scythe Fuma 3",
+            Sku = "COOLER-SCYTHE-FUMA-3",
+            CategoryId = coolerCategory.Id,
+            BrandId = scytheBrand.Id,
+            Price = 1500000,
+            Stock = 35,
+            Description = "Tản nhiệt khí Scythe Fuma 3 với thiết kế dual tower asymmetric không cản RAM. 6 ống dẫn nhiệt, 2 quạt Kaze Flex II PWM êm ái. Hiệu năng cao trong thiết kế nhỏ gọn, dễ lắp đặt.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, scytheFuma3Id, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 220, height: 154);
+        productImages.Add(new ProductImage { ProductId = scytheFuma3Id, ImageUrl = "https://www.scythe-eu.com/fileadmin/images/CPU-Cooler/Fuma-3/fuma3_main.jpg" });
+
+        // Cooler Master Hyper 212 EVO V2
+        var cmHyper212EvoV2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = cmHyper212EvoV2Id,
+            Name = "Cooler Master Hyper 212 EVO V2",
+            Sku = "COOLER-CM-HYPER-212-EVO-V2",
+            CategoryId = coolerCategory.Id,
+            BrandId = coolerMasterBrand.Id,
+            Price = 850000,
+            Stock = 60,
+            Description = "Tản nhiệt khí Cooler Master Hyper 212 EVO V2 - phiên bản cải tiến của huyền thoại Hyper 212. 4 ống dẫn nhiệt Direct Contact, quạt SickleFlow 120 PWM. Hệ thống gá đỡ mới dễ lắp đặt hơn.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, cmHyper212EvoV2Id, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 180, height: 159);
+        productImages.Add(new ProductImage { ProductId = cmHyper212EvoV2Id, ImageUrl = "https://cdn.coolermaster.com/media/assets/1035/hyper-212-evo-v2-gallery-1-image.png" });
+
+        // ============= BUDGET COOLERS =============
+
+        // ID-Cooling SE-214-XT
+        var idCoolingSE214XTId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = idCoolingSE214XTId,
+            Name = "ID-Cooling SE-214-XT ARGB",
+            Sku = "COOLER-IDCOOLING-SE-214-XT-ARGB",
+            CategoryId = coolerCategory.Id,
+            BrandId = idCoolingBrand.Id,
+            Price = 450000,
+            Stock = 80,
+            Description = "Tản nhiệt khí ID-Cooling SE-214-XT ARGB giá rẻ với 4 ống dẫn nhiệt Direct Touch. Quạt 120mm ARGB đẹp mắt, hỗ trợ sync với mainboard. Lựa chọn hoàn hảo cho build tầm trung và budget.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddCoolerSpecs(specValues, coolerSpecs, idCoolingSE214XTId, coolerType: "Air", socketSupport: "LGA1700,LGA1200,LGA115x,AM5,AM4", tdpRating: 180, height: 150);
+        productImages.Add(new ProductImage { ProductId = idCoolingSE214XTId, ImageUrl = "https://www.idcooling.com/uploadfile/image/SE-214-XT-ARGB/01.jpg" });
+    }
+
+    private static void AddCoolerSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string coolerType, string socketSupport, int tdpRating, int height)
+    {
+        var coolerTypeSpec = specs.FirstOrDefault(s => s.Code == "cooler_type");
+        if (coolerTypeSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = coolerTypeSpec.Id, TextValue = coolerType });
+
+        var socketSupportSpec = specs.FirstOrDefault(s => s.Code == "cooler_socket_support");
+        if (socketSupportSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = socketSupportSpec.Id, TextValue = socketSupport });
+
+        var tdpRatingSpec = specs.FirstOrDefault(s => s.Code == "cooler_tdp_rating");
+        if (tdpRatingSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = tdpRatingSpec.Id, NumberValue = tdpRating });
+
+        var heightSpec = specs.FirstOrDefault(s => s.Code == "cooler_height");
+        if (heightSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = heightSpec.Id, NumberValue = height });
+    }
+
+    private static async Task InitKeyboardProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var keyboardCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Bàn phím")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Bàn phím");
+
+        var keyboardSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == keyboardCategory.Id)
+            .ToListAsync();
+
+        // Load keyboard brands
+        var logitechBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Logitech")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Logitech");
+        var razerBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Razer")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Razer");
+        var corsairBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Corsair")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Corsair");
+        var steelSeriesBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "SteelSeries")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu SteelSeries");
+        var duckyBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Ducky")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Ducky");
+        var keychronBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Keychron")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Keychron");
+        var akkoBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Akko")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Akko");
+        var gloriousBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Glorious")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Glorious");
+        var wootingBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Wooting")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Wooting");
+        var leopoldBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Leopold")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Leopold");
+
+        // ============= HIGH-END GAMING KEYBOARDS =============
+
+        // Wooting 60HE+
+        var wooting60HEId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = wooting60HEId,
+            Name = "Wooting 60HE+",
+            Sku = "KB-WOOTING-60HE-PLUS",
+            CategoryId = keyboardCategory.Id,
+            BrandId = wootingBrand.Id,
+            Price = 4500000,
+            Stock = 15,
+            Description = "Bàn phím cơ Wooting 60HE+ với công nghệ Analog Hall Effect switches. Rapid Trigger với actuation point tùy chỉnh 0.1-4.0mm. Layout 60%, hot-swappable, được pro players tin dùng cho FPS games.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, wooting60HEId, kbType: "Hall Effect", kbSwitch: "Lekker Switch", layout: "60%", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = wooting60HEId, ImageUrl = "https://wooting.io/images/wooting-60he-plus.png" });
+
+        // Razer Huntsman V3 Pro
+        var razerHuntsmanV3ProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = razerHuntsmanV3ProId,
+            Name = "Razer Huntsman V3 Pro",
+            Sku = "KB-RAZER-HUNTSMAN-V3-PRO",
+            CategoryId = keyboardCategory.Id,
+            BrandId = razerBrand.Id,
+            Price = 5500000,
+            Stock = 20,
+            Description = "Bàn phím cơ Razer Huntsman V3 Pro với Analog Optical Switches Gen-2. Rapid Trigger và Adjustable Actuation. Layout TKL, magnetic wrist rest, Razer Chroma RGB. Thiết kế premium cho gaming đỉnh cao.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, razerHuntsmanV3ProId, kbType: "Quang học", kbSwitch: "Razer Analog Optical Gen-2", layout: "TKL", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = razerHuntsmanV3ProId, ImageUrl = "https://assets2.razerzone.com/images/pnx.assets/381e015fdc715eb63c822dea65c84b3e/razer-huntsman-v3-pro-usp-desktop.webp" });
+
+        // Logitech G Pro X TKL Lightspeed
+        var logitechGProXTKLId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = logitechGProXTKLId,
+            Name = "Logitech G Pro X TKL Lightspeed",
+            Sku = "KB-LOGITECH-G-PRO-X-TKL",
+            CategoryId = keyboardCategory.Id,
+            BrandId = logitechBrand.Id,
+            Price = 4800000,
+            Stock = 25,
+            Description = "Bàn phím cơ Logitech G Pro X TKL Lightspeed không dây với GX switches hot-swappable. Kết nối Lightspeed 2.4GHz và Bluetooth. Layout TKL, LIGHTSYNC RGB, thiết kế dành cho esports professionals.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, logitechGProXTKLId, kbType: "Cơ học", kbSwitch: "GX Brown Tactile", layout: "TKL", connection: "Lightspeed 2.4GHz, Bluetooth, USB-C", rgb: true);
+        productImages.Add(new ProductImage { ProductId = logitechGProXTKLId, ImageUrl = "https://resource.logitechg.com/w_1000,c_limit,q_auto,f_auto,dpr_auto/d_transparent.gif/content/dam/gaming/en/products/pro-x-tkl/gallery/pro-x-tkl-gallery-1-black.png" });
+
+        // ============= MID-RANGE MECHANICAL KEYBOARDS =============
+
+        // Ducky One 3 TKL
+        var duckyOne3TKLId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = duckyOne3TKLId,
+            Name = "Ducky One 3 TKL",
+            Sku = "KB-DUCKY-ONE-3-TKL",
+            CategoryId = keyboardCategory.Id,
+            BrandId = duckyBrand.Id,
+            Price = 3200000,
+            Stock = 30,
+            Description = "Bàn phím cơ Ducky One 3 TKL với thiết kế hot-swappable và QUACK Mechanics. Cherry MX switches, PBT double-shot keycaps. RGB LED, 3 mức góc nghiêng, build quality xuất sắc.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, duckyOne3TKLId, kbType: "Cơ học", kbSwitch: "Cherry MX Brown", layout: "TKL", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = duckyOne3TKLId, ImageUrl = "https://www.duckychannel.com.tw/upload/2022_04_2808/202204280804231909.png" });
+
+        // Keychron Q1 Pro
+        var keychronQ1ProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = keychronQ1ProId,
+            Name = "Keychron Q1 Pro",
+            Sku = "KB-KEYCHRON-Q1-PRO",
+            CategoryId = keyboardCategory.Id,
+            BrandId = keychronBrand.Id,
+            Price = 4200000,
+            Stock = 25,
+            Description = "Bàn phím cơ Keychron Q1 Pro với vỏ nhôm CNC full-metal, gasket mount design. Hỗ trợ Bluetooth 5.1 và USB-C. Layout 75%, hot-swappable, QMK/VIA programmable, south-facing RGB.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, keychronQ1ProId, kbType: "Cơ học", kbSwitch: "Gateron G Pro Brown", layout: "75%", connection: "Bluetooth 5.1, USB-C", rgb: true);
+        productImages.Add(new ProductImage { ProductId = keychronQ1ProId, ImageUrl = "https://www.keychron.com/cdn/shop/files/Keychron-Q1-Pro-QMK-VIA-wireless-custom-mechanical-keyboard-75-layout-full-aluminum-black-frame-for-Mac-Windows-Linux-Gateron-Jupiter-brown-switches.jpg" });
+
+        // Corsair K70 RGB Pro
+        var corsairK70RGBProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairK70RGBProId,
+            Name = "Corsair K70 RGB Pro",
+            Sku = "KB-CORSAIR-K70-RGB-PRO",
+            CategoryId = keyboardCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 3800000,
+            Stock = 35,
+            Description = "Bàn phím cơ Corsair K70 RGB Pro với Cherry MX switches và 8000Hz polling rate. Frame nhôm aircraft-grade, PBT double-shot keycaps. Per-key RGB, iCUE software, dedicated media controls.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, corsairK70RGBProId, kbType: "Cơ học", kbSwitch: "Cherry MX Red", layout: "Full-size", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = corsairK70RGBProId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Keyboards/CH-9109410-NA/Gallery/K70_PRO_01.webp" });
+
+        // SteelSeries Apex Pro TKL
+        var steelSeriesApexProTKLId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = steelSeriesApexProTKLId,
+            Name = "SteelSeries Apex Pro TKL (2023)",
+            Sku = "KB-STEELSERIES-APEX-PRO-TKL-2023",
+            CategoryId = keyboardCategory.Id,
+            BrandId = steelSeriesBrand.Id,
+            Price = 4500000,
+            Stock = 20,
+            Description = "Bàn phím cơ SteelSeries Apex Pro TKL 2023 với OmniPoint 2.0 adjustable switches. Rapid Trigger, actuation 0.2-3.8mm. Layout TKL, OLED smart display, aircraft-grade aluminum frame.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, steelSeriesApexProTKLId, kbType: "Magnetic Hall Effect", kbSwitch: "OmniPoint 2.0", layout: "TKL", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = steelSeriesApexProTKLId, ImageUrl = "https://media.steelseriescdn.com/thumbs/catalog/items/64856/fd0a854055f845dfb69dd8e70de90b82.png.1920x1080_q100_format-png_optimize-medium.png" });
+
+        // ============= BUDGET MECHANICAL KEYBOARDS =============
+
+        // Akko 3098B Plus
+        var akko3098BPlusId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = akko3098BPlusId,
+            Name = "Akko 3098B Plus Multi-Mode",
+            Sku = "KB-AKKO-3098B-PLUS",
+            CategoryId = keyboardCategory.Id,
+            BrandId = akkoBrand.Id,
+            Price = 1800000,
+            Stock = 50,
+            Description = "Bàn phím cơ Akko 3098B Plus với kết nối 3 chế độ (Bluetooth 5.0, 2.4GHz, USB-C). Layout 1800 compact, Akko CS switches hot-swappable, PBT double-shot keycaps. Giá tốt cho chất lượng cao.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, akko3098BPlusId, kbType: "Cơ học", kbSwitch: "Akko CS Silver", layout: "1800 Compact", connection: "Bluetooth 5.0, 2.4GHz, USB-C", rgb: true);
+        productImages.Add(new ProductImage { ProductId = akko3098BPlusId, ImageUrl = "https://en.akkogear.com/wp-content/uploads/2022/06/3098B-Plus-Black-Gold-01.jpg" });
+
+        // Glorious GMMK 2
+        var gloriousGMMK2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = gloriousGMMK2Id,
+            Name = "Glorious GMMK 2 65%",
+            Sku = "KB-GLORIOUS-GMMK2-65",
+            CategoryId = keyboardCategory.Id,
+            BrandId = gloriousBrand.Id,
+            Price = 2500000,
+            Stock = 40,
+            Description = "Bàn phím cơ Glorious GMMK 2 với layout 65% compact. Pre-lubed Glorious Fox switches, hot-swappable, gasket mounted plate. Rotary encoder, south-facing RGB, ABS doubleshot keycaps.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, gloriousGMMK2Id, kbType: "Cơ học", kbSwitch: "Glorious Fox Linear", layout: "65%", connection: "USB-C có dây", rgb: true);
+        productImages.Add(new ProductImage { ProductId = gloriousGMMK2Id, ImageUrl = "https://cdn.shopify.com/s/files/1/0549/2681/files/GMMK2_65_Black_001_720x.png" });
+
+        // Leopold FC660M
+        var leopoldFC660MId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = leopoldFC660MId,
+            Name = "Leopold FC660M PD",
+            Sku = "KB-LEOPOLD-FC660M-PD",
+            CategoryId = keyboardCategory.Id,
+            BrandId = leopoldBrand.Id,
+            Price = 2800000,
+            Stock = 25,
+            Description = "Bàn phím cơ Leopold FC660M PD với build quality huyền thoại từ Hàn Quốc. Cherry MX switches, PBT double-shot keycaps. Layout 65% compact, thiết kế minimalist không RGB, sound dampening foam.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddKeyboardSpecs(specValues, keyboardSpecs, leopoldFC660MId, kbType: "Cơ học", kbSwitch: "Cherry MX Silent Red", layout: "65%", connection: "USB-C có dây", rgb: false);
+        productImages.Add(new ProductImage { ProductId = leopoldFC660MId, ImageUrl = "https://mechanicalkeyboards.com/shop/images/products/large_FC660MPD_BTPD_1.png" });
+    }
+
+    private static void AddKeyboardSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string kbType, string kbSwitch, string layout, string connection, bool rgb)
+    {
+        var kbTypeSpec = specs.FirstOrDefault(s => s.Code == "kb_type");
+        if (kbTypeSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = kbTypeSpec.Id, TextValue = kbType });
+
+        var kbSwitchSpec = specs.FirstOrDefault(s => s.Code == "kb_switch");
+        if (kbSwitchSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = kbSwitchSpec.Id, TextValue = kbSwitch });
+
+        var layoutSpec = specs.FirstOrDefault(s => s.Code == "kb_layout");
+        if (layoutSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = layoutSpec.Id, TextValue = layout });
+
+        var connectionSpec = specs.FirstOrDefault(s => s.Code == "kb_connection");
+        if (connectionSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = connectionSpec.Id, TextValue = connection });
+
+        var rgbSpec = specs.FirstOrDefault(s => s.Code == "kb_rgb");
+        if (rgbSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = rgbSpec.Id, BoolValue = rgb });
+    }
+
+    private static async Task InitMouseProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var mouseCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Chuột")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Chuột");
+
+        var mouseSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == mouseCategory.Id)
+            .ToListAsync();
+
+        // Load mouse brands
+        var logitechBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Logitech")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Logitech");
+        var razerBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Razer")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Razer");
+        var pulsarBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Pulsar")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Pulsar");
+        var finalmouseBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Finalmouse")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Finalmouse");
+        var lamzuBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Lamzu")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Lamzu");
+        var zowieBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Zowie")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Zowie");
+        var steelSeriesBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "SteelSeries")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu SteelSeries");
+        var gloriousBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Glorious")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Glorious");
+        var endgameGearBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Endgame Gear")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Endgame Gear");
+        var vaxeeBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Vaxee")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Vaxee");
+
+        // ============= HIGH-END WIRELESS GAMING MICE =============
+
+        // Logitech G Pro X Superlight 2
+        var logitechGProXSuperlight2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = logitechGProXSuperlight2Id,
+            Name = "Logitech G Pro X Superlight 2",
+            Sku = "MOUSE-LOGITECH-GPX-SL2",
+            CategoryId = mouseCategory.Id,
+            BrandId = logitechBrand.Id,
+            Price = 3500000,
+            Stock = 30,
+            Description = "Chuột gaming không dây Logitech G Pro X Superlight 2 với cảm biến HERO 2 32K. Trọng lượng chỉ 60g, kết nối Lightspeed 2.4GHz polling rate 8000Hz. Được pro players tin dùng cho FPS esports.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, logitechGProXSuperlight2Id, sensor: "HERO 2 32K", dpi: 32000, connection: "Lightspeed 2.4GHz", weight: 60, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = logitechGProXSuperlight2Id, ImageUrl = "https://resource.logitechg.com/w_1000,c_limit,q_auto,f_auto,dpr_auto/d_transparent.gif/content/dam/gaming/en/products/pro-x-superlight-2/gallery/pro-x-superlight-2-gallery-1-black.png" });
+
+        // Razer DeathAdder V3 Pro
+        var razerDeathAdderV3ProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = razerDeathAdderV3ProId,
+            Name = "Razer DeathAdder V3 Pro",
+            Sku = "MOUSE-RAZER-DAV3-PRO",
+            CategoryId = mouseCategory.Id,
+            BrandId = razerBrand.Id,
+            Price = 3200000,
+            Stock = 35,
+            Description = "Chuột gaming không dây Razer DeathAdder V3 Pro với thiết kế ergonomic huyền thoại. Cảm biến Focus Pro 30K, trọng lượng 63g, HyperSpeed Wireless. Optical switches Gen-3, pin 90 giờ.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, razerDeathAdderV3ProId, sensor: "Focus Pro 30K", dpi: 30000, connection: "HyperSpeed 2.4GHz", weight: 63, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = razerDeathAdderV3ProId, ImageUrl = "https://assets2.razerzone.com/images/pnx.assets/c2f6e1c29e2e5b4ec1c1f1f1f1f1f1f1/razer-deathadder-v3-pro-hero-desktop.webp" });
+
+        // Pulsar X2 Wireless
+        var pulsarX2WirelessId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = pulsarX2WirelessId,
+            Name = "Pulsar X2 Wireless",
+            Sku = "MOUSE-PULSAR-X2-WIRELESS",
+            CategoryId = mouseCategory.Id,
+            BrandId = pulsarBrand.Id,
+            Price = 2800000,
+            Stock = 40,
+            Description = "Chuột gaming không dây Pulsar X2 với thiết kế symmetrical mini. Cảm biến PAW3395, trọng lượng siêu nhẹ 52g, 4K polling rate. Được thiết kế với input từ pro players, encoder Kailh.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, pulsarX2WirelessId, sensor: "PixArt PAW3395", dpi: 26000, connection: "2.4GHz Wireless", weight: 52, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = pulsarX2WirelessId, ImageUrl = "https://www.pulsar.gg/cdn/shop/files/X2_Black_Top.png" });
+
+        // Finalmouse UltralightX
+        var finalmouseUltralightXId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = finalmouseUltralightXId,
+            Name = "Finalmouse UltralightX",
+            Sku = "MOUSE-FINALMOUSE-ULX",
+            CategoryId = mouseCategory.Id,
+            BrandId = finalmouseBrand.Id,
+            Price = 5500000,
+            Stock = 15,
+            Description = "Chuột gaming không dây Finalmouse UltralightX với trọng lượng cực nhẹ chỉ 29g. Cảm biến Finalsensor, thiết kế magnesium alloy. 8000Hz polling rate, limited edition cho enthusiasts.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, finalmouseUltralightXId, sensor: "Finalsensor", dpi: 32000, connection: "2.4GHz Wireless", weight: 29, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = finalmouseUltralightXId, ImageUrl = "https://finalmouse.com/images/ultralightx.png" });
+
+        // Lamzu Atlantis Mini Pro
+        var lamzuAtlantisMiniProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = lamzuAtlantisMiniProId,
+            Name = "Lamzu Atlantis Mini Pro",
+            Sku = "MOUSE-LAMZU-ATLANTIS-MINI-PRO",
+            CategoryId = mouseCategory.Id,
+            BrandId = lamzuBrand.Id,
+            Price = 2500000,
+            Stock = 45,
+            Description = "Chuột gaming không dây Lamzu Atlantis Mini Pro với thiết kế nhỏ gọn cho cầm fingertip/claw. Cảm biến PAW3395, trọng lượng 49g, 4K polling rate. Build quality cao với giá hợp lý.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, lamzuAtlantisMiniProId, sensor: "PixArt PAW3395", dpi: 26000, connection: "2.4GHz Wireless", weight: 49, buttons: 6);
+        productImages.Add(new ProductImage { ProductId = lamzuAtlantisMiniProId, ImageUrl = "https://lamzu.com/cdn/shop/files/AtlantisMiniPro_Black_1.png" });
+
+        // ============= ESPORTS WIRELESS MICE =============
+
+        // Zowie EC2-CW
+        var zowieEC2CWId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = zowieEC2CWId,
+            Name = "Zowie EC2-CW",
+            Sku = "MOUSE-ZOWIE-EC2-CW",
+            CategoryId = mouseCategory.Id,
+            BrandId = zowieBrand.Id,
+            Price = 2800000,
+            Stock = 35,
+            Description = "Chuột gaming không dây Zowie EC2-CW với thiết kế ergonomic được CS pro players yêu thích. Cảm biến 3370, trọng lượng 77g, 24-step scroll wheel. Không RGB, tập trung vào performance.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, zowieEC2CWId, sensor: "PixArt 3370", dpi: 3200, connection: "2.4GHz Wireless", weight: 77, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = zowieEC2CWId, ImageUrl = "https://zowie.benq.com/content/dam/game/en/product/mouse/ec2-cw/gallery/ec2-cw-top.png" });
+
+        // SteelSeries Prime Wireless
+        var steelSeriesPrimeWirelessId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = steelSeriesPrimeWirelessId,
+            Name = "SteelSeries Prime Wireless",
+            Sku = "MOUSE-STEELSERIES-PRIME-WIRELESS",
+            CategoryId = mouseCategory.Id,
+            BrandId = steelSeriesBrand.Id,
+            Price = 2200000,
+            Stock = 40,
+            Description = "Chuột gaming không dây SteelSeries Prime Wireless với thiết kế cùng pro players. Cảm biến TrueMove Air, Prestige OM switches 100M clicks, trọng lượng 80g. Quantum 2.0 wireless.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, steelSeriesPrimeWirelessId, sensor: "TrueMove Air", dpi: 18000, connection: "Quantum 2.0 Wireless", weight: 80, buttons: 6);
+        productImages.Add(new ProductImage { ProductId = steelSeriesPrimeWirelessId, ImageUrl = "https://media.steelseriescdn.com/thumbs/catalog/items/62593/b0c9d8b0dbae4c9e85c5c7a6a0b0b0b0.png.1920x1080_q100_format-png_optimize-medium.png" });
+
+        // ============= MID-RANGE GAMING MICE =============
+
+        // Glorious Model O 2 Wireless
+        var gloriousModelO2WirelessId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = gloriousModelO2WirelessId,
+            Name = "Glorious Model O 2 Wireless",
+            Sku = "MOUSE-GLORIOUS-MODEL-O2-WIRELESS",
+            CategoryId = mouseCategory.Id,
+            BrandId = gloriousBrand.Id,
+            Price = 2000000,
+            Stock = 50,
+            Description = "Chuột gaming không dây Glorious Model O 2 với thiết kế ambidextrous nhẹ. Cảm biến BAMF 2.0 26K, trọng lượng 68g, 4K polling rate. Glorious switches, RGB underglow, giá cạnh tranh.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, gloriousModelO2WirelessId, sensor: "BAMF 2.0 26K", dpi: 26000, connection: "2.4GHz Wireless, Bluetooth", weight: 68, buttons: 6);
+        productImages.Add(new ProductImage { ProductId = gloriousModelO2WirelessId, ImageUrl = "https://cdn.shopify.com/s/files/1/0549/2681/files/Model-O-2-Wireless-Black-Top_720x.png" });
+
+        // Endgame Gear OP1we
+        var endgameGearOP1weId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = endgameGearOP1weId,
+            Name = "Endgame Gear OP1we",
+            Sku = "MOUSE-ENDGAMEGEAR-OP1WE",
+            CategoryId = mouseCategory.Id,
+            BrandId = endgameGearBrand.Id,
+            Price = 2300000,
+            Stock = 35,
+            Description = "Chuột gaming không dây Endgame Gear OP1we với thiết kế egg-shape compact. Cảm biến PAW3395, trọng lượng 59g, Kailh 8.0 switches. 4K polling rate, build quality Đức.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, endgameGearOP1weId, sensor: "PixArt PAW3395", dpi: 26000, connection: "2.4GHz Wireless", weight: 59, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = endgameGearOP1weId, ImageUrl = "https://www.endgamegear.com/media/image/product/3264/lg/endgame-gear-op1we-wireless-gaming-mouse-black.png" });
+
+        // Vaxee XE Wireless
+        var vaxeeXEWirelessId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = vaxeeXEWirelessId,
+            Name = "Vaxee XE Wireless",
+            Sku = "MOUSE-VAXEE-XE-WIRELESS",
+            CategoryId = mouseCategory.Id,
+            BrandId = vaxeeBrand.Id,
+            Price = 2600000,
+            Stock = 30,
+            Description = "Chuột gaming không dây Vaxee XE với thiết kế ergonomic medium size. Cảm biến PAW3395, trọng lượng 70g, Huano blue shell switches. Thiết kế từ Đài Loan với input từ pro players.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddMouseSpecs(specValues, mouseSpecs, vaxeeXEWirelessId, sensor: "PixArt PAW3395", dpi: 26000, connection: "2.4GHz Wireless", weight: 70, buttons: 5);
+        productImages.Add(new ProductImage { ProductId = vaxeeXEWirelessId, ImageUrl = "https://vaxee.co/upload/images/202310/XE_Wireless_Black_top.png" });
+    }
+
+    private static void AddMouseSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string sensor, int dpi, string connection, int weight, int buttons)
+    {
+        var sensorSpec = specs.FirstOrDefault(s => s.Code == "mouse_sensor");
+        if (sensorSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = sensorSpec.Id, TextValue = sensor });
+
+        var dpiSpec = specs.FirstOrDefault(s => s.Code == "mouse_dpi");
+        if (dpiSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = dpiSpec.Id, NumberValue = dpi });
+
+        var connectionSpec = specs.FirstOrDefault(s => s.Code == "mouse_connection");
+        if (connectionSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = connectionSpec.Id, TextValue = connection });
+
+        var weightSpec = specs.FirstOrDefault(s => s.Code == "mouse_weight");
+        if (weightSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = weightSpec.Id, NumberValue = weight });
+
+        var buttonsSpec = specs.FirstOrDefault(s => s.Code == "mouse_buttons");
+        if (buttonsSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = buttonsSpec.Id, NumberValue = buttons });
     }
 }
