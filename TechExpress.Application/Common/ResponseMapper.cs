@@ -1,3 +1,4 @@
+using Microsoft.Identity.Client;
 using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
@@ -178,6 +179,35 @@ public class ResponseMapper
             PageSize = productPagination.PageSize,
             TotalCount = productPagination.TotalCount
         };
+    }
+
+    public static List<ProductListResponse> MapToProductListResponsesFromProducts(List<Product> products)
+    {
+        var productResponses = products.Select(product =>
+            {
+                var firstImageUrl = product.Images
+                    .OrderBy(i => i.Id)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault();
+
+                return new ProductListResponse(
+                    product.Id,
+                    product.Name,
+                    product.Sku,
+                    product.CategoryId,
+                    product.BrandId,
+                    product.Category?.Name ?? string.Empty,
+                    product.Price,
+                    product.Stock,
+                    product.WarrantyMonth,
+                    product.Status,
+                    firstImageUrl,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
+            })
+            .ToList();
+        return productResponses;
     }
 
     public static ProductDetailResponse MapToProductDetailResponseFromProduct(Product product)

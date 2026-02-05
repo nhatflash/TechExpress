@@ -125,13 +125,14 @@ namespace TechExpress.Repository.Repositories
             await _context.Products.AddAsync(product);
         }
 
-        public async Task<Product?> FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(Guid id)
+        public async Task<Product?> FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(Guid id)
         {
             return await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Images)
                 .Include(p => p.SpecValues)
                     .ThenInclude(sv => sv.SpecDefinition)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -197,6 +198,20 @@ namespace TechExpress.Repository.Repositories
         public async Task<bool> ExistsByNameExcludingProductIdAsync(string name, Guid excludingId)
         {
             return await _context.Products.AnyAsync(p => p.Name == name && p.Id != excludingId);
+        }
+
+        public async Task<List<Product>> FindAvailableNewProducts(int number)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Images)
+                .Include(p => p.SpecValues)
+                    .ThenInclude(sv => sv.SpecDefinition)
+                .AsSplitQuery()
+                .Where(p => p.Status == ProductStatus.Available)
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(number)
+                .ToListAsync();
         }
 
     }

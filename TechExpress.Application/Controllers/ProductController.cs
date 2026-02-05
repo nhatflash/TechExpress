@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
@@ -66,7 +67,7 @@ namespace TechExpress.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ApiResponse<ProductListResponse>>> CreateProduct([FromBody] CreateProductRequest request)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
         {
             var specValueCmds = RequestMapper.MapToCreateProductSpecValueCommandsFromRequests(request.SpecValues);
 
@@ -91,7 +92,7 @@ namespace TechExpress.Application.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ApiResponse<ProductDetailResponse>>> UpdateProduct(
+        public async Task<IActionResult> UpdateProduct(
         Guid id,
         [FromBody] UpdateProductRequest request)
         {
@@ -118,7 +119,7 @@ namespace TechExpress.Application.Controllers
 
         [HttpPut("images")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ApiResponse<ProductDetailResponse>>> UpdateProductImages(
+        public async Task<IActionResult> UpdateProductImages(
             [FromBody] UpdateProductImagesRequest request)
         {
             var updated = await _serviceProvider.ProductService.HandleReplaceProductImagesAsync(
@@ -140,6 +141,17 @@ namespace TechExpress.Application.Controllers
         }
 
 
+        [HttpGet("ui-latest")]
+        public async Task<IActionResult> GetUiNewProducts([FromQuery] int number)
+        {
+            if (number <= 0 || number > 30)
+            {
+                return BadRequest("Số lượng sản phẩm mới ra mắt không được vượt quá 30 và dưới 1.");
+            }
+            var products = await _serviceProvider.ProductService.HandleGetUiNewProductsAsync(number);
+            var response = ResponseMapper.MapToProductListResponsesFromProducts(products);
+            return Ok(ApiResponse<List<ProductListResponse>>.OkResponse(response));
+        }
 
 
 

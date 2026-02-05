@@ -27,7 +27,7 @@ namespace TechExpress.Service.Services
 
         public async Task<Product> HandleGetProductDetailAsync(Guid productId)
         {
-            var product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(productId)
+            var product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(productId)
                 ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
             return product;
@@ -150,7 +150,7 @@ namespace TechExpress.Service.Services
             await _unitOfWork.ProductRepository.AddProductAsync(product);
             await _unitOfWork.SaveChangesAsync();;
 
-            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
+            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
 
             return product;
         }
@@ -283,7 +283,7 @@ namespace TechExpress.Service.Services
             product.UpdatedAt = DateTimeOffset.Now;
             await _unitOfWork.SaveChangesAsync();
 
-            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
+            product = await _unitOfWork.ProductRepository.FindByIdIncludeCategoryAndImagesAndSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(product.Id) ?? throw new NotFoundException($"Không tìm thấy sản phẩm đã tạo xong");
 
             return product;
         }
@@ -454,6 +454,11 @@ namespace TechExpress.Service.Services
                     }
                 }
             }
+        }
+
+        public async Task<List<Product>> HandleGetUiNewProductsAsync(int number)
+        {
+            return await _unitOfWork.ProductRepository.FindAvailableNewProducts(number);
         }
     }
 
