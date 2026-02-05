@@ -458,7 +458,7 @@ namespace TechExpress.Service.Services
 
         public async Task<List<Product>> HandleGetUiNewProductsAsync(int number)
         {
-            return await _unitOfWork.ProductRepository.FindAvailableNewProducts(number);
+            return await _unitOfWork.ProductRepository.FindAvailableNewProductsIncludeCategoryIncludeImagesIncludeSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(number);
         }
     }
 

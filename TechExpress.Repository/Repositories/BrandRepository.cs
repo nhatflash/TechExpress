@@ -81,16 +81,6 @@ public class BrandRepository
         return await _context.Brands.AnyAsync(b => b.Name == name && b.Id != excludeId);
     }
 
-    public async Task<bool> HasRelatedProductsAsync(Guid brandId)
-    {
-        return await _context.Products.AnyAsync(p => p.BrandId == brandId);
-    }
-
-    public async Task<bool> HasRelatedBrandCategoriesAsync(Guid brandId)
-    {
-        return await _context.BrandCategories.AnyAsync(bc => bc.BrandId == brandId);
-    }
-
     public async Task<bool> ExistsByIdAsync(Guid id)
     {
         return await _context.Brands.AnyAsync(b => b.Id == id);

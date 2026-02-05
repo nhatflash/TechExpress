@@ -200,7 +200,7 @@ namespace TechExpress.Repository.Repositories
             return await _context.Products.AnyAsync(p => p.Name == name && p.Id != excludingId);
         }
 
-        public async Task<List<Product>> FindAvailableNewProducts(int number)
+        public async Task<List<Product>> FindAvailableNewProductsIncludeCategoryIncludeImagesIncludeSpecValuesThenIncludeSpecDefinitionWithSplitQueryAsync(int number)
         {
             return await _context.Products
                 .Include(p => p.Category)
