@@ -23,7 +23,7 @@ public static class SpecDefinitionsInitializer
         var storageId = categories.First(c => c.Name == "Ổ cứng").Id;
         var caseId = categories.First(c => c.Name == "Vỏ máy tính").Id;
         var coolerId = categories.First(c => c.Name == "Tản nhiệt CPU").Id;
-        var laptopId = categories.First(c => c.Name == "Laptop").Id;
+        var laptopId = categories.First(c => c.Name == "Laptop Gaming").Id;
         var keyboardId = categories.First(c => c.Name == "Bàn phím").Id;
         var mouseId = categories.First(c => c.Name == "Chuột").Id;
         var headsetId = categories.First(c => c.Name == "Tai nghe").Id;
