@@ -1,3 +1,4 @@
+﻿using Microsoft.Identity.Client;
 using System;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
@@ -180,6 +181,35 @@ public class ResponseMapper
         };
     }
 
+    public static List<ProductListResponse> MapToProductListResponsesFromProducts(List<Product> products)
+    {
+        var productResponses = products.Select(product =>
+            {
+                var firstImageUrl = product.Images
+                    .OrderBy(i => i.Id)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault();
+
+                return new ProductListResponse(
+                    product.Id,
+                    product.Name,
+                    product.Sku,
+                    product.CategoryId,
+                    product.BrandId,
+                    product.Category?.Name ?? string.Empty,
+                    product.Price,
+                    product.Stock,
+                    product.WarrantyMonth,
+                    product.Status,
+                    firstImageUrl,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
+            })
+            .ToList();
+        return productResponses;
+    }
+
     public static ProductDetailResponse MapToProductDetailResponseFromProduct(Product product)
     {
         var thumbnailUrl = product.Images
@@ -312,9 +342,6 @@ public class ResponseMapper
                 ProductImage = item.Product?.Images?.OrderBy(img => img.Id).FirstOrDefault()?.ImageUrl,
                 Quantity = item.Quantity,
                 UnitPrice = item.UnitPrice,
-                SubTotal = item.Quantity * item.UnitPrice,
-                AvailableStock = item.Product?.Stock ?? 0,
-                ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
                 CreatedAt = item.CreatedAt,
                 UpdatedAt = item.UpdatedAt
             })
@@ -324,8 +351,6 @@ public class ResponseMapper
         {
             Id = cart.Id,
             UserId = cart.UserId,
-            Status = cart.Status,
-            TotalPrice = cart.TotalPrice,
             TotalItems = cart.Items.Sum(i => i.Quantity),
             Items = itemResponses,
             CreatedAt = cart.CreatedAt,

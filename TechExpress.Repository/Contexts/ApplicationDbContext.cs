@@ -474,16 +474,6 @@ namespace TechExpress.Repository.Contexts
                     .HasColumnName("user_id")
                     .IsRequired();
 
-                ct.Property(c => c.Status)
-                    .HasColumnName("status")
-                    .HasConversion<string>()
-                    .IsRequired();
-                
-                ct.Property(c => c.TotalPrice)
-                    .HasColumnName("total_price")
-                    .HasPrecision(18, 2)
-                    .IsRequired();
-
                 ct.Property(c => c.CreatedAt)
                     .HasColumnName("created_at")
                     .IsRequired();

@@ -16,27 +16,67 @@ namespace TechExpress.Repository.Repositories
             _context = context;
         }
 
-        public async Task<Cart?> FindActiveCartByUserIdAsync(Guid userId)
+        public async Task<Cart?> FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithTrackingAndSplitQueryAsync(Guid userId)
         {
             return await _context.Carts
                 .AsTracking()
                 .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.Images)
-                .FirstOrDefaultAsync(c => c.UserId == userId && c.Status == CartStatus.Active);
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
-        public async Task<Cart?> FindActiveCartByUserIdNoTrackingAsync(Guid userId)
+        public async Task<Cart?> FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithTrackingAsync(Guid userId)
         {
             return await _context.Carts
-                .AsNoTracking()
+                .AsTracking()
                 .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.Images)
-                .FirstOrDefaultAsync(c => c.UserId == userId && c.Status == CartStatus.Active);
+                .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
-        public async Task<Cart?> FindCartByIdAsync(Guid cartId)
+        public async Task<Cart?> FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(Guid userId)
+        {
+            return await _context.Carts
+                .Include(c => c.Items)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.Images)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesAsync(Guid userId)
+        {
+            return await _context.Carts
+                .Include(c => c.Items)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.Images)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByUserIdAsync(Guid userId)
+        {
+            return await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByUserIdWithTrackingAsync(Guid userId)
+        {
+            return await _context.Carts.AsTracking().FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByUserIdIncludeItemsWithTrackingAndSplitQueryAsync(Guid userId)
+        {
+            return await _context.Carts.AsTracking().Include(c => c.Items).AsSplitQuery().FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByUserIdIncludeItemsWithTrackingAsync(Guid userId)
+        {
+            return await _context.Carts.AsTracking().Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<Cart?> FindCartByIdIncludeItemsThenIncludeProductThenIncludeImagesWithtrackingAsync(Guid cartId)
         {
             return await _context.Carts
                 .AsTracking()
@@ -46,39 +86,15 @@ namespace TechExpress.Repository.Repositories
                 .FirstOrDefaultAsync(c => c.Id == cartId);
         }
 
+        public async Task<Cart?> FindCartByIdAsync(Guid cartId)
+        {
+            return await _context.Carts.FirstOrDefaultAsync(c => c.Id == cartId);
+        }
+
         public async Task AddCartAsync(Cart cart)
         {
             await _context.Carts.AddAsync(cart);
         }
 
-        public async Task<CartItem?> FindCartItemByCartIdAndProductIdAsync(Guid cartId, Guid productId)
-        {
-            return await _context.CartItems
-                .AsTracking()
-                .FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId);
-        }
-
-        public async Task<CartItem?> FindCartItemByIdAsync(Guid cartItemId)
-        {
-            return await _context.CartItems
-                .AsTracking()
-                .Include(ci => ci.Product)
-                .FirstOrDefaultAsync(ci => ci.Id == cartItemId);
-        }
-
-        public async Task AddCartItemAsync(CartItem cartItem)
-        {
-            await _context.CartItems.AddAsync(cartItem);
-        }
-
-        public void RemoveCartItem(CartItem cartItem)
-        {
-            _context.CartItems.Remove(cartItem);
-        }
-
-        public void ClearCartItems(Cart cart)
-        {
-            _context.CartItems.RemoveRange(cart.Items);
-        }
     }
 }

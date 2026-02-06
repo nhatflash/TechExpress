@@ -1,8 +1,4 @@
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
 using TechExpress.Repository.Contexts;
 using TechExpress.Repository.Repositories;
 
@@ -20,6 +16,7 @@ namespace TechExpress.Repository
         public ProductSpecValueRepository ProductSpecValueRepository { get; }
         public BrandRepository BrandRepository { get; }
         public CartRepository CartRepository { get; }
+        public CartItemRepository CartItemRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -33,6 +30,7 @@ namespace TechExpress.Repository
             ProductSpecValueRepository = new ProductSpecValueRepository(context);
             BrandRepository = new BrandRepository(context);
             CartRepository = new CartRepository(context);
+            CartItemRepository = new CartItemRepository(context);
         }
 
         public async Task SaveChangesAsync()
