@@ -10,9 +10,7 @@ public static class CategoryNameConstant
 
     public const string WorkstationPc = "PC Workstation";
 
-    public const string GamingLaptop = "Laptop Gaming";
-
-    public const string OfficeLaptop = "Laptop văn phòng";
+    public const string Laptop = "Máy tính xách tay";
 
     public const string PcComponent = "Linh kiện PC";
 

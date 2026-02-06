@@ -14,7 +14,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.Contexts;
 using TechExpress.Service;
 using TechExpress.Service.Contexts;
-using TechExpress.Service.Tasks;
+using TechExpress.Service.Initializers;
 using TechExpress.Service.Utils;
 
 var builder = WebApplication.CreateBuilder(args);

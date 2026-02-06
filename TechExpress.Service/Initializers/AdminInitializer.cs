@@ -8,7 +8,7 @@ using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 using TechExpress.Service.Utils;
 
-namespace TechExpress.Service.Tasks;
+namespace TechExpress.Service.Initializers;
 
 public class AdminInitializer : IHostedService
 {

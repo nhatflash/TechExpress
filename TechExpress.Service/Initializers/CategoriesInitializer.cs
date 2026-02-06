@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using TechExpress.Repository.Contexts;
 using TechExpress.Repository.Models;
 
-namespace TechExpress.Service.Tasks;
+namespace TechExpress.Service.Initializers;
 
 public static class CategoriesInitializer
 {
@@ -41,22 +41,13 @@ public static class CategoriesInitializer
             Description = "Máy tính trạm, server",
             IsDeleted = false,
         };
-        var gamingLaptop = new Category
+        var laptop = new Category
         {
             Id = Guid.NewGuid(),
-            Name = "Laptop Gaming",
+            Name = "Máy tính xách tay",
             ImageUrl = "https://www.tncstore.vn/media/product/250-8011-rix-g15-g513rm-hq055w-r7-6800h_080ec72734354979939d6d686704b6a7_master_e71b36a5698447f98ff737a2cc12f.jpg",
             ParentCategoryId = null,
             Description = "Máy tính xách tay chuyên chơi game",
-            IsDeleted = false,
-        };
-        var officeLaptop = new Category
-        {
-            Id = Guid.NewGuid(),
-            Name = "Laptop văn phòng",
-            ImageUrl = "https://maytinhanphat.vn/img/image/tin/586/6-laptop-van-phong-13-inch-mong-nhe-va-duoc-ua-thich-nhat-hien-nay-3.png",
-            ParentCategoryId = null,
-            Description = "Máy tính xách tay chuyên làm việc",
             IsDeleted = false,
         };
         
@@ -272,7 +263,7 @@ public static class CategoriesInitializer
         };
 
         context.Categories.AddRange(
-            gamingPc, officePc, workstationPc, gamingLaptop, officeLaptop,
+            gamingPc, officePc, workstationPc, laptop,
             pcComponents, cpu, motherboard, ram, gpu, psu, storage, pcCase, cpuCooler,
             accessories, keyboard, mouse, headset, monitor, webcam, speaker, mousepad,
             networkDevice, externalStorage, ups, caseFan, cable, gamingChair

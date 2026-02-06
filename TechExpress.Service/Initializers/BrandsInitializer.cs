@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TechExpress.Repository.Contexts;
 using TechExpress.Repository.Models;
 
-namespace TechExpress.Service.Tasks;
+namespace TechExpress.Service.Initializers;
 
 public static class BrandsInitializer
 {

@@ -5,7 +5,7 @@ using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
 
-namespace TechExpress.Service.Tasks;
+namespace TechExpress.Service.Initializers;
 
 public static class ProductsInitializer
 {
@@ -48,6 +48,9 @@ public static class ProductsInitializer
 
         // ============= MOUSE PRODUCTS =============
         await InitMouseProducts(context, allSpecValues, allProductImages);
+
+        // ============= HEADSET PRODUCTS =============
+        await InitHeadsetProducts(context, allSpecValues, allProductImages);
 
         context.ProductSpecValues.AddRange(allSpecValues);
         context.ProductImages.AddRange(allProductImages);
@@ -3355,5 +3358,241 @@ public static class ProductsInitializer
 
         var buttonsSpec = specs.FirstOrDefault(s => s.Code == "mouse_buttons");
         if (buttonsSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = buttonsSpec.Id, NumberValue = buttons });
+    }
+
+    private static async Task InitHeadsetProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
+    {
+        var headsetCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Tai nghe")
+            ?? throw new NotFoundException("Không tìm thấy danh mục Tai nghe");
+
+        var headsetSpecs = await context.SpecDefinitions
+            .Where(s => s.CategoryId == headsetCategory.Id)
+            .ToListAsync();
+
+        // Load headset brands
+        var logitechBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Logitech")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Logitech");
+        var razerBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Razer")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Razer");
+        var steelSeriesBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "SteelSeries")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu SteelSeries");
+        var hyperXBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "HyperX")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu HyperX");
+        var corsairBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Corsair")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Corsair");
+        var sonyBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Sony")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Sony");
+        var sennheiserBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Sennheiser")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Sennheiser");
+        var beyerdynamicBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Beyerdynamic")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Beyerdynamic");
+        var audioTechnicaBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Audio-Technica")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Audio-Technica");
+        var boseBrand = await context.Brands.FirstOrDefaultAsync(b => b.Name == "Bose")
+            ?? throw new NotFoundException("Không tìm thấy thương hiệu Bose");
+
+        // ============= HIGH-END GAMING HEADSETS =============
+
+        // SteelSeries Arctis Nova Pro Wireless
+        var steelSeriesArctisNovaProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = steelSeriesArctisNovaProId,
+            Name = "SteelSeries Arctis Nova Pro Wireless",
+            Sku = "HS-STEELSERIES-ARCTIS-NOVA-PRO-W",
+            CategoryId = headsetCategory.Id,
+            BrandId = steelSeriesBrand.Id,
+            Price = 8500000,
+            Stock = 15,
+            Description = "Tai nghe gaming không dây SteelSeries Arctis Nova Pro với Active Noise Cancellation. Driver Neodymium 40mm cao cấp, hệ thống pin kép hot-swap. Multi-System Connect, DAC tích hợp, micro ClearCast Gen 2 retractable.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, steelSeriesArctisNovaProId, hsType: "Over-ear", driver: 40, connection: "USB 2.4GHz, Bluetooth", microphone: true, noiseCancelling: true);
+        productImages.Add(new ProductImage { ProductId = steelSeriesArctisNovaProId, ImageUrl = "https://media.steelseriescdn.com/thumbs/catalog/items/61520/b3b3b3b3b3b3b3b3.png.1920x1080_q100_format-png_optimize-medium.png" });
+
+        // Logitech G Pro X 2 Lightspeed
+        var logitechGProX2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = logitechGProX2Id,
+            Name = "Logitech G Pro X 2 Lightspeed",
+            Sku = "HS-LOGITECH-G-PRO-X2",
+            CategoryId = headsetCategory.Id,
+            BrandId = logitechBrand.Id,
+            Price = 5500000,
+            Stock = 20,
+            Description = "Tai nghe gaming không dây Logitech G Pro X 2 Lightspeed với driver Graphene 50mm. Kết nối 3 chế độ Lightspeed, Bluetooth, USB-C. Micro detachable với Blue VO!CE technology, DTS Headphone:X 2.0.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, logitechGProX2Id, hsType: "Over-ear", driver: 50, connection: "Lightspeed 2.4GHz, Bluetooth, USB-C", microphone: true, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = logitechGProX2Id, ImageUrl = "https://resource.logitechg.com/w_1000,c_limit,q_auto,f_auto,dpr_auto/d_transparent.gif/content/dam/gaming/en/products/pro-x-2-lightspeed/gallery/pro-x-2-lightspeed-gallery-1-black.png" });
+
+        // Razer BlackShark V2 Pro (2023)
+        var razerBlackSharkV2ProId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = razerBlackSharkV2ProId,
+            Name = "Razer BlackShark V2 Pro (2023)",
+            Sku = "HS-RAZER-BLACKSHARK-V2-PRO-2023",
+            CategoryId = headsetCategory.Id,
+            BrandId = razerBrand.Id,
+            Price = 4500000,
+            Stock = 25,
+            Description = "Tai nghe gaming không dây Razer BlackShark V2 Pro 2023 với TriForce Titanium 50mm drivers. HyperSpeed Wireless, micro detachable HyperClear Super Wideband. THX Spatial Audio, trọng lượng nhẹ 320g.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, razerBlackSharkV2ProId, hsType: "Over-ear", driver: 50, connection: "HyperSpeed 2.4GHz, Bluetooth", microphone: true, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = razerBlackSharkV2ProId, ImageUrl = "https://assets2.razerzone.com/images/pnx.assets/d3d3d3d3d3d3d3d3/razer-blackshark-v2-pro-2023-hero.webp" });
+
+        // ============= MID-RANGE GAMING HEADSETS =============
+
+        // HyperX Cloud III Wireless
+        var hyperXCloud3WirelessId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = hyperXCloud3WirelessId,
+            Name = "HyperX Cloud III Wireless",
+            Sku = "HS-HYPERX-CLOUD-3-WIRELESS",
+            CategoryId = headsetCategory.Id,
+            BrandId = hyperXBrand.Id,
+            Price = 3500000,
+            Stock = 35,
+            Description = "Tai nghe gaming không dây HyperX Cloud III với driver 53mm Angled. DTS Headphone:X Spatial Audio, micro detachable với noise-cancelling. Pin 120 giờ, build quality bền bỉ, đệm tai memory foam.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, hyperXCloud3WirelessId, hsType: "Over-ear", driver: 53, connection: "USB 2.4GHz", microphone: true, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = hyperXCloud3WirelessId, ImageUrl = "https://hyperx.com/cdn/shop/files/hyperx_cloud_iii_wireless_black_1_main.jpg" });
+
+        // Corsair Virtuoso RGB Wireless XT
+        var corsairVirtuosoXTId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = corsairVirtuosoXTId,
+            Name = "Corsair Virtuoso RGB Wireless XT",
+            Sku = "HS-CORSAIR-VIRTUOSO-XT",
+            CategoryId = headsetCategory.Id,
+            BrandId = corsairBrand.Id,
+            Price = 4200000,
+            Stock = 20,
+            Description = "Tai nghe gaming không dây Corsair Virtuoso RGB Wireless XT với driver 50mm Neodymium. Kết nối Slipstream, Bluetooth 5.0, 3.5mm. Vỏ nhôm cao cấp, micro broadcast-grade detachable, Dolby Atmos.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, corsairVirtuosoXTId, hsType: "Over-ear", driver: 50, connection: "Slipstream 2.4GHz, Bluetooth 5.0, 3.5mm", microphone: true, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = corsairVirtuosoXTId, ImageUrl = "https://assets.corsair.com/image/upload/c_pad,q_auto,h_1024,w_1024,f_auto/products/Gaming-Headsets/CA-9011188-NA/Gallery/VIRTUOSO_XT_01.webp" });
+
+        // ============= AUDIOPHILE / HI-FI HEADSETS =============
+
+        // Sony WH-1000XM5
+        var sonyWH1000XM5Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = sonyWH1000XM5Id,
+            Name = "Sony WH-1000XM5",
+            Sku = "HS-SONY-WH1000XM5",
+            CategoryId = headsetCategory.Id,
+            BrandId = sonyBrand.Id,
+            Price = 7500000,
+            Stock = 25,
+            Description = "Tai nghe không dây Sony WH-1000XM5 với chống ồn chủ động hàng đầu thế giới. Driver 30mm tích hợp, 2 chip xử lý V1 + QN1. LDAC Hi-Res Audio, pin 30 giờ, Speak-to-Chat, Multipoint connection.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, sonyWH1000XM5Id, hsType: "Over-ear", driver: 30, connection: "Bluetooth 5.2, 3.5mm", microphone: true, noiseCancelling: true);
+        productImages.Add(new ProductImage { ProductId = sonyWH1000XM5Id, ImageUrl = "https://store.sony.com.vn/cdn/shop/files/WH-1000XM5_B_Main.png" });
+
+        // Sennheiser HD 660S2
+        var sennheiserHD660S2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = sennheiserHD660S2Id,
+            Name = "Sennheiser HD 660S2",
+            Sku = "HS-SENNHEISER-HD660S2",
+            CategoryId = headsetCategory.Id,
+            BrandId = sennheiserBrand.Id,
+            Price = 12000000,
+            Stock = 10,
+            Description = "Tai nghe audiophile Sennheiser HD 660S2 open-back với driver 42mm cải tiến. Trở kháng 300 Ohm, phù hợp với DAC/AMP. Âm thanh chi tiết, soundstage rộng, đệm tai velour thoáng khí. Made in Germany.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, sennheiserHD660S2Id, hsType: "Over-ear", driver: 42, connection: "6.35mm, 4.4mm Balanced", microphone: false, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = sennheiserHD660S2Id, ImageUrl = "https://assets.sennheiser.com/img/p/q/500x500/HD-660S2_Main_01.png" });
+
+        // Beyerdynamic DT 900 PRO X
+        var beyerdynamicDT900ProXId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = beyerdynamicDT900ProXId,
+            Name = "Beyerdynamic DT 900 PRO X",
+            Sku = "HS-BEYERDYNAMIC-DT900-PRO-X",
+            CategoryId = headsetCategory.Id,
+            BrandId = beyerdynamicBrand.Id,
+            Price = 7000000,
+            Stock = 15,
+            Description = "Tai nghe studio Beyerdynamic DT 900 PRO X open-back với driver STELLAR.45 45mm. Trở kháng 48 Ohm, dễ drive từ mọi nguồn. Âm thanh chi tiết, trung thực. Đệm tai velour, dây cáp tháo rời. Made in Germany.",
+            WarrantyMonth = 24,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, beyerdynamicDT900ProXId, hsType: "Over-ear", driver: 45, connection: "3.5mm (Mini-XLR detachable)", microphone: false, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = beyerdynamicDT900ProXId, ImageUrl = "https://europe.beyerdynamic.com/media/catalog/product/d/t/dt-900-pro-x_front.jpg" });
+
+        // Audio-Technica ATH-M50xBT2
+        var audioTechnicaM50xBT2Id = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = audioTechnicaM50xBT2Id,
+            Name = "Audio-Technica ATH-M50xBT2",
+            Sku = "HS-AUDIO-TECHNICA-ATH-M50XBT2",
+            CategoryId = headsetCategory.Id,
+            BrandId = audioTechnicaBrand.Id,
+            Price = 5500000,
+            Stock = 20,
+            Description = "Tai nghe không dây Audio-Technica ATH-M50xBT2 phiên bản Bluetooth của huyền thoại M50x. Driver 45mm, codec LDAC/AAC/SBC. Pin 50 giờ, có micro tích hợp, thiết kế gập gọn. Âm thanh studio chất lượng.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, audioTechnicaM50xBT2Id, hsType: "Over-ear", driver: 45, connection: "Bluetooth 5.0, 3.5mm", microphone: true, noiseCancelling: false);
+        productImages.Add(new ProductImage { ProductId = audioTechnicaM50xBT2Id, ImageUrl = "https://www.audio-technica.com/en-us/media/catalog/product/a/t/ath-m50xbt2_01.png" });
+
+        // Bose QuietComfort Ultra Headphones
+        var boseQCUltraId = Guid.NewGuid();
+        context.Products.Add(new Product
+        {
+            Id = boseQCUltraId,
+            Name = "Bose QuietComfort Ultra Headphones",
+            Sku = "HS-BOSE-QC-ULTRA",
+            CategoryId = headsetCategory.Id,
+            BrandId = boseBrand.Id,
+            Price = 9000000,
+            Stock = 15,
+            Description = "Tai nghe không dây Bose QuietComfort Ultra với chống ồn chủ động đỉnh cao. Immersive Audio với Snapdragon Sound, CustomTune EQ tự động. Pin 24 giờ, đệm tai protein leather êm ái, Multipoint connection.",
+            WarrantyMonth = 12,
+            Status = ProductStatus.Available,
+        });
+        AddHeadsetSpecs(specValues, headsetSpecs, boseQCUltraId, hsType: "Over-ear", driver: 35, connection: "Bluetooth 5.3, 3.5mm", microphone: true, noiseCancelling: true);
+        productImages.Add(new ProductImage { ProductId = boseQCUltraId, ImageUrl = "https://assets.bose.com/content/dam/cloudassets/Bose_DAM/Web/consumer_electronics/global/products/headphones/qc-ultra-headphones/product_silo_images/QCUltra_Black_Hero.png" });
+    }
+
+    private static void AddHeadsetSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, string hsType, int driver, string connection, bool microphone, bool noiseCancelling)
+    {
+        var hsTypeSpec = specs.FirstOrDefault(s => s.Code == "hs_type");
+        if (hsTypeSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = hsTypeSpec.Id, TextValue = hsType });
+
+        var driverSpec = specs.FirstOrDefault(s => s.Code == "hs_driver");
+        if (driverSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = driverSpec.Id, NumberValue = driver });
+
+        var connectionSpec = specs.FirstOrDefault(s => s.Code == "hs_connection");
+        if (connectionSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = connectionSpec.Id, TextValue = connection });
+
+        var microphoneSpec = specs.FirstOrDefault(s => s.Code == "hs_microphone");
+        if (microphoneSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = microphoneSpec.Id, BoolValue = microphone });
+
+        var noiseCancellingSpec = specs.FirstOrDefault(s => s.Code == "hs_noise_cancelling");
+        if (noiseCancellingSpec != null) specValues.Add(new ProductSpecValue { ProductId = productId, SpecDefinitionId = noiseCancellingSpec.Id, BoolValue = noiseCancelling });
     }
 }

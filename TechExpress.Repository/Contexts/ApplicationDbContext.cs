@@ -420,6 +420,9 @@ namespace TechExpress.Repository.Contexts
 
                 psv.HasIndex(p => p.SpecDefinitionId)
                     .HasDatabaseName("idx_spec_value_definition");
+
+                psv.HasIndex(p => new { p.ProductId, p.SpecDefinitionId })
+                    .HasDatabaseName("idx_spec_value_product_definition");
                 
                 psv.HasOne(p => p.Product)
                     .WithMany(p => p.SpecValues)
@@ -544,6 +547,281 @@ namespace TechExpress.Repository.Contexts
                     .HasForeignKey(c => c.ProductId)
                     .OnDelete(DeleteBehavior.NoAction);
             });
+
+            // db-schema for ComputerComponent model
+            modelBuilder.Entity<ComputerComponent>(cc =>
+            {
+                cc.Property(c => c.Id)
+                    .HasColumnName("id");
+
+                cc.Property(c => c.ComputerProductId)
+                    .HasColumnName("computer_product_id")
+                    .IsRequired();
+
+                cc.Property(c => c.ComponentProductId)
+                    .HasColumnName("component_product_id")
+                    .IsRequired();
+
+                cc.Property(c => c.Quantity)
+                    .HasColumnName("quantity")
+                    .IsRequired();
+
+                cc.Property(c => c.AttachedAt)
+                    .HasColumnName("attached_at")
+                    .IsRequired();
+
+                cc.Property(c => c.UpdatedAt)
+                    .HasColumnName("updated_at")
+                    .IsRequired();
+
+                cc.HasKey(c => c.Id);
+
+                cc.HasIndex(c => c.ComputerProductId)
+                    .HasDatabaseName("idx_computer_product");
+                
+                cc.HasIndex(c => new { c.ComputerProductId, c.ComponentProductId })
+                    .HasDatabaseName("idx_computer_component");
+                
+                cc.HasOne(c => c.ComputerProduct)
+                    .WithMany()
+                    .HasForeignKey(c => c.ComputerProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                cc.HasOne(c => c.ComponentProduct)
+                    .WithMany()
+                    .HasForeignKey(c => c.ComponentProductId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+            // db-schema for Order model
+            modelBuilder.Entity<Order>(od =>
+            {
+                od.Property(o => o.Id)
+                    .HasColumnName("id");
+
+                od.Property(o => o.UserId)
+                    .HasColumnName("user_id");
+
+                od.Property(o => o.DeliveryType)
+                    .HasColumnName("delivery_type")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                od.Property(o => o.SubTotal)
+                    .HasColumnName("sub_total")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                od.Property(o => o.ShippingCost)
+                    .HasColumnName("shipping_cost")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                od.Property(o => o.Tax)
+                    .HasColumnName("tax")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                od.Property(o => o.TotalPrice)
+                    .HasColumnName("total_price")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                od.Property(o => o.ReceiverEmail)
+                    .HasColumnName("receiver_email")
+                    .HasMaxLength(256);
+
+                od.Property(o => o.ReceiverFullName)
+                    .HasColumnName("receiver_full_name")
+                    .HasMaxLength(256);
+
+                od.Property(o => o.ShippingAddress)
+                    .HasColumnName("shipping_address")
+                    .HasMaxLength(512);
+
+                od.Property(o => o.TrackingPhone)
+                    .HasColumnName("tracking_phone")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                od.Property(o => o.Notes)
+                    .HasColumnName("notes")
+                    .HasMaxLength(512);
+
+                od.Property(o => o.PaidType)
+                    .HasColumnName("paid_type")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                od.Property(o => o.ReceiverIdentityCard)
+                    .HasColumnName("receiver_identity_card")
+                    .HasMaxLength(20);
+
+                od.Property(o => o.InstallmentDurationMonth)
+                    .HasColumnName("installment_duration_month");
+
+                od.Property(o => o.OrderDate)
+                    .HasColumnName("order_date")
+                    .IsRequired();
+
+                od.Property(o => o.Status)
+                    .HasColumnName("status")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                od.HasKey(o => o.Id);
+
+                od.HasIndex(o => o.UserId)
+                    .HasDatabaseName("idx_order_user");
+
+                od.HasIndex(o => o.Status)
+                    .HasDatabaseName("idx_order_status");
+
+                od.HasIndex(o => o.TrackingPhone)
+                    .HasDatabaseName("idx_order_tracking_phone");
+
+                od.HasOne(o => o.User)
+                    .WithMany()
+                    .HasForeignKey(o => o.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+            // db-schema for OrderItem model
+            modelBuilder.Entity<OrderItem>(oi =>
+            {
+                oi.Property(o => o.Id)
+                    .HasColumnName("id");
+
+                oi.Property(o => o.OrderId)
+                    .HasColumnName("order_id")
+                    .IsRequired();
+
+                oi.Property(o => o.ProductId)
+                    .HasColumnName("product_id")
+                    .IsRequired();
+
+                oi.Property(o => o.Quantity)
+                    .HasColumnName("quantity")
+                    .IsRequired();
+
+                oi.Property(o => o.UnitPrice)
+                    .HasColumnName("unit_price")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                oi.HasKey(o => o.Id);
+
+                oi.HasIndex(o => o.OrderId)
+                    .HasDatabaseName("idx_order_item_order");
+
+                oi.HasIndex(o => o.ProductId)
+                    .HasDatabaseName("idx_order_item_product");
+
+                oi.HasOne(o => o.Order)
+                    .WithMany(o => o.Items)
+                    .HasForeignKey(o => o.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                oi.HasOne(o => o.Product)
+                    .WithMany()
+                    .HasForeignKey(o => o.ProductId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+            // db-schema for Installment model
+            modelBuilder.Entity<Installment>(ins =>
+            {
+                ins.Property(i => i.Id)
+                    .HasColumnName("id");
+
+                ins.Property(i => i.OrderId)
+                    .HasColumnName("order_id")
+                    .IsRequired();
+
+                ins.Property(i => i.Period)
+                    .HasColumnName("period")
+                    .IsRequired();
+
+                ins.Property(i => i.Amount)
+                    .HasColumnName("amount")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                ins.Property(i => i.Status)
+                    .HasColumnName("status")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                ins.Property(i => i.DueDate)
+                    .HasColumnName("due_date")
+                    .IsRequired();
+
+                ins.HasKey(i => i.Id);
+
+                ins.HasIndex(i => new { i.OrderId, i.Period })
+                    .HasDatabaseName("idx_installment_order_period")
+                    .IsUnique();
+
+                ins.HasOne(i => i.Order)
+                    .WithMany()
+                    .HasForeignKey(i => i.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
+            // db-schema for Payment model
+            modelBuilder.Entity<Payment>(pm =>
+            {
+                pm.Property(p => p.Id)
+                    .HasColumnName("id");
+
+                pm.Property(p => p.OrderId)
+                    .HasColumnName("order_id")
+                    .IsRequired();
+
+                pm.Property(p => p.InstallmentId)
+                    .HasColumnName("installment_id");
+
+                pm.Property(p => p.Amount)
+                    .HasColumnName("amount")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                pm.Property(p => p.Method)
+                    .HasColumnName("method")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                pm.Property(p => p.Status)
+                    .HasColumnName("status")
+                    .HasConversion<string>()
+                    .IsRequired();
+
+                pm.Property(p => p.PaymentDate)
+                    .HasColumnName("payment_date")
+                    .IsRequired();
+
+                pm.HasKey(p => p.Id);
+
+                pm.HasIndex(p => p.OrderId)
+                    .HasDatabaseName("idx_payment_order");
+
+                pm.HasIndex(p => p.InstallmentId)
+                    .HasDatabaseName("idx_payment_installment");
+
+                pm.HasOne(p => p.Order)
+                    .WithMany()
+                    .HasForeignKey(p => p.OrderId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                pm.HasOne(p => p.Installment)
+                    .WithMany()
+                    .HasForeignKey(p => p.InstallmentId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
         }
 
 
@@ -557,5 +835,10 @@ namespace TechExpress.Repository.Contexts
         public DbSet<SpecDefinition> SpecDefinitions { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Installment> Installments { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<ComputerComponent> ComputerComponents { get; set; }
     }
 }
