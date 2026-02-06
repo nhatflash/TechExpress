@@ -111,7 +111,39 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, asus4090Id, vram: 24, tdp: 450, length: 358, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = asus4090Id, ImageUrl = "https://dlcdnwebimgs.asus.com/gain/3f0f0f27-8c88-4b44-adb6-df13ca8d9fae/w800" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355376547_0.webp?alt=media&token=9be42280-dbd5-483d-9f4a-df73021c1a16"
+            },
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355391981_0.webp?alt=media&token=08789856-be00-4d79-99f6-0dc7ce4fa4d3"
+            },
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355391981_1.webp?alt=media&token=06311fb0-e090-4d86-84c3-14aeb0a28685"
+            },
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355391982_2.webp?alt=media&token=4c6aa0c7-bcbf-4343-bd09-e7fce7d2531c"
+            },
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355391982_3.webp?alt=media&token=90b442e7-eaf3-4c9b-9021-d663c4062234"
+            },
+            new ProductImage
+            {
+                ProductId = asus4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F829b3b61-2dcc-46f0-a024-83ae09df2500%2Fimages%2F1770355391982_4.webp?alt=media&token=476fd043-cf2a-485a-bcaf-6ec0b480fbe4"
+            },
+        ]);
 
         // MSI SUPRIM X RTX 4090
         var msi4090Id = Guid.NewGuid();
@@ -129,7 +161,24 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, msi4090Id, vram: 24, tdp: 450, length: 336, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = msi4090Id, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1664184282a71f6a3c6c19a1c1c7e4e3e5c1e5e4.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = msi4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6730de27-d421-42a4-a009-6f57534b590e%2Fimages%2F1770356355552_0.webp?alt=media&token=eefe2a01-ad61-424d-a397-4894d86a676f"
+            },
+            new ProductImage
+            {
+                ProductId = msi4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6730de27-d421-42a4-a009-6f57534b590e%2Fimages%2F1770356371354_0.webp?alt=media&token=debe19f2-3169-424d-890e-64e752c76c02"
+            },
+            new ProductImage
+            {
+                ProductId = msi4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6730de27-d421-42a4-a009-6f57534b590e%2Fimages%2F1770356371356_1.webp?alt=media&token=da8d2e9e-d87f-429b-a27f-ee115a0f2d5f"
+            }
+        ]);
 
         // Gigabyte AORUS Master RTX 4090
         var gigabyte4090Id = Guid.NewGuid();
@@ -147,7 +196,44 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, gigabyte4090Id, vram: 24, tdp: 450, length: 358, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = gigabyte4090Id, ImageUrl = "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2238/innergigabyte/images/kf-img.png" });
+        productImages.AddRange(
+        [
+            new ProductImage 
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356871139_0.webp?alt=media&token=5ea3a304-1c2b-4a1e-ad39-495e99e4584c",
+            },
+            new ProductImage 
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901190_0.webp?alt=media&token=8e77fe80-3fdd-48d1-8f1b-a71be4ed46fd",
+            },
+            new ProductImage 
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901191_1.webp?alt=media&token=3b8c5c39-c67b-4204-9216-67e79e23d4a5",
+            },
+            new ProductImage 
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901191_2.webp?alt=media&token=78713043-87c2-49a1-9eb5-0b9784122c95",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901191_3.webp?alt=media&token=716c1240-de38-461c-b0ab-67480a54c890",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901192_4.webp?alt=media&token=ef0ad964-01ad-4285-8657-85c519bee2b5",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4090Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1fa5a15f-0508-480b-a49b-fcdb2610d3f9%2Fimages%2F1770356901192_5.webp?alt=media&token=3b5a14f3-2087-4060-b599-09a97d9c8c50",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4080 SUPER =============
 
@@ -167,7 +253,44 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, asus4080sId, vram: 16, tdp: 320, length: 348, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = asus4080sId, ImageUrl = "https://dlcdnwebimgs.asus.com/gain/e8c8f8e8-8c88-4b44-adb6-df13ca8d9fae/w800" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357331942_0.webp?alt=media&token=af817e01-f7f1-4b3c-8054-e91c51314d63",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357343846_1.webp?alt=media&token=1bdd4698-d173-4f93-87e2-a38d605459ac",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357343846_2.webp?alt=media&token=f2ffb06d-8acc-40b4-a9ec-662da6442181",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357343846_3.webp?alt=media&token=59dc7f29-6e88-4aeb-bf1e-6cea8a7d4f9e",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357343847_4.webp?alt=media&token=63e08b7f-97c5-454a-b8b7-39aa72197276",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357343847_5.webp?alt=media&token=3debdb40-4b9e-4d0f-b661-dfee49ef8b02",
+            },
+            new ProductImage
+            {
+                ProductId = asus4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa2a58a6d-f0c4-4db8-9224-ab9f8f180408%2Fimages%2F1770357365790_0.webp?alt=media&token=39f12267-7197-4ecb-b443-1d5ebd62898b",
+            }
+        ]);
 
         // MSI Gaming X Trio RTX 4080 SUPER
         var msi4080sId = Guid.NewGuid();
@@ -185,7 +308,44 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, msi4080sId, vram: 16, tdp: 320, length: 337, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = msi4080sId, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1705391282a71f6a3c6c19a1c1c7e4e3e5c1e5e4.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357831119_0.webp?alt=media&token=06559cca-cadf-4c51-b54d-5eebc597c42a",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357847153_2.webp?alt=media&token=49678dbc-2be8-42aa-98a3-ae6396664b76",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357847153_3.webp?alt=media&token=bafff482-a89f-4793-8258-ede1b3e27d1e",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357847153_4.webp?alt=media&token=e3670327-30f9-4591-94f7-7b36710c0ab4",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357847153_5.webp?alt=media&token=117c2cdd-425a-4009-8da5-bc21cecc7fe4",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357879915_0.webp?alt=media&token=f6b9d52d-fa69-4347-a426-25ab010f842a",
+            },
+            new ProductImage
+            {
+                ProductId = msi4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F8ed95b9c-7149-4723-99fc-72d76568f56a%2Fimages%2F1770357879916_1.webp?alt=media&token=f170acd7-a75e-40f7-a7e1-043601abcfce",
+            }
+        ]);
 
         // Zotac Trinity RTX 4080 SUPER
         var zotac4080sId = Guid.NewGuid();
@@ -203,7 +363,44 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, zotac4080sId, vram: 16, tdp: 320, length: 306, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = zotac4080sId, ImageUrl = "https://www.zotac.com/download/files/styles/w1024/public/product_gallery/graphics_cards/zt-d40810d-10p-image01.jpg" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770361385655_0.jpg?alt=media&token=ce97d655-feef-43d9-af3b-75eebdc20469",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358426643_0.jpg?alt=media&token=e909ea6f-d53a-4068-a97f-8956053580a3",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358426645_1.jpg?alt=media&token=b9119cab-c258-451b-a36a-798d759b6704",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358426645_2.jpg?alt=media&token=5d0b19c2-6ff6-4055-a39d-464c178f8623",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358426645_3.jpg?alt=media&token=f37f550d-2280-4045-b136-20b517856cd2",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358426645_4.jpg?alt=media&token=9d4a3be3-9ed4-4012-a2db-d2993e0ed316",
+            },
+            new ProductImage
+            {
+                ProductId = zotac4080sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd141b0bc-5f35-42a6-8dfe-dddae0ec9bbd%2Fimages%2F1770358439145_0.jpg?alt=media&token=ad1b0d8a-5c85-4563-9452-bf7dcc1bacbb",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4070 Ti SUPER =============
 
@@ -223,7 +420,39 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, gigabyte4070tiSId, vram: 16, tdp: 285, length: 329, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = gigabyte4070tiSId, ImageUrl = "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2494/innergigabyte/images/kf-img.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366825481_0.webp?alt=media&token=905a1a7f-f2c9-44e2-abd9-3d14cd5005f9",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366835503_0.webp?alt=media&token=2389749e-693e-4d64-ae3e-723497c99245",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366835504_1.webp?alt=media&token=715b8efe-a720-4d26-bec6-9759ecf3e3ee",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366835504_2.webp?alt=media&token=48d4e30f-6b18-4c44-8453-841cf822b317",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366835504_3.webp?alt=media&token=e3a2dc3d-518b-4e76-9cf9-40b971b11ef4",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F245b22de-25f9-40fc-ba83-f144ceb32cfb%2Fimages%2F1770366846168_0.webp?alt=media&token=5c2b451b-2f8f-4502-b742-cfeb80a8de48",
+            }
+        ]);
 
         // Palit GameRock RTX 4070 Ti SUPER
         var palit4070tiSId = Guid.NewGuid();
@@ -241,7 +470,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, palit4070tiSId, vram: 16, tdp: 285, length: 329, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = palit4070tiSId, ImageUrl = "https://www.palit.com/palit/vgapro/img/ne6407ts19t2-1043g.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = palit4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F5c2bcbb3-1bf6-43eb-891f-2816d901e8a3%2Fimages%2F1770367156424_0.jpg?alt=media&token=9686a97a-5b4c-46f7-8e6d-9ae5cf539a8b",
+            },
+            new ProductImage
+            {
+                ProductId = palit4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F5c2bcbb3-1bf6-43eb-891f-2816d901e8a3%2Fimages%2F1770367172606_0.jpg?alt=media&token=8fe2874b-e412-40ef-be70-bb1a5834c74f",
+            },
+            new ProductImage
+            {
+                ProductId = palit4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F5c2bcbb3-1bf6-43eb-891f-2816d901e8a3%2Fimages%2F1770367172607_1.jpg?alt=media&token=c0892776-fa69-42a8-819e-183c57fa0b7d",
+            },
+            new ProductImage
+            {
+                ProductId = palit4070tiSId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F5c2bcbb3-1bf6-43eb-891f-2816d901e8a3%2Fimages%2F1770367172607_2.jpg?alt=media&token=9b9ac0f8-31a2-42fa-97c5-fdc59f211629",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4070 SUPER =============
 
@@ -261,7 +512,44 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, msi4070sId, vram: 12, tdp: 220, length: 308, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = msi4070sId, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1705391282a71f6a3c6c19a1c1c7e4e3e5c1e5e5.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367360422_0.webp?alt=media&token=86bae889-4d1d-4cd8-ad5c-0c65eb713909",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367381274_0.webp?alt=media&token=db5f2149-6436-47db-9f11-332c98e0d978",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367381275_1.webp?alt=media&token=243489f8-f509-4a24-8e68-f22f31d24960",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367381275_2.webp?alt=media&token=60ea5975-4603-4f4d-8d33-bb174dc40611",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367381276_3.webp?alt=media&token=e56166a4-38ba-4a6c-ba6c-0b2c57f52bc0",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367381276_4.webp?alt=media&token=d30cccf2-deca-415c-9e54-4033bb268687",
+            },
+            new ProductImage
+            {
+                ProductId = msi4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F01875154-8ccb-4f77-aef1-a9722bb60aef%2Fimages%2F1770367392317_0.webp?alt=media&token=ebe2546e-797d-46c7-b988-a3a11dcb1d8a",
+            }
+        ]);
 
         // Galax RTX 4070 SUPER EX Gamer
         var galax4070sId = Guid.NewGuid();
@@ -279,7 +567,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, galax4070sId, vram: 12, tdp: 220, length: 302, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 16-pin (12VHPWR)");
-        productImages.Add(new ProductImage { ProductId = galax4070sId, ImageUrl = "https://www.galax.com/en/graphics-card/40-series/geforce-rtx-4070-super-ex-gamer.html" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = galax4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3563764d-1110-43e4-b0db-d5aba85f1206%2Fimages%2F1770367738898_0.png?alt=media&token=61d303cc-e21d-47b9-a359-bc82f68bdcec",
+            },
+            new ProductImage
+            {
+                ProductId = galax4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3563764d-1110-43e4-b0db-d5aba85f1206%2Fimages%2F1770367749514_0.png?alt=media&token=6b100321-7f76-4cce-8bb3-1faac48f1878",
+            },
+            new ProductImage
+            {
+                ProductId = galax4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3563764d-1110-43e4-b0db-d5aba85f1206%2Fimages%2F1770367749515_1.png?alt=media&token=15605724-338c-4818-85cb-5e7a4404839a",
+            },
+            new ProductImage
+            {
+                ProductId = galax4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3563764d-1110-43e4-b0db-d5aba85f1206%2Fimages%2F1770367749515_2.png?alt=media&token=a66a3313-3c79-4658-8e21-39499c8b9857",
+            },
+            new ProductImage
+            {
+                ProductId = galax4070sId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3563764d-1110-43e4-b0db-d5aba85f1206%2Fimages%2F1770367749515_3.png?alt=media&token=972c68a4-10c5-4afd-995e-7cb6fa89e448",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4070 =============
 
@@ -299,11 +614,19 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, rtx4070Id, vram: 12, tdp: 200, length: 267, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.AddRange(new[]
-        {
-            new ProductImage { ProductId = rtx4070Id, ImageUrl = "https://inno3d.com/uploads/product/n40702-12d6x-171xxin/n40702-12d6x-171xxin_img_01-e8a4d0c3.webp" },
-            new ProductImage { ProductId = rtx4070Id, ImageUrl = "https://inno3d.com/uploads/product/n40702-12d6x-171xxin/n40702-12d6x-171xxin_img_02-d3e76b21.webp" },
-        });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = rtx4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ff90ab568-93d8-4ed4-9eb2-938bf2a545bf%2Fimages%2F1770369799504_0.jpg?alt=media&token=22d5035b-837d-468a-99c2-8ff85a182fd1",
+            },
+            new ProductImage
+            {
+                ProductId = rtx4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ff90ab568-93d8-4ed4-9eb2-938bf2a545bf%2Fimages%2F1770369807630_0.jpg?alt=media&token=e498480a-b9af-42be-b2f7-b000cbfb0f4d",
+            }
+        ]);
 
         // ASUS Dual RTX 4070
         var asus4070Id = Guid.NewGuid();
@@ -321,7 +644,24 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, asus4070Id, vram: 12, tdp: 200, length: 267, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = asus4070Id, ImageUrl = "https://dlcdnwebimgs.asus.com/gain/2f0f0f27-8c88-4b44-adb6-df13ca8d9faf/w800" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = asus4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6871af48-978b-45ba-ba03-c05a11d545eb%2Fimages%2F1770375633196_0.webp?alt=media&token=50c16279-b27e-413c-864d-9290777fea54",
+            },
+            new ProductImage
+            {
+                ProductId = asus4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6871af48-978b-45ba-ba03-c05a11d545eb%2Fimages%2F1770375650881_0.webp?alt=media&token=34b54f00-064e-4e34-ba14-48d92aa128e2",
+            },
+            new ProductImage
+            {
+                ProductId = asus4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F6871af48-978b-45ba-ba03-c05a11d545eb%2Fimages%2F1770375650882_1.webp?alt=media&token=3af7c58b-f126-4ebb-afc2-b300220da64c",
+            }
+        ]);
 
         // Colorful iGame RTX 4070 Ultra W DUO OC
         var colorful4070Id = Guid.NewGuid();
@@ -339,7 +679,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, colorful4070Id, vram: 12, tdp: 200, length: 275, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = colorful4070Id, ImageUrl = "https://en.colorful.cn/product/GeForce-RTX-4070-Ultra-W-DUO-OC-12GB.html" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = colorful4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F792cf7eb-d8e5-460c-b429-4a5a2031834b%2Fimages%2F1770375830176_0.webp?alt=media&token=dbd09acd-35d3-4b7d-833c-17f60a56cfc7",
+            },
+            new ProductImage
+            {
+                ProductId = colorful4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F792cf7eb-d8e5-460c-b429-4a5a2031834b%2Fimages%2F1770375846200_0.webp?alt=media&token=c389a840-a3b2-4004-bedc-8dff092cf19d",
+            },
+            new ProductImage
+            {
+                ProductId = colorful4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F792cf7eb-d8e5-460c-b429-4a5a2031834b%2Fimages%2F1770375846201_1.webp?alt=media&token=02323988-5702-44a7-8461-fcd5b1739a57",
+            },
+            new ProductImage
+            {
+                ProductId = colorful4070Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F792cf7eb-d8e5-460c-b429-4a5a2031834b%2Fimages%2F1770375855007_0.webp?alt=media&token=5a75708a-e848-4fd3-93fb-f75feb080504",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4060 Ti =============
 
@@ -359,7 +721,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, gigabyte4060tiId, vram: 8, tdp: 160, length: 261, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = gigabyte4060tiId, ImageUrl = "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2428/innergigabyte/images/kf-img.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = gigabyte4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffb030e8f-a3b7-4069-924c-37a8ae1f48e7%2Fimages%2F1770376876567_0.webp?alt=media&token=ef8f9db8-604d-43ad-9d7a-b021136a43da",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffb030e8f-a3b7-4069-924c-37a8ae1f48e7%2Fimages%2F1770376886711_0.webp?alt=media&token=b37766b3-1ca5-4b13-9dcb-00b86afe5e04",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffb030e8f-a3b7-4069-924c-37a8ae1f48e7%2Fimages%2F1770376886712_1.webp?alt=media&token=9f42e288-c2b8-4666-a3ca-93a069a3e3e2",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffb030e8f-a3b7-4069-924c-37a8ae1f48e7%2Fimages%2F1770376886712_2.webp?alt=media&token=0f2361cf-efd0-4187-b4c1-0e7d0d378d3e",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffb030e8f-a3b7-4069-924c-37a8ae1f48e7%2Fimages%2F1770376892953_0.webp?alt=media&token=abb356e8-6c41-4f9b-9646-edb68c0fe283",
+            }
+        ]);
 
         // PNY VERTO Dual Fan RTX 4060 Ti
         var pny4060tiId = Guid.NewGuid();
@@ -377,7 +766,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, pny4060tiId, vram: 8, tdp: 160, length: 250, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = pny4060tiId, ImageUrl = "https://www.pny.com/file%20library/product%20images/graphics%20cards/geforce/rtx-4060-ti-verto.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = pny4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fdeaa3fa3-59f5-4937-bce9-2a4d7ec76850%2Fimages%2F1770377077182_0.webp?alt=media&token=e975b0ee-bc4e-4b74-a734-c4f169448d57",
+            },
+            new ProductImage
+            {
+                ProductId = pny4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fdeaa3fa3-59f5-4937-bce9-2a4d7ec76850%2Fimages%2F1770377089106_0.webp?alt=media&token=e72d675b-43bf-4141-b36b-331cbdbd167e",
+            },
+            new ProductImage
+            {
+                ProductId = pny4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fdeaa3fa3-59f5-4937-bce9-2a4d7ec76850%2Fimages%2F1770377089106_1.webp?alt=media&token=d25cdd7e-44d3-472e-90a3-dd8d453bd052",
+            },
+            new ProductImage
+            {
+                ProductId = pny4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fdeaa3fa3-59f5-4937-bce9-2a4d7ec76850%2Fimages%2F1770377089107_2.webp?alt=media&token=9eb83e31-db0a-4afc-9518-e6ff65ce4197",
+            },
+            new ProductImage
+            {
+                ProductId = pny4060tiId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fdeaa3fa3-59f5-4937-bce9-2a4d7ec76850%2Fimages%2F1770377098441_0.webp?alt=media&token=48685963-c98e-42ad-bff9-916d97a92579",
+            }
+        ]);
 
         // ============= NVIDIA RTX 4060 =============
 
@@ -397,7 +813,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, msi4060Id, vram: 8, tdp: 115, length: 199, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = msi4060Id, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1684391282a71f6a3c6c19a1c1c7e4e3e5c1e5e4.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = msi4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F515b0611-2b9c-4a3d-b9e9-723b446c7dd5%2Fimages%2F1770377478975_0.webp?alt=media&token=91b86162-899d-4c47-8c36-2f3f88be9e20",
+            },
+            new ProductImage
+            {
+                ProductId = msi4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F515b0611-2b9c-4a3d-b9e9-723b446c7dd5%2Fimages%2F1770377486442_0.webp?alt=media&token=7a3fab64-5d0e-46e6-a6cf-b2506e715b0b",
+            },
+            new ProductImage
+            {
+                ProductId = msi4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F515b0611-2b9c-4a3d-b9e9-723b446c7dd5%2Fimages%2F1770377486443_1.webp?alt=media&token=fb64ffd2-4001-4479-89da-e95ffdfadae3",
+            },
+            new ProductImage
+            {
+                ProductId = msi4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F515b0611-2b9c-4a3d-b9e9-723b446c7dd5%2Fimages%2F1770377486443_2.webp?alt=media&token=72a79be8-37e6-4a42-886b-6fc5eb45e4a0",
+            },
+            new ProductImage
+            {
+                ProductId = msi4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F515b0611-2b9c-4a3d-b9e9-723b446c7dd5%2Fimages%2F1770377492209_0.webp?alt=media&token=b8816f14-0230-487d-85df-6fe608f73e7a",
+            }
+        ]);
 
         // INNO3D RTX 4060 TWIN X2
         var inno3d4060Id = Guid.NewGuid();
@@ -415,7 +858,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, inno3d4060Id, vram: 8, tdp: 115, length: 240, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = inno3d4060Id, ImageUrl = "https://inno3d.com/uploads/product/n40602-08d6-171xxin/n40602-08d6-171xxin_img_01.webp" });
+        productImages.AddRange([
+            new ProductImage 
+            {
+                ProductId = inno3d4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8b8f6d5-a7b6-4439-9841-16d7abe7fa01%2Fimages%2F1770377698059_0.png?alt=media&token=87ae8900-53ac-4804-ad63-bfadb7fd852a",
+            },
+            new ProductImage 
+            {
+                ProductId = inno3d4060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8b8f6d5-a7b6-4439-9841-16d7abe7fa01%2Fimages%2F1770377730847_0.png?alt=media&token=a67dab92-2c8b-4db7-a428-d45b4c75b213"
+            }
+        ]);
 
         // ============= NVIDIA RTX 3060 =============
 
@@ -435,7 +889,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, palit3060Id, vram: 12, tdp: 170, length: 245, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = palit3060Id, ImageUrl = "https://www.palit.com/palit/vgapro/img/ne63060019k9-190af.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = palit3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2a6b5eed-3de1-4648-8ef8-8deb03f50b4c%2Fimages%2F1770377894555_0.png?alt=media&token=bb7d6834-191b-463d-ae14-22382400b454",
+            },
+            new ProductImage
+            {
+                ProductId = palit3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2a6b5eed-3de1-4648-8ef8-8deb03f50b4c%2Fimages%2F1770377906270_0.png?alt=media&token=c503c653-00bf-4b8e-b066-2a27fc9bef1b",
+            },
+            new ProductImage
+            {
+                ProductId = palit3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2a6b5eed-3de1-4648-8ef8-8deb03f50b4c%2Fimages%2F1770377906271_1.png?alt=media&token=b1b42649-7473-42cc-9b45-2cd9f240d8c0",
+            },
+            new ProductImage
+            {
+                ProductId = palit3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2a6b5eed-3de1-4648-8ef8-8deb03f50b4c%2Fimages%2F1770377906271_2.png?alt=media&token=aa75024d-0c71-4f47-b425-7a41f03f1d1a",
+            },
+            new ProductImage
+            {
+                ProductId = palit3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2a6b5eed-3de1-4648-8ef8-8deb03f50b4c%2Fimages%2F1770377913391_0.png?alt=media&token=6401c31a-7d39-4d05-ad69-bfd4fa00b232",
+            }
+        ]);
 
         // Galax RTX 3060 (1-Click OC)
         var galax3060Id = Guid.NewGuid();
@@ -453,7 +934,34 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, galax3060Id, vram: 12, tdp: 170, length: 235, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = galax3060Id, ImageUrl = "https://www.galax.com/en/graphics-card/30-series/geforce-rtx-3060-1-click-oc.html" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = galax3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fc3d2398c-deae-4d97-9b7f-13a6f507b3cf%2Fimages%2F1770378300068_0.jpg?alt=media&token=866eeba0-a485-4dea-ae6c-2c84a5efc7e9",
+            },
+            new ProductImage
+            {
+                ProductId = galax3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fc3d2398c-deae-4d97-9b7f-13a6f507b3cf%2Fimages%2F1770378308101_0.jpg?alt=media&token=c34332a7-4b1d-4078-a6af-127d744b1206",
+            },
+            new ProductImage
+            {
+                ProductId = galax3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fc3d2398c-deae-4d97-9b7f-13a6f507b3cf%2Fimages%2F1770378308102_1.jpg?alt=media&token=d8a0df5f-34ca-4269-bd17-4699563ad584",
+            },
+            new ProductImage
+            {
+                ProductId = galax3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fc3d2398c-deae-4d97-9b7f-13a6f507b3cf%2Fimages%2F1770378308102_2.jpg?alt=media&token=8672cec1-3782-457b-be2f-fb78c3eb04d6",
+            },
+            new ProductImage
+            {
+                ProductId = galax3060Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fc3d2398c-deae-4d97-9b7f-13a6f507b3cf%2Fimages%2F1770378355237_0.jpg?alt=media&token=ddd6778b-14e9-4697-8373-669450562e61",
+            }
+        ]);
 
         // ============= AMD RADEON RX 7900 XTX =============
 
@@ -473,7 +981,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, sapphire7900xtxId, vram: 24, tdp: 355, length: 320, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = sapphire7900xtxId, ImageUrl = "https://www.sapphiretech.com/images/products/7900xtx-nitro-vaporx.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = sapphire7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3f33f8ef-dec6-4367-841e-13d2b350c66c%2Fimages%2F1770378562859_0.jpg?alt=media&token=41a1f26f-5861-4889-9f92-508ad6f33ada",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3f33f8ef-dec6-4367-841e-13d2b350c66c%2Fimages%2F1770378569192_0.jpg?alt=media&token=9f519985-d580-4cef-bf33-d35d303ab0e9",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3f33f8ef-dec6-4367-841e-13d2b350c66c%2Fimages%2F1770378569193_1.jpg?alt=media&token=d38ef9c6-5c3e-4b5f-997a-a9b0a8033032",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3f33f8ef-dec6-4367-841e-13d2b350c66c%2Fimages%2F1770378569193_2.jpg?alt=media&token=179674a1-9ef7-4df2-aa04-80f477e43ee9",
+            }
+        ]);
 
         // XFX MERC 310 RX 7900 XTX
         var xfx7900xtxId = Guid.NewGuid();
@@ -491,7 +1021,23 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, xfx7900xtxId, vram: 24, tdp: 355, length: 344, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = xfx7900xtxId, ImageUrl = "https://www.xfxforce.com/images/products/rx-7900-xtx-merc-310.png" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = xfx7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F491a53fe-f1f4-4378-9de7-ffe7fccbf58f%2Fimages%2F1770378805836_0.jpg?alt=media&token=53168d0f-2baf-4aad-a825-cc9e3cd0f504",
+            },
+            new ProductImage
+            {
+                ProductId = xfx7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F491a53fe-f1f4-4378-9de7-ffe7fccbf58f%2Fimages%2F1770378814271_0.png?alt=media&token=8381f31a-05b8-4191-8296-516679a44e45",
+            },
+            new ProductImage
+            {
+                ProductId = xfx7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F491a53fe-f1f4-4378-9de7-ffe7fccbf58f%2Fimages%2F1770378814272_1.jpg?alt=media&token=71bc5eff-485f-474d-a076-a72ccdd0c46f"
+            }
+        ]);
 
         // PowerColor Red Devil RX 7900 XTX
         var powercolor7900xtxId = Guid.NewGuid();
@@ -509,7 +1055,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, powercolor7900xtxId, vram: 24, tdp: 355, length: 332, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = powercolor7900xtxId, ImageUrl = "https://www.powercolor.com/images/products/rx-7900-xtx-red-devil.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = powercolor7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12e5057e-8bb8-49e2-9ad0-4e47a4cbe0a9%2Fimages%2F1770378955014_0.png?alt=media&token=dfadcac7-1301-4f7d-a161-bf9e3380629a",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12e5057e-8bb8-49e2-9ad0-4e47a4cbe0a9%2Fimages%2F1770378965412_0.png?alt=media&token=c7518480-463b-40e3-ad2a-17c5d6df43de",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12e5057e-8bb8-49e2-9ad0-4e47a4cbe0a9%2Fimages%2F1770378965412_1.png?alt=media&token=d89d01d8-4c68-463e-bb26-d9516de93bf9",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7900xtxId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12e5057e-8bb8-49e2-9ad0-4e47a4cbe0a9%2Fimages%2F1770378972685_0.png?alt=media&token=6444abb1-c2df-4b7b-afbb-72fdf004d31c",
+            }
+        ]);
 
         // ============= AMD RADEON RX 7900 XT =============
 
@@ -529,7 +1097,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, sapphire7900xtId, vram: 20, tdp: 315, length: 280, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = sapphire7900xtId, ImageUrl = "https://www.sapphiretech.com/images/products/7900xt-pulse.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = sapphire7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffc2b4ec3-1e7e-4cfc-9213-f2d3a37b1922%2Fimages%2F1770379136257_0.png?alt=media&token=c09c9f06-1e56-498f-81f9-ecdd49d9bf21",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffc2b4ec3-1e7e-4cfc-9213-f2d3a37b1922%2Fimages%2F1770379159534_0.png?alt=media&token=d4d829ef-06df-49ea-8279-aeaef0348ffa",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffc2b4ec3-1e7e-4cfc-9213-f2d3a37b1922%2Fimages%2F1770379159535_1.png?alt=media&token=b4f96b1a-20fb-4010-9ed7-1e486523eeb3",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ffc2b4ec3-1e7e-4cfc-9213-f2d3a37b1922%2Fimages%2F1770379159535_2.png?alt=media&token=0cb21891-0ed4-4731-96aa-1e7d4625c896",
+            }
+        ]);
 
         // ASUS TUF Gaming RX 7900 XT
         var asus7900xtId = Guid.NewGuid();
@@ -547,7 +1137,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, asus7900xtId, vram: 20, tdp: 315, length: 353, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = asus7900xtId, ImageUrl = "https://dlcdnwebimgs.asus.com/gain/4f0f0f27-8c88-4b44-adb6-df13ca8d9fae/w800" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = asus7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F06c7d294-9cb9-402f-8c99-d94362c2f6f1%2Fimages%2F1770379400673_0.jpg?alt=media&token=952bfcf3-9766-4b84-8b9a-79e8cd81cb83",
+            },
+            new ProductImage
+            {
+                ProductId = asus7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F06c7d294-9cb9-402f-8c99-d94362c2f6f1%2Fimages%2F1770379400674_1.jpg?alt=media&token=5a3c8992-762d-4576-afdb-d08d9122b8eb",
+            },
+            new ProductImage
+            {
+                ProductId = asus7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F06c7d294-9cb9-402f-8c99-d94362c2f6f1%2Fimages%2F1770379400675_2.png?alt=media&token=f6448c42-c7dc-4f75-966d-5ca466d213d9",
+            },
+            new ProductImage
+            {
+                ProductId = asus7900xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F06c7d294-9cb9-402f-8c99-d94362c2f6f1%2Fimages%2F1770379400675_3.png?alt=media&token=be9f4cdf-8535-4509-92c3-dcd52addce94",
+            }
+        ]);
 
         // ============= AMD RADEON RX 7800 XT =============
 
@@ -567,7 +1179,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, powercolor7800xtId, vram: 16, tdp: 263, length: 305, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = powercolor7800xtId, ImageUrl = "https://www.powercolor.com/images/products/rx-7800-xt-red-dragon.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = powercolor7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fda469173-4ef0-4c36-9770-f3b3455fe27c%2Fimages%2F1770379703762_0.jpg?alt=media&token=1fe19870-271f-43ba-9d45-f2efdb967505",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fda469173-4ef0-4c36-9770-f3b3455fe27c%2Fimages%2F1770379703763_1.png?alt=media&token=91663a3c-8c53-4e7f-aa10-5d1cc5ff30d8",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fda469173-4ef0-4c36-9770-f3b3455fe27c%2Fimages%2F1770379703763_2.png?alt=media&token=57868b67-d4d8-452e-89e5-5f29af1e2ca2",
+            },
+            new ProductImage
+            {
+                ProductId = powercolor7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fda469173-4ef0-4c36-9770-f3b3455fe27c%2Fimages%2F1770379703763_3.png?alt=media&token=66a07502-c5f0-4aa4-9025-680af920a1c8",
+            }
+        ]);
 
         // XFX QICK 319 RX 7800 XT
         var xfx7800xtId = Guid.NewGuid();
@@ -585,7 +1219,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, xfx7800xtId, vram: 16, tdp: 263, length: 322, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = xfx7800xtId, ImageUrl = "https://www.xfxforce.com/images/products/rx-7800-xt-qick-319.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = xfx7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F4ec9b0d0-95fe-43cb-9f61-c44323b5e453%2Fimages%2F1770379837220_0.jpg?alt=media&token=d942a6d6-3c1f-4961-b6c1-ced2ff37ceea",
+            },
+            new ProductImage
+            {
+                ProductId = xfx7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F4ec9b0d0-95fe-43cb-9f61-c44323b5e453%2Fimages%2F1770379837221_1.jpg?alt=media&token=aae90839-de6c-4a4e-8b6c-dd70ea93418f",
+            },
+            new ProductImage
+            {
+                ProductId = xfx7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F4ec9b0d0-95fe-43cb-9f61-c44323b5e453%2Fimages%2F1770379837221_2.jpg?alt=media&token=6244c218-51c9-49f6-a791-ec504b3caa28",
+            },
+            new ProductImage
+            {
+                ProductId = xfx7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F4ec9b0d0-95fe-43cb-9f61-c44323b5e453%2Fimages%2F1770379837221_3.jpg?alt=media&token=612f2d35-1000-4f7b-9e74-bac8aeab5baa",
+            }
+        ]);
 
         // Sapphire NITRO+ RX 7800 XT
         var sapphire7800xtId = Guid.NewGuid();
@@ -603,7 +1259,29 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, sapphire7800xtId, vram: 16, tdp: 263, length: 310, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = sapphire7800xtId, ImageUrl = "https://www.sapphiretech.com/images/products/7800xt-nitro.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = sapphire7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F47ebaa04-5794-48fc-8b2e-6016dfa58345%2Fimages%2F1770380002749_0.jpg?alt=media&token=362f369d-d148-4c79-9053-edb4a3633fbc",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F47ebaa04-5794-48fc-8b2e-6016dfa58345%2Fimages%2F1770380002750_1.jpg?alt=media&token=cf4d9d32-36bc-4a2c-9263-df9d7064ed96",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F47ebaa04-5794-48fc-8b2e-6016dfa58345%2Fimages%2F1770380002750_2.jpg?alt=media&token=2f7c5c85-cb38-48ef-b451-8640cf8f5173",
+            },
+            new ProductImage
+            {
+                ProductId = sapphire7800xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F47ebaa04-5794-48fc-8b2e-6016dfa58345%2Fimages%2F1770380002750_3.jpg?alt=media&token=04837839-8417-496a-8a1e-f24686a24d03",
+            }
+        ]);
 
         // ============= AMD RADEON RX 7700 XT =============
 
@@ -623,7 +1301,39 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, gigabyte7700xtId, vram: 12, tdp: 245, length: 302, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = gigabyte7700xtId, ImageUrl = "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2456/innergigabyte/images/kf-img.png" });
+        productImages.AddRange(
+        [
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152573_0.webp?alt=media&token=b7fa3b5c-7e96-444f-a453-3f1760defcea",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152574_1.webp?alt=media&token=248d32e3-c147-40e6-bf65-aad750894243",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152574_2.webp?alt=media&token=676ea73d-e58d-4152-ad34-41faac213b46",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152574_3.webp?alt=media&token=6702ac71-d3c5-46b8-9e75-62e22e6edc4b",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152574_4.webp?alt=media&token=8dfd80a2-e9b2-493b-91c3-365130adcf63",
+            },
+            new ProductImage
+            {
+                ProductId = gigabyte7700xtId,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F3574c2a5-4f6a-4c0e-b733-fb94a4ebb7bf%2Fimages%2F1770380152575_5.webp?alt=media&token=1468bba2-4847-480d-ac9f-abf9dab37d49",
+            }
+        ]);
 
         // MSI Gaming X RX 7700 XT
         var msi7700xtId = Guid.NewGuid();
