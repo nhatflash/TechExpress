@@ -868,7 +868,10 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, msi7700xtId, vram: 12, tdp: 245, length: 325, pcieSlot: "PCIe 4.0 x16", powerConnector: "2x 8-pin");
-        productImages.Add(new ProductImage { ProductId = msi7700xtId, ImageUrl = "https://asset.msi.com/resize/image/global/product/product_1693391282a71f6a3c6c19a1c1c7e4e3e5c1e5e4.png62405b38c58fe0f07fcef2367d8a9ba1/1024.png" });
+        AddImages(
+            msi7700xtId,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fcd2bd72a-224e-4ddc-8488-029769b01d3c%2Fimages%2F1770380448566_0.png?alt=media&token=608c1977-26d8-4eba-ab8d-2d94b9b999a6"
+        );
 
         // ============= AMD RADEON RX 7600 =============
 
@@ -888,7 +891,13 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, sapphire7600Id, vram: 8, tdp: 165, length: 260, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = sapphire7600Id, ImageUrl = "https://www.sapphiretech.com/images/products/7600-pulse.png" });
+        AddImages(
+            sapphire7600Id,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2d057a06-7c34-4af9-a2e7-a6c2a946c2bd%2Fimages%2F1770380695870_0.webp?alt=media&token=3cd985a0-44f3-457a-8d24-c57fecb4c5e6",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2d057a06-7c34-4af9-a2e7-a6c2a946c2bd%2Fimages%2F1770380695871_1.webp?alt=media&token=88e46f69-7b99-4da7-aaca-b4bc58baf385",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2d057a06-7c34-4af9-a2e7-a6c2a946c2bd%2Fimages%2F1770380695871_2.webp?alt=media&token=57de3ba4-c5da-4161-9507-b437b126c962",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F2d057a06-7c34-4af9-a2e7-a6c2a946c2bd%2Fimages%2F1770380695872_3.webp?alt=media&token=8ce0e0f5-5e62-49eb-bf5f-091cb7fb325f"
+        );
 
         // PowerColor Fighter RX 7600
         var powercolor7600Id = Guid.NewGuid();
@@ -906,7 +915,12 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, powercolor7600Id, vram: 8, tdp: 165, length: 256, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = powercolor7600Id, ImageUrl = "https://www.powercolor.com/images/products/rx-7600-fighter.png" });
+        AddImages(
+            powercolor7600Id,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8d59ae9-a1e8-4c62-bd92-3ad129cd845e%2Fimages%2F1770380887432_0.jpg?alt=media&token=92f6caa0-3f7d-4339-a1a4-9d52a494a83e",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8d59ae9-a1e8-4c62-bd92-3ad129cd845e%2Fimages%2F1770380887433_1.jpg?alt=media&token=1fdc7008-d5f9-4f1a-b038-4a7f1db44a90",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8d59ae9-a1e8-4c62-bd92-3ad129cd845e%2Fimages%2F1770380887433_2.jpg?alt=media&token=09380c2f-df85-41fe-bfd6-873738dba110"
+        );
 
         // XFX SWFT 210 RX 7600
         var xfx7600Id = Guid.NewGuid();
@@ -924,7 +938,12 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, xfx7600Id, vram: 8, tdp: 165, length: 240, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = xfx7600Id, ImageUrl = "https://www.xfxforce.com/images/products/rx-7600-swft-210.png" });
+        AddImages(
+            xfx7600Id,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88a37c98-8169-4beb-b666-5ac86d27b8e3%2Fimages%2F1770381050261_0.jpg?alt=media&token=41a1abee-40a9-4426-92d6-2868bdafc83f",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88a37c98-8169-4beb-b666-5ac86d27b8e3%2Fimages%2F1770381050262_1.jpg?alt=media&token=6a67253d-7171-491b-8666-2590b72433e1",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88a37c98-8169-4beb-b666-5ac86d27b8e3%2Fimages%2F1770381050263_2.jpg?alt=media&token=ad76cbeb-2806-4b3a-b267-fe2544b23e8c"
+        );
 
         // ============= AMD RADEON RX 6700 XT =============
 
@@ -944,7 +963,14 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, sapphire6700xtId, vram: 12, tdp: 230, length: 310, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin + 1x 6-pin");
-        productImages.Add(new ProductImage { ProductId = sapphire6700xtId, ImageUrl = "https://www.sapphiretech.com/images/products/6700xt-nitro.png" });
+        AddImages(
+            sapphire6700xtId,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fbcc48a31-bd28-4582-ae67-033cbd9ae713%2Fimages%2F1770381230135_0.jpg?alt=media&token=eab931c1-523d-4ec3-8a97-310ce07f4d51",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fbcc48a31-bd28-4582-ae67-033cbd9ae713%2Fimages%2F1770381230136_1.jpg?alt=media&token=61d7f002-30cf-413e-a7f2-761f16033ca9",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fbcc48a31-bd28-4582-ae67-033cbd9ae713%2Fimages%2F1770381230136_2.jpg?alt=media&token=d78efce6-620a-462d-a508-b787b6d9e410",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fbcc48a31-bd28-4582-ae67-033cbd9ae713%2Fimages%2F1770381230137_3.jpg?alt=media&token=a773446f-3b67-4a3e-a792-171a5a9c5f9b",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fbcc48a31-bd28-4582-ae67-033cbd9ae713%2Fimages%2F1770381230137_4.jpg?alt=media&token=a377261a-e4e4-4301-a364-2b580f6a002e"
+        );
 
         // ============= AMD RADEON RX 6600 =============
 
@@ -964,7 +990,14 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, powercolor6600Id, vram: 8, tdp: 132, length: 230, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = powercolor6600Id, ImageUrl = "https://www.powercolor.com/images/products/rx-6600-fighter.png" });
+        AddImages(
+            powercolor6600Id,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F20b7a191-43b6-48e5-b936-fd74c07db05d%2Fimages%2F1770381575698_0.jpg?alt=media&token=b53b1a07-7a6c-4ded-805f-a4639f8283b3",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F20b7a191-43b6-48e5-b936-fd74c07db05d%2Fimages%2F1770381575699_1.jpg?alt=media&token=6c015867-2692-452a-aeb2-ebe061016701",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F20b7a191-43b6-48e5-b936-fd74c07db05d%2Fimages%2F1770381575699_2.jpg?alt=media&token=e264001f-9900-4300-b4b7-8beef40cb95f",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F20b7a191-43b6-48e5-b936-fd74c07db05d%2Fimages%2F1770381575700_3.jpg?alt=media&token=1d004073-bce3-4a95-9335-823bc320dbb1",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F20b7a191-43b6-48e5-b936-fd74c07db05d%2Fimages%2F1770381575700_4.jpg?alt=media&token=b6617040-3b42-4c1c-85a6-d2a642316c7e"
+        );
 
         // XFX SWFT 210 RX 6600
         var xfx6600Id = Guid.NewGuid();
@@ -982,7 +1015,11 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddGpuSpecs(specValues, gpuSpecs, xfx6600Id, vram: 8, tdp: 132, length: 235, pcieSlot: "PCIe 4.0 x16", powerConnector: "1x 8-pin");
-        productImages.Add(new ProductImage { ProductId = xfx6600Id, ImageUrl = "https://www.xfxforce.com/images/products/rx-6600-swft-210.png" });
+        AddImages(
+            xfx6600Id,
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd08a4dcc-f3d3-43eb-bc39-764acda665d2%2Fimages%2F1770382033222_0.jpg?alt=media&token=6364b26b-d43f-4882-9460-561352ec774b",
+            "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd08a4dcc-f3d3-43eb-bc39-764acda665d2%2Fimages%2F1770382033223_1.jpg?alt=media&token=6a207190-f60b-4340-8c21-5762fb35739e"
+        );
     }
 
     private static async Task InitCpuProducts(ApplicationDbContext context, List<ProductSpecValue> specValues, List<ProductImage> productImages)
