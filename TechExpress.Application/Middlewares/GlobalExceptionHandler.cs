@@ -15,12 +15,15 @@ namespace TechExpress.Application.Middlewares
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger.LogError("Exception thrown: {}", exception);
             var (statusCode, message) = exception switch
             {
                 BaseException customEx => (customEx.StatusCode, customEx.Message),
-                _ => (StatusCodes.Status500InternalServerError, $"Lỗi không xác định: {exception}")
+                _ => (StatusCodes.Status500InternalServerError, $"Lỗi không xác định")
             };
+            if (exception is not BaseException)
+            {
+                _logger.LogError(exception, "Unhandled exception at {Path}", httpContext.Request.Path);
+            }
 
             httpContext.Response.StatusCode = statusCode;
 

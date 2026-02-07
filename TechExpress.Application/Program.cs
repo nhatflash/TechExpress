@@ -279,6 +279,7 @@ app.UseCors();
 app.UseAuthentication();
 
 app.UseMiddleware<UserStatusMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseAuthorization();
 
 app.UseExceptionHandler();

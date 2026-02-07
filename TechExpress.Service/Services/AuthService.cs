@@ -28,16 +28,16 @@ namespace TechExpress.Service.Services
 
         public async Task<(User user, string accessToken, string refreshToken)> LoginAsyncWithUser(string email, string password)
         {
-            var user = await _unitOfWork.UserRepository.FindUserByEmailAsync(email) ?? throw new UnauthorizedException("Invalid email or password");
+            var user = await _unitOfWork.UserRepository.FindUserByEmailAsync(email) ?? throw new UnauthorizedException("Sai thông tin đăng nhập");
 
             if (!PasswordEncoder.VerifyPassword(password, user.PasswordHash))
             {
-                throw new UnauthorizedException("Invalid email or password");
+                throw new UnauthorizedException("Sai thông tin đăng nhập");
             }
 
             if (user.Status != UserStatus.Active)
             {
-                throw new ForbiddenException("Your account is not active");
+                throw new ForbiddenException("Tài khoản của bạn không hoạt động");
             }
 
             var accessToken = _jwtUtils.GenerateAccessToken(user);
@@ -55,14 +55,14 @@ namespace TechExpress.Service.Services
         {
             if (await _unitOfWork.UserRepository.UserExistByEmailAsync(email))
             {
-                throw new BadRequestException("Email already exists");
+                throw new BadRequestException("Email đã tồn tại");
             }
 
             if (!string.IsNullOrWhiteSpace(phone))
             {
                 if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone))
                 {
-                    throw new BadRequestException("Phone number already exists");
+                    throw new BadRequestException("Số điện thoại đã tồn tại");
                 }
             }
 
@@ -97,14 +97,14 @@ namespace TechExpress.Service.Services
             var existingUser = await _unitOfWork.UserRepository.FindUserByEmailAsync(email);
             if (await _unitOfWork.UserRepository.UserExistByEmailAsync(email))
             {
-                throw new BadRequestException("Email already exists");
+                throw new BadRequestException("Email đã tồn tại");
             }
 
             if (!string.IsNullOrWhiteSpace(phone))
             {
                 if (await _unitOfWork.UserRepository.UserExistByPhoneAsync(phone))
                 {
-                    throw new BadRequestException("Phone number already exists");
+                    throw new BadRequestException("Số điện thoại đã tồn tại");
                 }
             }
 
