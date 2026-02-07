@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Identity.Client;
 using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Constants;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Hubs;
 
 namespace TechExpress.Service.Services
 {
@@ -12,11 +16,13 @@ namespace TechExpress.Service.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly UserContext _userContext;
+        private readonly IHubContext<CartHub> _cartHubContext;
 
-        public CartService(UnitOfWork unitOfWork, UserContext userContext)
+        public CartService(UnitOfWork unitOfWork, UserContext userContext, IHubContext<CartHub> cartHubContext)
         {
             _unitOfWork = unitOfWork;
             _userContext = userContext;
+            _cartHubContext = cartHubContext;
         }
 
         public async Task<Cart> HandleGetCurrentCartAsync()
@@ -97,6 +103,7 @@ namespace TechExpress.Service.Services
             await _unitOfWork.SaveChangesAsync();
 
             var newCart = await _unitOfWork.CartRepository.FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId) ?? throw new NotFoundException($"Không tìm thấy giỏ hàng của người dùng {userId}");
+            await SendCartChangesBySignalR(newCart, userId);
             return newCart;
         }
 
@@ -147,6 +154,7 @@ namespace TechExpress.Service.Services
             await _unitOfWork.SaveChangesAsync();
 
             var updatedCart = await _unitOfWork.CartRepository.FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId) ?? throw new NotFoundException($"Không tìm thấy giỏ hàng của người dùng {userId}");
+            await SendCartChangesBySignalR(updatedCart, userId);
             return updatedCart;
         }
 
@@ -169,6 +177,7 @@ namespace TechExpress.Service.Services
             cart.UpdatedAt = DateTimeOffset.Now;
             await _unitOfWork.SaveChangesAsync();
             var removedCart = await _unitOfWork.CartRepository.FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId) ?? throw new NotFoundException($"Không tìm thấy giỏ hàng của người dùng {userId}");
+            await SendCartChangesBySignalR(removedCart, userId);
             return removedCart;
         }
 
@@ -183,8 +192,25 @@ namespace TechExpress.Service.Services
             cart.UpdatedAt = DateTimeOffset.Now;
 
             await _unitOfWork.SaveChangesAsync();
+            var removedCart = await _unitOfWork.CartRepository.FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId) ?? throw new NotFoundException($"Không tìm thấy giỏ hàng của người dùng {userId}");
+            await SendCartChangesBySignalR(removedCart, userId);
+            return removedCart;
+        }
 
-            return cart;
+        public async Task<int> HandleGetTotalItemsFromCartAsync()
+        {
+            var userId = _userContext.GetCurrentAuthenticatedUserId();
+            
+            var cart = await _unitOfWork.CartRepository.FindCartByUserIdAsync(userId) ?? throw new NotFoundException($"Không tìm thấy giỏ hàng");
+            return await _unitOfWork.CartItemRepository.GetTotalItemsFromCartIdAsync(cart.Id);
+        }
+
+        public async Task SendCartChangesBySignalR(Cart cart, Guid userId)
+        {
+            var totalItems = cart.Items.Sum(ci => ci.Quantity);
+            var user = userId.ToString();
+            await _cartHubContext.Clients.User(user).SendAsync(SignalRMessageConstant.NewCartItemList, user, cart.Items);
+            await _cartHubContext.Clients.User(user).SendAsync(SignalRMessageConstant.CartItemQuantityUpdate, user, totalItems);
         }
     }
 }

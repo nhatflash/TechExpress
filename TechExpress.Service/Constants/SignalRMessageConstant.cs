@@ -1,0 +1,12 @@
+using System;
+
+namespace TechExpress.Service.Constants;
+
+public static class SignalRMessageConstant
+{
+    public const string NewCartItem = "NewCartItem";
+
+    public const string NewCartItemList = "NewCartItemList";
+
+    public const string CartItemQuantityUpdate = "CartItemQuantityUpdate";
+}

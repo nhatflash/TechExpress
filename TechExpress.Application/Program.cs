@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -14,6 +15,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.Contexts;
 using TechExpress.Service;
 using TechExpress.Service.Contexts;
+using TechExpress.Service.Hubs;
 using TechExpress.Service.Initializers;
 using TechExpress.Service.Utils;
 
@@ -64,6 +66,8 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 // SQL Server configuration
 var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -114,7 +118,8 @@ builder.Services.AddAuthentication(opt =>
         OnMessageReceived = context =>
         {
             var accessToken = context.Request.Query["token"];
-            if (!string.IsNullOrEmpty(accessToken))
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/cartHub"))
             {
                 context.Token = accessToken;
             }
@@ -288,5 +293,7 @@ using (var scope = app.Services.CreateScope())
     await BrandsInitializer.Init(context);
     await ProductsInitializer.Init(context);
 }   
+
+app.MapHub<CartHub>("/cartHub");
 
 app.Run();

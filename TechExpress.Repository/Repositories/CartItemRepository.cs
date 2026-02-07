@@ -51,4 +51,9 @@ public class CartItemRepository
     {
         _context.CartItems.RemoveRange(cartItems);
     }
+
+    public async Task<int> GetTotalItemsFromCartIdAsync(Guid cartId)
+    {
+        return await _context.CartItems.Where(ci => ci.CartId == cartId).SumAsync(ci => ci.Quantity);
+    }
 }

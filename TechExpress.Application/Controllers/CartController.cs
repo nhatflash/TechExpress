@@ -97,5 +97,13 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToCartResponseFromCart(cart);
             return Ok(ApiResponse<CartResponse>.OkResponse(response));
         }
+
+
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalItemsFromCart()
+        {
+            var response = await _serviceProvider.CartService.HandleGetTotalItemsFromCartAsync();
+            return Ok(ApiResponse<int>.OkResponse(response));
+        }
     }
 }

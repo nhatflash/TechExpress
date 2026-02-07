@@ -27,4 +27,8 @@
     <ProjectReference Include="..\TechExpress.Repository\TechExpress.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Hubs\" />
+  </ItemGroup>
+
 </Project>
