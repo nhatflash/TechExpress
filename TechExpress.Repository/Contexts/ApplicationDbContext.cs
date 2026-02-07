@@ -822,6 +822,100 @@ namespace TechExpress.Repository.Contexts
                     .HasForeignKey(p => p.InstallmentId)
                     .OnDelete(DeleteBehavior.NoAction);
             });
+
+
+            // db-schema for Review model
+            modelBuilder.Entity<Review>(rv =>
+            {
+                rv.Property(r => r.Id)
+                    .HasColumnName("id");
+
+                rv.Property(r => r.ProductId)
+                    .HasColumnName("product_id")
+                    .IsRequired();
+
+                rv.Property(r => r.UserId)
+                    .HasColumnName("user_id");
+
+                rv.Property(r => r.FullName)
+                    .HasColumnName("full_name")
+                    .HasMaxLength(256);
+
+                rv.Property(r => r.Phone)
+                    .HasColumnName("phone")
+                    .HasMaxLength(20);
+
+                rv.Property(r => r.Comment)
+                    .HasColumnName("comment")
+                    .HasMaxLength(2048)
+                    .IsRequired();
+
+                rv.Property(r => r.Rating)
+                    .HasColumnName("rating")
+                    .IsRequired();
+
+                rv.Property(r => r.IsDeleted)
+                    .HasColumnName("is_deleted")
+                    .HasDefaultValue(false)
+                    .IsRequired();
+
+                rv.Property(r => r.CreatedAt)
+                    .HasColumnName("created_at")
+                    .IsRequired();
+
+                rv.Property(r => r.UpdatedAt)
+                    .HasColumnName("updated_at")
+                    .IsRequired();
+
+                rv.HasKey(r => r.Id);
+
+                rv.HasIndex(r => r.ProductId)
+                    .HasDatabaseName("idx_review_product");
+
+                rv.HasIndex(r => r.UserId)
+                    .HasDatabaseName("idx_review_user");
+
+                rv.HasOne(r => r.Product)
+                    .WithMany()
+                    .HasForeignKey(r => r.ProductId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                rv.HasOne(r => r.User)
+                    .WithMany()
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+            // db-schema for ReviewMedia model
+            modelBuilder.Entity<ReviewMedia>(rm =>
+            {
+                rm.Property(r => r.Id)
+                    .HasColumnName("id");
+
+                rm.Property(r => r.ReviewId)
+                    .HasColumnName("review_id")
+                    .IsRequired();
+
+                rm.Property(r => r.MediaUrl)
+                    .HasColumnName("media_url")
+                    .HasMaxLength(2048)
+                    .IsRequired();
+
+                rm.Property(r => r.CreatedAt)
+                    .HasColumnName("created_at")
+                    .IsRequired();
+
+                rm.HasKey(r => r.Id);
+
+                rm.HasIndex(r => r.ReviewId)
+                    .HasDatabaseName("idx_review_media_review");
+
+                rm.HasOne(r => r.Review)
+                    .WithMany(r => r.Medias)
+                    .HasForeignKey(r => r.ReviewId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
 
@@ -840,5 +934,7 @@ namespace TechExpress.Repository.Contexts
         public DbSet<Installment> Installments { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<ComputerComponent> ComputerComponents { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<ReviewMedia> ReviewMedias { get; set; }
     }
 }
