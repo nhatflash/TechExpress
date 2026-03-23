@@ -7,9 +7,10 @@ using TechExpress.Service.Utils;
 
 namespace TechExpress.Service.Services;
 
-public class TicketService(UnitOfWork unitOfWork)
+public class TicketService(UnitOfWork unitOfWork, NotificationHelper notificationHelper)
 {
     private readonly UnitOfWork _unitOfWork = unitOfWork;
+    private readonly NotificationHelper _notificationHelper = notificationHelper;
 
     public async Task<Ticket> HandleCreateTicketForAuthenticatedUser(
         Guid userId,
@@ -81,6 +82,8 @@ public class TicketService(UnitOfWork unitOfWork)
 
         await _unitOfWork.TicketMessageRepository.AddAsync(initialMessage);
         await _unitOfWork.SaveChangesAsync();
+
+        await _notificationHelper.TryCreateTicketAlertNotificationForAdminAndStaffAsync(ticket.Id, ticket.Title);
 
         return await _unitOfWork.TicketRepository.FindByIdFullJoinWithSplitQueryAsync(ticket.Id)
             ?? throw new NotFoundException($"Không tìm thấy ticket: {ticket.Id}");
@@ -156,6 +159,8 @@ public class TicketService(UnitOfWork unitOfWork)
 
         await _unitOfWork.TicketMessageRepository.AddAsync(initialMessage);
         await _unitOfWork.SaveChangesAsync();
+
+        await _notificationHelper.TryCreateTicketAlertNotificationForAdminAndStaffAsync(ticket.Id, ticket.Title);
 
         return await _unitOfWork.TicketRepository.FindByIdFullJoinWithSplitQueryAsync(ticket.Id)
             ?? throw new NotFoundException($"Không tìm thấy ticket: {ticket.Id}");
@@ -337,6 +342,14 @@ public class TicketService(UnitOfWork unitOfWork)
         ticket.UpdatedAt = DateTimeOffset.Now;
 
         await _unitOfWork.SaveChangesAsync();
+
+        if (isStaff && ticket.UserId.HasValue)
+        {
+            await _notificationHelper.TryCreateTicketReplyNotificationAsync(
+                ticket.UserId.Value,
+                ticketId,
+                ticket.Title);
+        }
 
         var updatedTicket = await _unitOfWork.TicketRepository.FindByIdFullJoinWithSplitQueryAsync(ticketId)
             ?? throw new NotFoundException($"Không tìm thấy ticket: {ticketId}");

@@ -399,6 +399,11 @@ namespace TechExpress.Service.Services
                 // ================== CẬP NHẬT: ĐƯA TRỪ TỒN KHO BATCH RA NGOÀI VÒNG LẶP ==================
                 var decrementResults = await _unitOfWork.ProductRepository.DecrementStockBatchAsync(requestProducts);
                 var failedIds = decrementResults.Where(r => r.IsUpdated == 0).Select(r => r.ProductId).ToList();
+                var outOfStockProductIds = decrementResults
+                    .Where(r => r.IsUpdated == 1 && r.NewStock.HasValue && r.NewStock.Value == 0)
+                    .Select(r => r.ProductId)
+                    .Distinct()
+                    .ToList();
 
                 if (failedIds.Count > 0)
                 {
@@ -465,6 +470,14 @@ namespace TechExpress.Service.Services
                 // Lưu thay đổi và commit
                 await _unitOfWork.SaveChangesAsync();
                 await transaction.CommitAsync();
+
+                foreach (var productId in outOfStockProductIds)
+                {
+                    if (productDict.TryGetValue(productId, out var product))
+                    {
+                        await _notificationHelper.TryCreateStockAlertNotificationAsync(productId, product.Name);
+                    }
+                }
 
                 var finalOrder = await GetOrderDetailsAsync(orderId);
                 var usageList = await _unitOfWork.PromotionUsageRepository.GetByOrderIdIncludePromotionAsync(orderId);
@@ -772,6 +785,7 @@ namespace TechExpress.Service.Services
             }
             order.Status = OrderStatus.Processing;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.Processing);
 
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
@@ -803,6 +817,8 @@ namespace TechExpress.Service.Services
             }
             order.Status = OrderStatus.Shipping;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.Shipping);
+
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
         }
@@ -826,6 +842,8 @@ namespace TechExpress.Service.Services
             order.Status = OrderStatus.Delivered;
             order.ReceivedAt = DateTimeOffset.Now;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.Delivered);
+
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
         }
@@ -843,6 +861,8 @@ namespace TechExpress.Service.Services
             }
             order.Status = OrderStatus.ReadyForPickup;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.ReadyForPickup);
+
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
         }
@@ -862,6 +882,8 @@ namespace TechExpress.Service.Services
             order.Status = OrderStatus.PickedUp;
             order.ReceivedAt = DateTimeOffset.Now;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.PickedUp);
+
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
         }
@@ -900,6 +922,8 @@ namespace TechExpress.Service.Services
             }
             order.Status = OrderStatus.Completed;
             await _unitOfWork.SaveChangesAsync();
+            await TryNotifyOrderStatusChangedAsync(order.UserId, orderId, OrderStatus.Completed);
+
             var (updatedOrder, installments, payments) = await HandleGetOrderDetailAsync(orderId);
             return (updatedOrder, installments, payments);
         }
@@ -955,14 +979,13 @@ namespace TechExpress.Service.Services
 
                     await _unitOfWork.SaveChangesAsync();
 
-                    // Tạo notification khi order bị hủy
+                    await transaction.CommitAsync();
+
+                    // Gửi notification sau khi nghiệp vụ chính đã commit thành công
                     if (trackedOrder.UserId.HasValue)
                     {
-                        await _notificationHelper.CreateOrderNotificationAsync(trackedOrder.UserId.Value, orderId, OrderStatus.Canceled);
-                        await _unitOfWork.SaveChangesAsync();
+                        await _notificationHelper.TryCreateOrderNotificationAsync(trackedOrder.UserId.Value, orderId, OrderStatus.Canceled);
                     }
-
-                    await transaction.CommitAsync();
 
                     return trackedOrder;
                 }
@@ -972,6 +995,14 @@ namespace TechExpress.Service.Services
                     throw;
                 }
             });
+        }
+
+        private async Task TryNotifyOrderStatusChangedAsync(Guid? userId, Guid orderId, OrderStatus status)
+        {
+            if (!userId.HasValue)
+                return;
+
+            await _notificationHelper.TryCreateOrderNotificationAsync(userId.Value, orderId, status);
         }
 
     }

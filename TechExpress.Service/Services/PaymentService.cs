@@ -372,6 +372,8 @@ namespace TechExpress.Service.Services
             await _unitOfWork.PaymentRepository.AddAsync(payment);
             await _unitOfWork.SaveChangesAsync();
 
+            Guid? notifyUserId = null;
+
             // 6) Update statuses nếu success
             if (status == PaymentStatus.Success)
             {
@@ -393,26 +395,24 @@ namespace TechExpress.Service.Services
                 await UpdateOrderStatusAfterPaymentAsync(session.OrderId, ct);
                 await _unitOfWork.SaveChangesAsync();
 
-                // Tạo notification thanh toán thành công
                 if (order?.UserId.HasValue == true)
-                {
-                    await _notificationHelper.CreatePaymentNotificationAsync(order.UserId.Value, session.OrderId, PaymentStatus.Success);
-                    await _unitOfWork.SaveChangesAsync();
-                }
+                    notifyUserId = order.UserId.Value;
             }
             else
             {
-                // Tạo notification thanh toán thất bại
                 var order = await _unitOfWork.OrderRepository.FindByIdWithTrackingAsync(session.OrderId);
                 if (order?.UserId.HasValue == true)
-                {
-                    await _notificationHelper.CreatePaymentNotificationAsync(order.UserId.Value, session.OrderId, PaymentStatus.Failed);
-                    await _unitOfWork.SaveChangesAsync();
-                }
+                    notifyUserId = order.UserId.Value;
             }
 
-            // (optional) clear session luôn
+            // Hoàn tất nghiệp vụ chính
             await ClearSessionAsync(session);
+
+            // Gửi notification sau khi nghiệp vụ chính đã chạy xong
+            if (notifyUserId.HasValue)
+            {
+                await _notificationHelper.TryCreatePaymentNotificationAsync(notifyUserId.Value, session.OrderId, status);
+            }
 
             return new GatewayCallbackResult
             {

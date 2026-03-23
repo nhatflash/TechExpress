@@ -33,6 +33,7 @@ namespace TechExpress.Repository
         public TicketRepository TicketRepository { get; }
         public TicketMessageRepository TicketMessageRepository { get; }
         public NotificationRepository NotificationRepository { get; }
+        public DashboardRepository DashboardRepository { get; }
 
         public OrderItemRepository OrderItemRepository { get; }
 
@@ -59,6 +60,7 @@ namespace TechExpress.Repository
             ChatSessionRepository = new ChatSessionRepository(context);
             ChatMessageRepository = new ChatMessageRepository(context);
             NotificationRepository = new NotificationRepository(context);
+            DashboardRepository = new DashboardRepository(context);
             TicketMessageRepository = new TicketMessageRepository(context);
             TicketRepository = new TicketRepository(context);
             OrderItemRepository = new OrderItemRepository(context);

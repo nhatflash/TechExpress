@@ -71,6 +71,7 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+builder.Services.AddHttpClient();
 
 // Anthropic AI configuration
 var anthropicApiKey = builder.Configuration["AI:ApiKey"] ?? "";
