@@ -82,6 +82,19 @@ public class ChatAiService(AnthropicClient client, string systemPrompt)
                 },
                 Required = ["reason"]
             }
+        }, null),
+
+        new ToolUnion(new Tool
+        {
+            Name = "get_active_promotions",
+            Description = "Get currently active promotions and discount codes available in the store. Use when the customer asks about discounts, vouchers, promo codes, or ongoing deals.",
+            InputSchema = new InputSchema
+            {
+                Properties = new Dictionary<string, JsonElement>
+                {
+                    ["count"] = JsonDocument.Parse("""{"type":"integer","description":"Number of promotions to return (default 5, max 10)"}""").RootElement
+                }
+            }
         }, null)
     ];
 

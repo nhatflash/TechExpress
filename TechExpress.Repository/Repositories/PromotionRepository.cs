@@ -60,6 +60,18 @@ public class PromotionRepository
             .Where(p => !string.IsNullOrEmpty(p.Code) && codes.Contains(p.Code) && p.StartDate <= now && p.EndDate > now && p.IsActive).ToListAsync();
     }
 
+    public async Task<List<Promotion>> FindActiveOnCountAsync(int count)
+    {
+        var now = DateTimeOffset.Now;
+        return await _context.Promotions
+            .Include(p => p.RequiredProducts)
+            .Include(p => p.FreeProducts)
+            .Include(p => p.AppliedProducts)
+            .AsSplitQuery()
+            .Take(count)
+            .Where(p => p.StartDate <= now && p.EndDate > now && p.IsActive).ToListAsync();
+    }
+
     public async Task<int> IncrementUsageCountIfMaxUsageNotExceed(Guid id)
     {
         return await _context.Promotions

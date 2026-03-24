@@ -274,6 +274,7 @@ public class ChatService(UnitOfWork unitOfWork, ChatAiService chatAiService)
                 "get_product_detail" => await GetProductDetailToolAsync(input),
                 "check_pc_compatibility" => await CheckPcCompatibilityToolAsync(input),
                 "escalate_to_staff" => await EscalateToStaffToolAsync(sessionId),
+                "get_active_promotions" => await GetActivePromotionsToolAsync(input),
                 _ => $"Unknown tool: {toolName}"
             };
         }
@@ -438,5 +439,35 @@ public class ChatService(UnitOfWork unitOfWork, ChatAiService chatAiService)
         session.UpdatedAt = DateTimeOffset.Now;
         await _unitOfWork.SaveChangesAsync();
         return "Session escalated successfully. The session will be response back by a staff member";
+    }
+
+    private async Task<string> GetActivePromotionsToolAsync(IReadOnlyDictionary<string, JsonElement> input)
+    {
+        if (!input.TryGetValue("count", out var countEl) || countEl.ValueKind != JsonValueKind.Number)
+        {
+            return $"Missing required parameter: count (must be a number)";
+        }
+        var count = countEl.GetInt32();
+        if (count <= 0) count = 5;
+        List<Promotion> activePromotions;
+        try
+        {
+            activePromotions = await _unitOfWork.PromotionRepository.FindActiveOnCountAsync(count);
+        }
+        catch (Exception ex)
+        {
+            return $"Active promotions check failed: {ex.Message}";
+        }
+        if (activePromotions.Count == 0)
+        {
+            return "There is no active promotions available";
+        }
+        var sb = new StringBuilder();
+        sb.AppendLine("Active promotions: ");
+        foreach (var ap in activePromotions)
+        {
+            sb.AppendLine($" - {ap.Name}: {ap.StartDate} - {ap.EndDate}");
+        }
+        return sb.ToString().TrimEnd();
     }
 }
