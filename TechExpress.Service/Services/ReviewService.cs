@@ -128,21 +128,10 @@ namespace TechExpress.Service.Services
             await _unitOfWork.ReviewRepository.AddAsync(review);
             await _unitOfWork.SaveChangesAsync();
 
-            // Tạo notification cho tất cả admin users khi có review mới
-            var admins = await _unitOfWork.UserRepository.FindAdminUsersAsync();
-            if (admins.Any())
-            {
-                foreach (var admin in admins)
-                {
-                    await _notificationHelper.CreateNewReviewNotificationAsync(
-                        admin.Id,
-                        productId,
-                        (await _unitOfWork.ProductRepository.FindByIdAsync(productId))?.Name ?? "Sản phẩm",
-                        resolvedFullName ?? "Khách vãng lai"
-                    );
-                }
-                await _unitOfWork.SaveChangesAsync();
-            }
+            // Nghiệp vụ chính đã hoàn tất, notification xử lý sau
+            await TryNotifyAdminsAndStaffsForNewReviewAsync(
+                productId,
+                resolvedFullName ?? "Khách vãng lai");
 
             return review;
         }
@@ -180,6 +169,24 @@ namespace TechExpress.Service.Services
         {
             if (!Regex.IsMatch(phone, @"^\d{9,12}$"))
                 throw new BadRequestException("Số điện thoại phải là chữ số và có độ dài từ 9 đến 12 ký tự.");
+        }
+
+        private async Task TryNotifyAdminsAndStaffsForNewReviewAsync(Guid productId, string reviewerName)
+        {
+            var recipients = await _unitOfWork.UserRepository.FindAdminAndStaffUsersAsync();
+            if (!recipients.Any())
+                return;
+
+            var productName = (await _unitOfWork.ProductRepository.FindByIdAsync(productId))?.Name ?? "Sản phẩm";
+
+            foreach (var recipient in recipients)
+            {
+                await _notificationHelper.TryCreateNewReviewNotificationAsync(
+                    recipient.Id,
+                    productId,
+                    productName,
+                    reviewerName);
+            }
         }
     }
 }

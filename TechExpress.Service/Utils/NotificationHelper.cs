@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using TechExpress.Repository;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
@@ -41,6 +41,85 @@ public class NotificationHelper
             .SendAsync(SignalRMessageConstant.NotificationListUpdate);
     }
 
+    public async Task CreateTicketAlertNotificationForAdminAndStaffAsync(Guid ticketId, string ticketTitle)
+    {
+        var recipients = await _unitOfWork.UserRepository.FindAdminAndStaffUsersAsync();
+        if (!recipients.Any())
+            return;
+
+        foreach (var recipient in recipients)
+        {
+            var notification = new Notification
+            {
+                UserId = recipient.Id,
+                Type = NotificationType.TicketAlert,
+                Title = "Có ticket mới cần xử lý",
+                Message = $"Ticket mới: '{ticketTitle}' vừa được tạo.",
+                ReferenceId = ticketId,
+                ReferenceType = NotificationReferenceType.Ticket,
+                IsRead = false
+            };
+
+            await _unitOfWork.NotificationRepository.AddAsync(notification);
+            await _notificationHubContext.Clients.User(recipient.Id.ToString())
+                .SendAsync(SignalRMessageConstant.NotificationListUpdate);
+        }
+    }
+
+    public async Task TryCreateTicketAlertNotificationForAdminAndStaffAsync(Guid ticketId, string ticketTitle)
+    {
+        try
+        {
+            await CreateTicketAlertNotificationForAdminAndStaffAsync(ticketId, ticketTitle);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
+        }
+    }
+
+    public async Task CreateTicketReplyNotificationAsync(Guid userId, Guid ticketId, string ticketTitle)
+    {
+        var notification = new Notification
+        {
+            UserId = userId,
+            Type = NotificationType.TicketAlert,
+            Title = "Ticket có phản hồi mới",
+            Message = $"Ticket '{ticketTitle}' của bạn có phản hồi mới từ nhân viên.",
+            ReferenceId = ticketId,
+            ReferenceType = NotificationReferenceType.Ticket,
+            IsRead = false
+        };
+
+        await _unitOfWork.NotificationRepository.AddAsync(notification);
+        await _notificationHubContext.Clients.User(userId.ToString())
+            .SendAsync(SignalRMessageConstant.NotificationListUpdate);
+    }
+
+    public async Task TryCreateTicketReplyNotificationAsync(Guid userId, Guid ticketId, string ticketTitle)
+    {
+        try
+        {
+            await CreateTicketReplyNotificationAsync(userId, ticketId, ticketTitle);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
+        }
+    }
+
+    public async Task TryCreateOrderNotificationAsync(Guid userId, Guid orderId, OrderStatus status)
+    {
+        try
+        {
+            await CreateOrderNotificationAsync(userId, orderId, status);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
+        }
+    }
+
     /// <summary>
     /// T?o notification cho Payment status change
     /// </summary>
@@ -70,6 +149,18 @@ public class NotificationHelper
             .SendAsync(SignalRMessageConstant.NotificationListUpdate);
     }
 
+    public async Task TryCreatePaymentNotificationAsync(Guid userId, Guid orderId, PaymentStatus paymentStatus)
+    {
+        try
+        {
+            await CreatePaymentNotificationAsync(userId, orderId, paymentStatus);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
+        }
+    }
+
     /// <summary>
     /// Tạo notification cho Stock Alert (khi sản phẩm hết hàng)
     /// Gửi cho tất cả admin users
@@ -97,6 +188,18 @@ public class NotificationHelper
             await _unitOfWork.NotificationRepository.AddAsync(notification);
             await _notificationHubContext.Clients.User(admin.Id.ToString())
                 .SendAsync(SignalRMessageConstant.NotificationListUpdate);
+        }
+    }
+
+    public async Task TryCreateStockAlertNotificationAsync(Guid productId, string productName)
+    {
+        try
+        {
+            await CreateStockAlertNotificationAsync(productId, productName);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
         }
     }
 
@@ -142,6 +245,18 @@ public class NotificationHelper
             .SendAsync(SignalRMessageConstant.NotificationListUpdate);
     }
 
+    public async Task TryCreateNewReviewNotificationAsync(Guid productOwnerId, Guid productId, string productName, string reviewerName)
+    {
+        try
+        {
+            await CreateNewReviewNotificationAsync(productOwnerId, productId, productName, reviewerName);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
+        }
+    }
+
     /// <summary>
     /// Tạo notification hệ thống chung
     /// </summary>
@@ -176,6 +291,18 @@ public class NotificationHelper
         foreach (var customer in customers)
         {
             await CreatePromotionNotificationAsync(customer.Id, promotionId, promotionCode, promotionName);
+        }
+    }
+
+    public async Task TryCreatePromotionNotificationForAllCustomersAsync(Guid promotionId, string promotionCode, string promotionName)
+    {
+        try
+        {
+            await CreatePromotionNotificationForAllCustomersAsync(promotionId, promotionCode, promotionName);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch
+        {
         }
     }
 

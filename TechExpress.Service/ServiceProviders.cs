@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -39,8 +40,9 @@ namespace TechExpress.Service
         public TicketService TicketService { get; }
 
         public WarrantySupportService WarrantySupportService { get; }
+        public DashboardService DashboardService { get; }
 
-        public ServiceProviders(UnitOfWork unitOfWork, PayOsClient payOsClient, RedisUtils redisUtils, SmtpEmailSender emailSender, JwtUtils jwtUtils, UserContext userContext, OtpUtils otpUtils, GoogleAuthUtils googleAuthUtils, IConnectionMultiplexer redis, ChatAiService chatAiService, NotificationHelper notificationHelper)
+        public ServiceProviders(UnitOfWork unitOfWork, PayOsClient payOsClient, RedisUtils redisUtils, SmtpEmailSender emailSender, JwtUtils jwtUtils, UserContext userContext, OtpUtils otpUtils, GoogleAuthUtils googleAuthUtils, IConnectionMultiplexer redis, ChatAiService chatAiService, NotificationHelper notificationHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             UnitOfWork = unitOfWork;
             NotificationHelper = notificationHelper;
@@ -62,8 +64,9 @@ namespace TechExpress.Service
             OrderService = new OrderService(unitOfWork, userContext, PromotionService, NotificationHelper);
             ChatService = new ChatService(unitOfWork, chatAiService);
             NotificationService = new NotificationService(unitOfWork);
-            TicketService = new TicketService(unitOfWork);
+            TicketService = new TicketService(unitOfWork, notificationHelper);
             WarrantySupportService = new WarrantySupportService(unitOfWork, userContext);
+            DashboardService = new DashboardService(unitOfWork, httpClientFactory, configuration);
         }
     }
 }

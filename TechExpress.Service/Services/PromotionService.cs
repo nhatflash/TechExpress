@@ -75,14 +75,14 @@ public class PromotionService
 
         await _unitOfWork.PromotionRepository.AddAsync(promotion);
         await _unitOfWork.SaveChangesAsync();
+        Promotion newPromotion = await _unitOfWork.PromotionRepository.FindByIdIncludeRequiredProductsIncludeFreeProductsIncludeAppliedProductsWithSplitQueryAsync(promotion.Id) ?? throw new NotFoundException($"Không tìm thấy khuyến mãi {promotion.Id}");
 
-        // Gửi thông báo khuyến mãi cho tất cả khách hàng
-        await _notificationHelper.CreatePromotionNotificationForAllCustomersAsync(
+        // Gửi notification sau khi nghiệp vụ chính đã hoàn tất
+        await _notificationHelper.TryCreatePromotionNotificationForAllCustomersAsync(
             promotion.Id,
             promotion.Code ?? string.Empty,
             promotion.Name);
 
-        Promotion newPromotion = await _unitOfWork.PromotionRepository.FindByIdIncludeRequiredProductsIncludeFreeProductsIncludeAppliedProductsWithSplitQueryAsync(promotion.Id) ?? throw new NotFoundException($"Không tìm thấy khuyến mãi {promotion.Id}");
         return newPromotion;
     }
 

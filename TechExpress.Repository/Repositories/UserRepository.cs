@@ -182,5 +182,12 @@ namespace TechExpress.Repository.Repositories
                 .Where(u => u.Role == UserRole.Admin && u.Status == UserStatus.Active)
                 .ToListAsync();
         }
+
+        public async Task<List<User>> FindAdminAndStaffUsersAsync()
+        {
+            return await _context.Users
+                .Where(u => (u.Role == UserRole.Admin || u.Role == UserRole.Staff) && u.Status == UserStatus.Active)
+                .ToListAsync();
+        }
     }
 }
