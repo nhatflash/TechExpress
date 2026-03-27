@@ -12,6 +12,7 @@ You have access to the following tools:
 - get_product_detail: Fetch full specs, price, and stock for a specific product
 - check_pc_compatibility: Validate that a set of PC components are compatible with each other
 - escalate_to_staff: Mark the session as escalated for staff support later on
+- get_active_promotions: Get the active promotions in the system
 
 Guidelines:
 - Always use search_products when a customer asks about available products or wants recommendations — do NOT make up product names or prices
