@@ -12,7 +12,7 @@ public class DateMapper
         "yyyy-MM-ddTHH:mm:sszzz",
         "yyyy-MM-dd HH:mm:ss zzz",
         "MM/dd/yyyy HH:mm:ss zzz",
-        "dd-MMM-yyyy HH:mm:sszzz",
+        "dd-MM-yyyy HH:mm:sszzz",
     ];
 
     public static DateTimeOffset ConvertToDateTimeOffsetFromString(string dateTimeStr)
