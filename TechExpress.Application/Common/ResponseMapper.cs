@@ -6,6 +6,7 @@ using TechExpress.Application.Dtos.Responses;
 using TechExpress.Application.DTOs.Responses;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Dtos;
 using TechExpress.Service.Services;
 using TechExpress.Service.Utils;
 
@@ -146,9 +147,12 @@ public class ResponseMapper
 
     // ======================= Map ProductListResponse =======================//
     public static Pagination<ProductListResponse>
-    MapToProductListResponsePaginationFromProductPagination(
-        Pagination<Product> productPagination)
+MapToProductListResponsePaginationFromProductPagination(
+    Pagination<Product> productPagination,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
     {
+        pricingMap ??= [];
+
         var productResponses = productPagination.Items
             .Select(product =>
             {
@@ -156,6 +160,11 @@ public class ResponseMapper
                     .OrderBy(i => i.Id)
                     .Select(i => i.ImageUrl)
                     .FirstOrDefault();
+
+                pricingMap.TryGetValue(product.Id, out var pricing);
+
+                var discountValue = pricing?.DiscountValue ?? 0;
+                var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
 
                 return new ProductListResponse(
                     product.Id,
@@ -184,39 +193,53 @@ public class ResponseMapper
         };
     }
 
-        public static List<ProductListResponse> MapToProductListResponsesFromProducts(List<Product> products)
-        {
-            var productResponses = products.Select(product =>
-            {
-                var firstImageUrl = product.Images
-                    .OrderBy(i => i.Id)
-                    .Select(i => i.ImageUrl)
-                    .FirstOrDefault();
-
-                return new ProductListResponse(
-                    product.Id,
-                    product.Name,
-                    product.Sku,
-                    product.CategoryId,
-                    product.BrandId,
-                    product.Category?.Name ?? string.Empty,
-                    product.Price,
-                    product.Stock,
-                    product.WarrantyMonth,
-                    product.Status,
-                    firstImageUrl,
-                    product.CreatedAt,
-                    product.UpdatedAt
-                );
-            })
-            .ToList();
-            return productResponses;
-        }
-
-        
-
-    public static ProductDetailResponse MapToProductDetailResponseFromProduct(Product product)
+    public static List<ProductListResponse> MapToProductListResponsesFromProducts(
+    List<Product> products,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
     {
+        pricingMap ??= [];
+
+        var productResponses = products.Select(product =>
+        {
+            var firstImageUrl = product.Images
+                .OrderBy(i => i.Id)
+                .Select(i => i.ImageUrl)
+                .FirstOrDefault();
+
+            pricingMap.TryGetValue(product.Id, out var pricing);
+
+            var discountValue = pricing?.DiscountValue ?? 0;
+            var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
+
+            return new ProductListResponse(
+                product.Id,
+                product.Name,
+                product.Sku,
+                product.CategoryId,
+                product.BrandId,
+                product.Category?.Name ?? string.Empty,
+                product.Price,
+                product.Stock,
+                product.WarrantyMonth,
+                product.Status,
+                firstImageUrl,
+                product.CreatedAt,
+                product.UpdatedAt
+            );
+        })
+        .ToList();
+
+        return productResponses;
+    }
+
+
+
+    public static ProductDetailResponse MapToProductDetailResponseFromProduct(
+    Product product,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
+    {
+        pricingMap ??= [];
+
         var thumbnailUrl = product.Images
             .OrderBy(i => i.Id)
             .Select(i => i.ImageUrl)
@@ -247,6 +270,11 @@ public class ResponseMapper
                 );
             })
             .ToList();
+
+        pricingMap.TryGetValue(product.Id, out var pricing);
+
+        var discountValue = pricing?.DiscountValue ?? 0;
+        var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
 
         return new ProductDetailResponse(
             product.Id,
@@ -306,6 +334,161 @@ public class ResponseMapper
         return new PCDetailsWithCompatibilityWarningResponse(
             MapToProductPCDetailResponseFromProduct(product, components),
             compatibilityWarning
+        );
+    }
+
+    public static Pagination<ProductListWithPricingResponse>
+MapToProductListWithPricingResponsePaginationFromProductPagination(
+    Pagination<Product> productPagination,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
+    {
+        pricingMap ??= [];
+
+        var productResponses = productPagination.Items
+            .Select(product =>
+            {
+                var firstImageUrl = product.Images
+                    .OrderBy(i => i.Id)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault();
+
+                pricingMap.TryGetValue(product.Id, out var pricing);
+
+                var discountValue = pricing?.DiscountValue ?? 0;
+                var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
+
+                return new ProductListWithPricingResponse(
+                    product.Id,
+                    product.Name,
+                    product.Sku,
+                    product.CategoryId,
+                    product.BrandId,
+                    product.Category?.Name ?? string.Empty,
+                    product.Price,
+                    discountValue,
+                    priceAfterDiscount,
+                    product.Stock,
+                    product.WarrantyMonth,
+                    product.Status,
+                    firstImageUrl,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
+            })
+            .ToList();
+
+        return new Pagination<ProductListWithPricingResponse>
+        {
+            Items = productResponses,
+            PageNumber = productPagination.PageNumber,
+            PageSize = productPagination.PageSize,
+            TotalCount = productPagination.TotalCount
+        };
+    }
+
+
+    public static List<ProductListWithPricingResponse> MapToProductListWithPricingResponsesFromProducts(
+    List<Product> products,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
+    {
+        pricingMap ??= [];
+
+        var productResponses = products.Select(product =>
+        {
+            var firstImageUrl = product.Images
+                .OrderBy(i => i.Id)
+                .Select(i => i.ImageUrl)
+                .FirstOrDefault();
+
+            pricingMap.TryGetValue(product.Id, out var pricing);
+
+            var discountValue = pricing?.DiscountValue ?? 0;
+            var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
+
+            return new ProductListWithPricingResponse(
+                product.Id,
+                product.Name,
+                product.Sku,
+                product.CategoryId,
+                product.BrandId,
+                product.Category?.Name ?? string.Empty,
+                product.Price,
+                discountValue,
+                priceAfterDiscount,
+                product.Stock,
+                product.WarrantyMonth,
+                product.Status,
+                firstImageUrl,
+                product.CreatedAt,
+                product.UpdatedAt
+            );
+        })
+        .ToList();
+
+        return productResponses;
+    }
+
+
+    public static ProductDetailWithPricingResponse MapToProductDetailWithPricingResponseFromProduct(
+    Product product,
+    Dictionary<Guid, ProductPricingInfo>? pricingMap = null)
+    {
+        pricingMap ??= [];
+
+        var thumbnailUrl = product.Images
+            .OrderBy(i => i.Id)
+            .Select(i => i.ImageUrl)
+            .ToList();
+
+        var specResponses = product.SpecValues
+            .OrderBy(sv => sv.Id)
+            .Select(sv =>
+            {
+                var def = sv.SpecDefinition;
+
+                string value = def.AcceptValueType switch
+                {
+                    SpecAcceptValueType.Text => sv.TextValue ?? string.Empty,
+                    SpecAcceptValueType.Number => sv.NumberValue?.ToString() ?? string.Empty,
+                    SpecAcceptValueType.Decimal => sv.DecimalValue?.ToString() ?? string.Empty,
+                    SpecAcceptValueType.Bool => sv.BoolValue?.ToString() ?? string.Empty,
+                    _ => string.Empty
+                };
+
+                return new ProductSpecValueResponse(
+                    def.Id,
+                    def.Name,
+                    def.Unit,
+                    def.Code,
+                    def.AcceptValueType,
+                    value
+                );
+            })
+            .ToList();
+
+        pricingMap.TryGetValue(product.Id, out var pricing);
+
+        var discountValue = pricing?.DiscountValue ?? 0;
+        var priceAfterDiscount = pricing?.FinalPrice ?? product.Price;
+
+        return new ProductDetailWithPricingResponse(
+            product.Id,
+            product.Name,
+            product.Sku,
+            product.CategoryId,
+            product.BrandId,
+            product.Category?.Name ?? string.Empty,
+            product.Price,
+            discountValue,
+            priceAfterDiscount,
+            product.Stock,
+            product.WarrantyMonth,
+            product.Status,
+            product.Description,
+            thumbnailUrl,
+            product.CreatedAt,
+            product.UpdatedAt,
+            specResponses
         );
     }
 

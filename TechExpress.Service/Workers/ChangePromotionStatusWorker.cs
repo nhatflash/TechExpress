@@ -66,7 +66,7 @@ public class ChangePromotionStatusWorker : BackgroundService
                 _logger.LogError("Change promotion status worker encounter an error: {}", ex.Message);
             }
             
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }
 }

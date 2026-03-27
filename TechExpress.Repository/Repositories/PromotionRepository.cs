@@ -243,4 +243,39 @@ public class PromotionRepository
                         !_context.PromotionUsages.Any(pu => pu.PromotionId == p.Id))
             .ExecuteDeleteAsync();
     }
+
+    public async Task<List<Promotion>> FindActiveDisplayPromotionsAsync(
+    DateTimeOffset now,
+    List<Guid> productIds,
+    List<Guid> categoryIds,
+    List<Guid> brandIds)
+    {
+        productIds ??= [];
+        categoryIds ??= [];
+        brandIds ??= [];
+
+        return await _context.Promotions
+            .AsNoTracking()
+            .Include(p => p.RequiredProducts)
+            .Include(p => p.AppliedProducts)
+            .AsSplitQuery()
+            .Where(p =>
+                p.IsActive &&
+                p.StartDate <= now &&
+                p.EndDate > now &&
+                (
+                    (p.Scope == PromotionScope.Product &&
+                     p.AppliedProducts.Any(ap => productIds.Contains(ap.ProductId)))
+                    ||
+                    (p.Scope == PromotionScope.Category &&
+                     p.CategoryId.HasValue &&
+                     categoryIds.Contains(p.CategoryId.Value))
+                    ||
+                    (p.Scope == PromotionScope.Brand &&
+                     p.BrandId.HasValue &&
+                     brandIds.Contains(p.BrandId.Value))
+                )
+            )
+            .ToListAsync();
+    }
 }

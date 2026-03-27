@@ -16,6 +16,7 @@ namespace TechExpress.Application.Dtos.Responses
         string? FirstImageUrl,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt
+    
     );
 
     public record ProductSpecValueResponse(
@@ -74,5 +75,45 @@ namespace TechExpress.Application.Dtos.Responses
     public record PCDetailsWithCompatibilityWarningResponse(
         ProductPCDetailResponse PCDetails,
         List<string>? CompatibilityWarning
+    );
+
+    public record ProductDetailWithPricingResponse(
+    Guid Id,
+    string Name,
+    string Sku,
+    Guid CategoryId,
+    Guid? BrandId,
+    string CategoryName,
+    decimal Price,
+    decimal DiscountValue,
+    decimal PriceAfterDiscount,
+    int Stock,
+    int WarrantyMonth,
+    ProductStatus Status,
+    string Description,
+    List<string>? ThumbnailUrl,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt,
+    List<ProductSpecValueResponse> SpecValues
+);
+
+
+
+    public record ProductListWithPricingResponse(
+        Guid Id,
+        string Name,
+        string Sku,
+        Guid CategoryId,
+        Guid? BrandId,
+        string CategoryName,
+        decimal Price,
+        decimal DiscountValue,
+        decimal PriceAfterDiscount,
+        int Stock,
+        int WarrantyMonth,
+        ProductStatus Status,
+        string? FirstImageUrl,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset UpdatedAt
     );
 }
