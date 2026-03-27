@@ -745,5 +745,181 @@ public class PromotionService
             ?? throw new NotFoundException($"Không tìm thấy khuyến mãi với mã: {promotionCode}");
     }
 
+    public async Task<Dictionary<Guid, ProductPricingInfo>> CalculateDisplayPricingForProductsAsync(List<Product> products)
+    {
+        if (products == null || products.Count == 0)
+        {
+            return [];
+        }
+
+        var now = DateTimeOffset.Now;
+
+        var productIds = products
+            .Select(p => p.Id)
+            .Distinct()
+            .ToList();
+
+        var categoryIds = products
+            .Select(p => p.CategoryId)
+            .Distinct()
+            .ToList();
+
+        var brandIds = products
+            .Where(p => p.BrandId.HasValue)
+            .Select(p => p.BrandId!.Value)
+            .Distinct()
+            .ToList();
+
+        var promotions = await _unitOfWork.PromotionRepository
+            .FindActiveDisplayPromotionsAsync(now, productIds, categoryIds, brandIds);
+
+        var result = new Dictionary<Guid, ProductPricingInfo>();
+        const decimal minFinalPrice = 2000m;
+
+        foreach (var product in products)
+        {
+            var applicablePromotions = promotions
+                .Where(p => IsPromotionApplicableForDisplay(p, product))
+                .ToList();
+
+            var selectedPromotions = GetDisplayPromotionsAfterStackabilityResolving(
+                applicablePromotions,
+                product.Price);
+
+            var totalDiscount = selectedPromotions.Sum(p =>
+                CalculateProductLevelDiscountForDisplay(p, product.Price));
+
+            totalDiscount = Math.Min(totalDiscount, product.Price);
+
+            if (product.Price > minFinalPrice)
+            {
+                var maxAllowedDiscount = product.Price - minFinalPrice;
+                totalDiscount = Math.Min(totalDiscount, maxAllowedDiscount);
+            }
+            else
+            {
+                totalDiscount = 0;
+            }
+
+            var finalPrice = product.Price - totalDiscount;
+
+            result[product.Id] = new ProductPricingInfo
+            {
+                ProductId = product.Id,
+                OriginalPrice = product.Price,
+                DiscountValue = totalDiscount,
+                FinalPrice = finalPrice,
+                PromotionId = selectedPromotions.Count == 1 ? selectedPromotions[0].Id : null,
+                PromotionName = selectedPromotions.Count == 1 ? selectedPromotions[0].Name : null
+            };
+        }
+
+        return result;
+    }
+
+    private static bool IsPromotionApplicableForDisplay(Promotion promotion, Product product)
+    {
+        if (!promotion.IsActive)
+        {
+            return false;
+        }
+
+        var now = DateTimeOffset.Now;
+        if (now < promotion.StartDate || now > promotion.EndDate)
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(promotion.Code))
+        {
+            return false;
+        }
+
+        if (promotion.Type == PromotionType.FreeItem)
+        {
+            return false;
+        }
+
+        if (promotion.Scope == PromotionScope.Order)
+        {
+            return false;
+        }
+
+        if (promotion.MinOrderValue.HasValue)
+        {
+            return false;
+        }
+
+        if (promotion.RequiredProducts.Count > 0)
+        {
+            return false;
+        }
+
+        return promotion.Scope switch
+        {
+            PromotionScope.Product => promotion.AppliedProducts.Any(ap => ap.ProductId == product.Id),
+            PromotionScope.Category => promotion.CategoryId == product.CategoryId,
+            PromotionScope.Brand => promotion.BrandId.HasValue
+                                     && product.BrandId.HasValue
+                                     && promotion.BrandId == product.BrandId,
+            _ => false
+        };
+    }
+
+    private static decimal CalculateProductLevelDiscountForDisplay(Promotion promotion, decimal productPrice)
+    {
+        var discount = promotion.Type switch
+        {
+            PromotionType.FixedDiscount => promotion.DiscountValue ?? 0,
+
+            PromotionType.PercentageDiscount => Math.Min(
+                productPrice * (promotion.DiscountValue ?? 0) / 100,
+                promotion.MaxDiscountValue ?? decimal.MaxValue),
+
+            PromotionType.FixedPrice => Math.Max(
+                productPrice - (promotion.DiscountValue ?? productPrice),
+                0),
+
+            _ => 0
+        };
+
+        return Math.Min(discount, productPrice);
+    }
+
+    private static List<Promotion> GetDisplayPromotionsAfterStackabilityResolving(
+        List<Promotion> applicablePromotions,
+        decimal productPrice)
+    {
+        if (applicablePromotions.Count == 0)
+        {
+            return [];
+        }
+
+        if (applicablePromotions.All(p => p.IsStackable))
+        {
+            return applicablePromotions;
+        }
+
+        var stackables = applicablePromotions
+            .Where(p => p.IsStackable)
+            .ToList();
+
+        var nonStackables = applicablePromotions
+            .Where(p => !p.IsStackable)
+            .ToList();
+
+        if (nonStackables.Count == 0)
+        {
+            return stackables;
+        }
+
+        var bestNonStackable = nonStackables
+            .MaxBy(p => CalculateProductLevelDiscountForDisplay(p, productPrice))!;
+
+        stackables.Add(bestNonStackable);
+
+        return stackables;
+    }
+
 
 }

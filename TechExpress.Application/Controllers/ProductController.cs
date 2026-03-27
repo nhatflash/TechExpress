@@ -5,6 +5,7 @@ using TechExpress.Application.Common;
 using TechExpress.Application.Dtos.Requests;
 using TechExpress.Application.Dtos.Responses;
 using TechExpress.Repository.Enums;
+using TechExpress.Repository.Models;
 using TechExpress.Service;
 using TechExpress.Service.Enums;
 using TechExpress.Service.Utils;
@@ -46,10 +47,13 @@ namespace TechExpress.Application.Controllers
                     request.BrandId
                 );
 
-            var response = ResponseMapper
-                .MapToProductListResponsePaginationFromProductPagination(productPagination);
+            var pricingMap = await _serviceProvider.PromotionService
+         .CalculateDisplayPricingForProductsAsync(productPagination.Items.ToList());
 
-            return Ok(ApiResponse<Pagination<ProductListResponse>>.OkResponse(response));
+            var response = ResponseMapper
+                .MapToProductListWithPricingResponsePaginationFromProductPagination(productPagination, pricingMap);
+
+            return Ok(ApiResponse<Pagination<ProductListWithPricingResponse>>.OkResponse(response));
         }
 
 
@@ -59,10 +63,13 @@ namespace TechExpress.Application.Controllers
             var product = await _serviceProvider.ProductService
                 .HandleGetProductDetailAsync(id);
 
-            var response = ResponseMapper
-                .MapToProductDetailResponseFromProduct(product);
+            var pricingMap = await _serviceProvider.PromotionService
+        .CalculateDisplayPricingForProductsAsync([product]);
 
-            return Ok(ApiResponse<ProductDetailResponse>.OkResponse(response));
+            var response = ResponseMapper
+                .MapToProductDetailWithPricingResponseFromProduct(product, pricingMap);
+
+            return Ok(ApiResponse<ProductDetailWithPricingResponse>.OkResponse(response));
         }
 
 
@@ -149,9 +156,15 @@ namespace TechExpress.Application.Controllers
             {
                 return BadRequest("Số lượng sản phẩm mới ra mắt không được vượt quá 30 và dưới 1.");
             }
+
             var products = await _serviceProvider.ProductService.HandleGetUiNewProductsAsync(number);
-            var response = ResponseMapper.MapToProductListResponsesFromProducts(products);
-            return Ok(ApiResponse<List<ProductListResponse>>.OkResponse(response));
+
+            var pricingMap = await _serviceProvider.PromotionService
+        .CalculateDisplayPricingForProductsAsync(products);
+
+            var response = ResponseMapper.MapToProductListWithPricingResponsesFromProducts(products, pricingMap);
+
+            return Ok(ApiResponse<List<ProductListWithPricingResponse>>.OkResponse(response));
         }
 
         [HttpGet("ui")]
@@ -164,8 +177,14 @@ namespace TechExpress.Application.Controllers
             var pagedProducts =
                 await _serviceProvider.ProductService.HandleGetUiProductList(search, categoryId, page, pageSize, sortBy,
                     sortDirection);
-            var response = ResponseMapper.MapToProductListResponsePaginationFromProductPagination(pagedProducts);
-            return Ok(ApiResponse<Pagination<ProductListResponse>>.OkResponse(response));
+
+            var pricingMap = await _serviceProvider.PromotionService
+        .CalculateDisplayPricingForProductsAsync(pagedProducts.Items.ToList());
+
+            var response = ResponseMapper
+                .MapToProductListWithPricingResponsePaginationFromProductPagination(pagedProducts, pricingMap);
+
+            return Ok(ApiResponse<Pagination<ProductListWithPricingResponse>>.OkResponse(response));
         }
 
 
@@ -181,10 +200,14 @@ namespace TechExpress.Application.Controllers
             var products = await _serviceProvider.ProductService.HandleGetTopSellingProductsAsync(count);
 
             // Map dữ liệu sang DTO response
-            var response = ResponseMapper.MapToProductListResponsesFromProducts(products);
+            var pricingMap = await _serviceProvider.PromotionService
+        .CalculateDisplayPricingForProductsAsync(products);
 
-            return Ok(ApiResponse<List<ProductListResponse>>.OkResponse(response));
+            var response = ResponseMapper.MapToProductListWithPricingResponsesFromProducts(products, pricingMap);
+
+            return Ok(ApiResponse<List<ProductListWithPricingResponse>>.OkResponse(response));
         }
+    
 
     }
 }
