@@ -1706,7 +1706,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i7_14700k_Id, socket: "LGA1700", cores: 20, threads: 28, baseClock: 3.4m, boostClock: 5.6m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i7_14700k_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2014th%20Gen%20i7%20K.png" });
+        productImages.Add(new ProductImage { ProductId = i7_14700k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22417_png_918003a24b06431e848c39ffe676341c_master.png" });
 
         // Intel Core i9-14900K (Flagship, with iGPU, unlocked)
         var i9_14900k_Id = Guid.NewGuid();
@@ -1724,7 +1724,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i9_14900k_Id, socket: "LGA1700", cores: 24, threads: 32, baseClock: 3.2m, boostClock: 6.0m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i9_14900k_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2014th%20Gen%20i9%20K.png" });
+        productImages.Add(new ProductImage { ProductId = i9_14900k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22360_png_36691178908b435494f526d804c4b249.png" });
 
         // Intel Xeon W3-2423 (Entry Workstation)
         var xeon_w3_2423_Id = Guid.NewGuid();
@@ -1742,7 +1742,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w3_2423_Id, socket: "LGA4677", cores: 6, threads: 12, baseClock: 2.1m, boostClock: 4.2m, tdp: 120, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w3_2423_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Xeon%20W.png" });
+        productImages.Add(new ProductImage { ProductId = xeon_w3_2423_Id, ImageUrl = "https://maychumang.vn/content/images/thumbs/0026024_intel-xeon-w3-2423-15-mb-cache-6-cores-12-threads-21-ghz-to-42-ghz-turbo-120-w_550.jpeg" });
 
         // Intel Xeon W5-2455X (Mid Workstation)
         var xeon_w5_2455x_Id = Guid.NewGuid();
@@ -1760,7 +1760,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w5_2455x_Id, socket: "LGA4677", cores: 12, threads: 24, baseClock: 3.2m, boostClock: 4.6m, tdp: 200, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w5_2455x_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Xeon%20W.png" });
+        productImages.Add(new ProductImage { ProductId = xeon_w5_2455x_Id, ImageUrl = "https://cdn.cs.1worldsync.com/6d/c7/6dc7bef2-ee62-4174-ac0e-d8ce61c18ca5.jpg" });
 
         // Intel Xeon W9-3495X (High-end Workstation)
         var xeon_w9_3495x_Id = Guid.NewGuid();
@@ -1778,7 +1778,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w9_3495x_Id, socket: "LGA4677", cores: 56, threads: 112, baseClock: 1.9m, boostClock: 4.8m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w9_3495x_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Xeon%20W.png" });
+        productImages.Add(new ProductImage { ProductId = xeon_w9_3495x_Id, ImageUrl = "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2023-01/badge-xeon-workstation-w9.png" });
 
         // ============= AMD CPUs =============
 
@@ -1816,7 +1816,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_5600g_Id, socket: "AM4", cores: 6, threads: 12, baseClock: 3.9m, boostClock: 4.4m, tdp: 65, memoryType: "DDR4", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r5_5600g_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r5_5600g_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/3751_027a6a7a0e65add66af8e368c3041a32_8f4958df421c4023b6bb6fb0b2c0e067_635a806a86ce4678962f4e63adfbce5c_master.jpg" });
 
         // AMD Ryzen 5 5600X (Mid-range, no iGPU)
         var r5_5600x_Id = Guid.NewGuid();
@@ -1834,7 +1834,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_5600x_Id, socket: "AM4", cores: 6, threads: 12, baseClock: 3.7m, boostClock: 4.6m, tdp: 65, memoryType: "DDR4", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = r5_5600x_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r5_5600x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/3-7ghz-boost-4-6ghz-6-nhan-12-luong-6_167f2550f47e49498dbbcbc955278ecc_6433636327b747c9ad3175496d4b73e7_master.jpg" });
 
         // AMD Ryzen 5 7600X (Mid-range, no iGPU, AM5)
         var r5_7600x_Id = Guid.NewGuid();
@@ -1852,7 +1852,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_7600x_Id, socket: "AM5", cores: 6, threads: 12, baseClock: 4.7m, boostClock: 5.3m, tdp: 105, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r5_7600x_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-amd-ryzen-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r5_7600x_Id, ImageUrl = "https://hanoicomputercdn.com/media/product/67743_cpu_amd_ryzen_5_7600x_4_7_ghz_upto_5_3ghz_38mb_6_cores_12_threads_105w_socket_am5_fix.jpg" });
 
         // AMD Ryzen 5 7600 (Mid-range, lower TDP)
         var r5_7600_Id = Guid.NewGuid();
@@ -1888,7 +1888,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r7_7800x3d_Id, socket: "AM5", cores: 8, threads: 16, baseClock: 4.2m, boostClock: 5.0m, tdp: 120, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r7_7800x3d_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r7_7800x3d_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen-7-7800x3d-600x600_30d6f05d43524a6c950830a366e4f4eb_2fb2daf9ef7d4faf92f0b1ed1612b1a0.png" });
 
         // AMD Ryzen 9 7900X (High-end)
         var r9_7900x_Id = Guid.NewGuid();
@@ -1906,7 +1906,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r9_7900x_Id, socket: "AM5", cores: 12, threads: 24, baseClock: 4.7m, boostClock: 5.6m, tdp: 170, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r9_7900x_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-9-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r9_7900x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_9_-_1_5157911128a742f3bde4732cf4abdfb2_806c446fab4b42b6b6c71b298e08f563_master.jpg" });
 
         // AMD Ryzen 9 7950X (Flagship)
         var r9_7950x_Id = Guid.NewGuid();
@@ -1924,7 +1924,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r9_7950x_Id, socket: "AM5", cores: 16, threads: 32, baseClock: 4.5m, boostClock: 5.7m, tdp: 170, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r9_7950x_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-9-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = r9_7950x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_9_-_1_fa0f5db1db294e6fa653eb37cab6f3fa_0885fb4b6488450f921dc3cdc2c8f520_master.jpg" });
 
         // AMD Ryzen Threadripper 7960X (HEDT Workstation)
         var tr_7960x_Id = Guid.NewGuid();
@@ -1942,7 +1942,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, tr_7960x_Id, socket: "sTR5", cores: 24, threads: 48, baseClock: 4.2m, boostClock: 5.3m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = tr_7960x_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-threadripper-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = tr_7960x_Id, ImageUrl = "https://nguyencongpc.vn/media/product/25862-ryzen-threadripper-7960x.jpg" });
 
         // AMD Ryzen Threadripper PRO 7995WX (Ultimate Workstation)
         var tr_pro_7995wx_Id = Guid.NewGuid();
@@ -1960,7 +1960,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, tr_pro_7995wx_Id, socket: "sWRX9", cores: 96, threads: 192, baseClock: 2.5m, boostClock: 5.1m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = tr_pro_7995wx_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-threadripper-pro-702x702.png" });
+        productImages.Add(new ProductImage { ProductId = tr_pro_7995wx_Id, ImageUrl = "https://anphat.com.vn/media/lib/24-02-2024/str5.jpg" });
     }
 
     private static void AddGpuSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, int vram, int tdp, int length, string pcieSlot, string powerConnector)
