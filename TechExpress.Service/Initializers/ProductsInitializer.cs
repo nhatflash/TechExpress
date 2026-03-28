@@ -1616,7 +1616,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i3_12100f_Id, socket: "LGA1700", cores: 4, threads: 8, baseClock: 3.3m, boostClock: 4.3m, tdp: 58, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i3_12100f_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2012th%20Gen%20i3.png" });
+        productImages.Add(new ProductImage { ProductId = i3_12100f_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/12th_m35582_ang01_right_v01_1280x1280_4d930b209e67413e896c06ea77490494_9d521047bb1d4fd4b83e1f9c99b32794.png" });
 
         // Intel Core i3-14100 (Low-end, with iGPU)
         var i3_14100_Id = Guid.NewGuid();
@@ -1634,7 +1634,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i3_14100_Id, socket: "LGA1700", cores: 4, threads: 8, baseClock: 3.5m, boostClock: 4.7m, tdp: 60, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i3_14100_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2014th%20Gen%20i3.png" });
+        productImages.Add(new ProductImage { ProductId = i3_14100_Id, ImageUrl = "https://hanoicomputercdn.com/media/product/78868_i3_14.jpg" });
 
         // Intel Core i5-12400F (Mid-range, no iGPU)
         var i5_12400f_Id = Guid.NewGuid();
@@ -1652,7 +1652,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_12400f_Id, socket: "LGA1700", cores: 6, threads: 12, baseClock: 2.5m, boostClock: 4.4m, tdp: 65, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i5_12400f_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2012th%20Gen%20i5.png" });
+        productImages.Add(new ProductImage { ProductId = i5_12400f_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/12th_m35582_ang02_front_v01_1280x1280_e9dcdcca011345a1bd10ecccfce2d4f8_297dbb3ac30a419abb2dc7f7da00143f_master.png" });
 
         // Intel Core i5-14400F (Mid-range, no iGPU)
         var i5_14400f_Id = Guid.NewGuid();
@@ -1670,7 +1670,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_14400f_Id, socket: "LGA1700", cores: 10, threads: 16, baseClock: 2.5m, boostClock: 4.7m, tdp: 65, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i5_14400f_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2014th%20Gen%20i5.png" });
+        productImages.Add(new ProductImage { ProductId = i5_14400f_Id, ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/cpu-intel-core-i5-14400f-up-to-4-7ghz-10-cores-16-threads-20mb.jpg?v=1734109255247" });
 
         // Intel Core i5-14600K (Mid-high, with iGPU, unlocked)
         var i5_14600k_Id = Guid.NewGuid();
@@ -1688,7 +1688,7 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_14600k_Id, socket: "LGA1700", cores: 14, threads: 20, baseClock: 3.5m, boostClock: 5.3m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i5_14600k_Id, ImageUrl = "https://ark.intel.com/content/dam/ark/assets/images/box-shots/Intel%20Core%2014th%20Gen%20i5%20K.png" });
+        productImages.Add(new ProductImage { ProductId = i5_14600k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22490-001-rpl-i5k-univ_png_dd9c15cdc33d45e5963d0a5f73f47f1d.png" });
 
         // Intel Core i7-14700K (High-end, with iGPU, unlocked)
         var i7_14700k_Id = Guid.NewGuid();
