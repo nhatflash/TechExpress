@@ -588,6 +588,65 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
         };
     }
 
+    //================ MAP CART RESPONSE VỚI PROMOTION=================//
+    public static CartWithPromotionsResponse MapToCartWithPromotionsResponse(Cart cart, List<Promotion> activePromotions)
+    {
+        decimal totalDiscount = 0;
+
+        var itemResponses = cart.Items
+            .OrderByDescending(i => i.CreatedAt)
+            .Select(item => {
+                // Tìm KM tốt nhất cho sản phẩm
+                var bestPromotion = activePromotions.Where(p =>
+                    (p.Scope == PromotionScope.Product && p.AppliedProducts.Any(ap => ap.ProductId == item.ProductId)) ||
+                    (p.Scope == PromotionScope.Category && p.CategoryId == item.Product.CategoryId) ||
+                    (p.Scope == PromotionScope.Brand && p.BrandId == item.Product.BrandId)
+                ).OrderByDescending(p => p.DiscountValue).FirstOrDefault();
+
+                decimal discountAmountPerItem = 0;
+                if (bestPromotion != null)
+                {
+                    if (bestPromotion.Type == PromotionType.PercentageDiscount)
+                        discountAmountPerItem = item.UnitPrice * (bestPromotion.DiscountValue ?? 0) / 100;
+                    else if (bestPromotion.Type == PromotionType.FixedDiscount)
+                        discountAmountPerItem = bestPromotion.DiscountValue ?? 0;
+                }
+
+                totalDiscount += (discountAmountPerItem * item.Quantity);
+
+                return new CartItemWithPromotionResponse
+                {
+                    Id = item.Id,
+                    CartId = item.CartId,
+                    ProductId = item.ProductId,
+                    ProductName = item.Product?.Name ?? string.Empty,
+                    ProductImage = item.Product?.Images?.OrderBy(img => img.Id).FirstOrDefault()?.ImageUrl,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice,
+                    DiscountValue = bestPromotion?.DiscountValue,
+                    PromotionType = bestPromotion?.Type,
+                    DiscountAmountPerItem = discountAmountPerItem,
+                    SubTotal = (item.UnitPrice - discountAmountPerItem) * item.Quantity,
+                    //AvailableStock = item.Product?.Stock ?? 0,
+                    //ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
+                    CreatedAt = item.CreatedAt,
+                    UpdatedAt = item.UpdatedAt
+                };
+            }).ToList();
+
+        return new CartWithPromotionsResponse
+        {
+            Id = cart.Id,
+            UserId = cart.UserId,
+            TotalItems = cart.Items.Sum(i => i.Quantity),
+            TotalPrice = cart.Items.Sum(i => i.UnitPrice * i.Quantity),
+            TotalDiscountAmount = totalDiscount,
+            Items = itemResponses,
+            CreatedAt = cart.CreatedAt,
+            UpdatedAt = cart.UpdatedAt
+        };
+    }
+
     // =======================
     // Payment / Installment (API)
     // =======================

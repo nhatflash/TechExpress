@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TechExpress.Repository.Enums;
 
@@ -30,5 +30,20 @@ namespace TechExpress.Application.Dtos.Responses
         public ProductStatus ProductStatus { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
+    }
+
+    public class CartWithPromotionsResponse : CartResponse
+    {
+        public decimal TotalDiscountAmount { get; set; }
+        public decimal FinalTotalPrice => TotalPrice - TotalDiscountAmount;
+        public new List<CartItemWithPromotionResponse> Items { get; set; } = [];
+    }
+
+    public class CartItemWithPromotionResponse : CartItemResponse
+    {
+        public decimal? DiscountValue { get; set; } // Ví dụ: 10 (%) hoặc 50000 (VND)
+        public PromotionType? PromotionType { get; set; }
+        public decimal DiscountAmountPerItem { get; set; }
+        public new decimal SubTotal { get; set; } // Giá sau giảm: (UnitPrice - DiscountAmountPerItem) * Quantity
     }
 }
