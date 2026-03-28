@@ -35,9 +35,14 @@ namespace TechExpress.Application.Controllers
         public async Task<IActionResult> GetCart()
         {
             var userId = _userContext.GetCurrentAuthenticatedUserId();
-            var cart = await _serviceProvider.CartService.HandleGetCurrentCartAsync(userId);
-            var response = ResponseMapper.MapToCartResponseFromCart(cart);
-            return Ok(ApiResponse<CartResponse>.OkResponse(response));
+
+            // Gọi hàm Service trả về Tuple (Cart, Promotions) như đã bàn ở bước trước
+            var (cart, activePromotions) = await _serviceProvider.CartService.HandleGetCurrentCartAsync(userId);
+
+            // Sử dụng Mapper MỚI dành cho GET
+            var response = ResponseMapper.MapToCartWithPromotionsResponse(cart, activePromotions);
+
+            return Ok(ApiResponse<CartWithPromotionsResponse>.OkResponse(response));
         }
 
         /// <summary>
@@ -48,14 +53,16 @@ namespace TechExpress.Application.Controllers
         public async Task<IActionResult> GetCartItems()
         {
             var userId = _userContext.GetCurrentAuthenticatedUserId();
-            var cart = await _serviceProvider.CartService.HandleGetCurrentCartAsync(userId);
-            var response = ResponseMapper.MapToCartResponseFromCart(cart);
-            
+            var (cart, activePromotions) = await _serviceProvider.CartService.HandleGetCurrentCartAsync(userId);
+            var response = ResponseMapper.MapToCartWithPromotionsResponse(cart, activePromotions);
+
             if (cart.Id == Guid.Empty || cart.Items.Count == 0)
             {
-                return Ok(ApiResponse<List<CartItemResponse>>.OkResponse([]));
+                return Ok(ApiResponse<List<CartItemWithPromotionResponse>>.OkResponse([]));
             }
-            return Ok(ApiResponse<List<CartItemResponse>>.OkResponse(response.Items));
+
+            return Ok(ApiResponse<List<CartItemWithPromotionResponse>>.OkResponse(response.Items));
+
         }
 
         /// <summary>

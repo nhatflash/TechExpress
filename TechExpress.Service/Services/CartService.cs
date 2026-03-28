@@ -21,13 +21,15 @@ namespace TechExpress.Service.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Cart> HandleGetCurrentCartAsync(Guid userId)
+        public async Task<(Cart Cart, List<Promotion> ActivePromotions)> HandleGetCurrentCartAsync(Guid userId)
         {
-            var cart = await _unitOfWork.CartRepository.FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId);
+            // 1. Lấy thông tin giỏ hàng kèm Product và Images
+            var cart = await _unitOfWork.CartRepository
+                .FindCartByUserIdIncludeItemsThenIncludeProductThenIncludeImagesWithSplitQueryAsync(userId);
 
             if (cart == null)
             {
-                return new Cart
+                cart = new Cart
                 {
                     Id = Guid.Empty,
                     UserId = userId,
@@ -35,7 +37,11 @@ namespace TechExpress.Service.Services
                 };
             }
 
-            return cart;
+            // 2. Lấy các khuyến mãi Auto-Apply đang có hiệu lực (Logic chuyển từ Controller sang)
+            var now = DateTimeOffset.Now;
+            var activePromotions = await _unitOfWork.PromotionRepository.FindActiveAutoApplyAsync(now);
+
+            return (cart, activePromotions);
         }
 
         public async Task<Cart> HandleAddProductToCartAsync(Guid userId, Guid productId, int quantity)
