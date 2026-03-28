@@ -388,7 +388,10 @@ namespace TechExpress.Application.Controllers
             var (order, installments, payments) = await _serviceProvider.OrderService
                 .HandleGetOrderDetailAsync(orderId);
 
-            var response = ResponseMapper.MapToOrderDetailResponseFromOrder(order, installments, payments);
+            var promotionUsages = await _serviceProvider.OrderService
+                .HandleGetOrderPromotionUsagesAsync(orderId);
+
+            var response = ResponseMapper.MapToOrderDetailResponseFromOrder(order, installments, payments, promotionUsages);
             return Ok(ApiResponse<OrderDetailResponse>.OkResponse(response));
         }
 

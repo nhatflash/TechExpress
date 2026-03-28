@@ -769,6 +769,11 @@ namespace TechExpress.Service.Services
             return (order, installments, payments);
         }
 
+        public async Task<List<PromotionUsage>> HandleGetOrderPromotionUsagesAsync(Guid orderId)
+        {
+            return await _unitOfWork.PromotionUsageRepository.GetByOrderIdIncludePromotionAsync(orderId);
+        }
+
         public async Task<Order> GetOrderDetailsAsync(Guid orderId)
         {
             var order = await _unitOfWork.OrderRepository.FindByIdIncludeItemsThenIncludeProductWithSplitQueryAsync(orderId)

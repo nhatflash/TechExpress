@@ -919,8 +919,108 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
     public static OrderDetailResponse MapToOrderDetailResponseFromOrder(
         Order order,
         List<Installment>? installments,
-        List<Payment>? payments)
+        List<Payment>? payments,
+        List<PromotionUsage>? promotionUsages = null)
     {
+        decimal GetDiscountAmountPerUnit(OrderItem orderItem)
+        {
+            if (promotionUsages == null || promotionUsages.Count == 0 || orderItem.IsFreeItem)
+            {
+                return 0;
+            }
+
+            if (orderItem.Product == null)
+            {
+                return 0;
+            }
+
+            var applicablePromotions = promotionUsages
+                .Select(pu => pu.Promotion)
+                .Where(p => p != null)
+                .Where(p =>
+                    (p.Scope == PromotionScope.Product && p.AppliedProducts.Any(ap => ap.ProductId == orderItem.ProductId)) ||
+                    (p.Scope == PromotionScope.Category && p.CategoryId == orderItem.Product.CategoryId) ||
+                    (p.Scope == PromotionScope.Brand && p.BrandId == orderItem.Product.BrandId))
+                .ToList();
+
+            if (applicablePromotions.Count == 0)
+            {
+                return 0;
+            }
+
+            var bestDiscountAmount = applicablePromotions
+                .Select(promotion =>
+                {
+                    var discountAmount = promotion.Type switch
+                    {
+                        PromotionType.PercentageDiscount => orderItem.UnitPrice * ((promotion.DiscountValue ?? 0) / 100m),
+                        PromotionType.FixedDiscount => promotion.DiscountValue ?? 0,
+                        _ => 0
+                    };
+
+                    if (promotion.MaxDiscountValue.HasValue)
+                    {
+                        discountAmount = Math.Min(discountAmount, promotion.MaxDiscountValue.Value);
+                    }
+
+                    return discountAmount;
+                })
+                .DefaultIfEmpty(0)
+                .Max();
+
+            return Math.Min(bestDiscountAmount, orderItem.UnitPrice);
+        }
+
+        decimal subTotalDiscount = 0;
+        decimal subTotalDiscountValue = 0;
+
+        var itemResponses = order.Items.Select(oi =>
+        {
+            var discountValue = GetDiscountAmountPerUnit(oi);
+            var discountPrice = oi.UnitPrice - discountValue;
+
+            subTotalDiscount += discountPrice * oi.Quantity;
+            subTotalDiscountValue += discountValue * oi.Quantity;
+
+            ProductListResponse? product = null;
+            if (oi.Product != null)
+            {
+                var firstImageUrl = oi.Product.Images
+                    .OrderBy(i => i.Id)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault();
+
+                product = new ProductListResponse(
+                    oi.Product.Id,
+                    oi.Product.Name,
+                    oi.Product.Sku,
+                    oi.Product.CategoryId,
+                    oi.Product.BrandId,
+                    oi.Product.Category?.Name ?? string.Empty,
+                    oi.Product.Price,
+                    oi.Product.Stock,
+                    oi.Product.WarrantyMonth,
+                    oi.Product.Status,
+                    firstImageUrl,
+                    oi.Product.CreatedAt,
+                    oi.Product.UpdatedAt,
+                    discountValue > 0 ? discountPrice : null,
+                    discountValue > 0 ? discountValue : null
+                );
+            }
+
+            return new OrderItemDetailResponse
+            {
+                Id = oi.Id,
+                ProductId = oi.ProductId,
+                Quantity = oi.Quantity,
+                UnitPrice = oi.UnitPrice,
+                DiscountPrice = discountValue > 0 ? discountPrice : null,
+                DiscountValue = discountValue > 0 ? discountValue : null,
+                Product = product
+            };
+        }).ToList();
+
         return new OrderDetailResponse
         {
             Id = order.Id,
@@ -928,6 +1028,8 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
             OrderDate = order.OrderDate,
             Status = order.Status,
             SubTotal = order.SubTotal,
+            SubTotalDiscount = subTotalDiscount,
+            SubTotalDiscountValue = subTotalDiscountValue,
             ShippingCost = order.ShippingCost,
             Tax = order.Tax,
             TotalPrice = order.TotalPrice,
@@ -940,48 +1042,16 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
             Notes = order.Notes,
             ReceiverIdentityCard = order.ReceiverIdentityCard,
             InstallmentDurationMonth = order.InstallmentDurationMonth,
-
-            Items = order.Items.Select(oi =>
-            {
-                ProductListResponse? product = null;
-                if (oi.Product != null)
-                {
-                    var firstImageUrl = oi.Product.Images
-                        .OrderBy(i => i.Id)
-                        .Select(i => i.ImageUrl)
-                        .FirstOrDefault();
-
-                    product = new ProductListResponse(
-                        oi.Product.Id,
-                        oi.Product.Name,
-                        oi.Product.Sku,
-                        oi.Product.CategoryId,
-                        oi.Product.BrandId,
-                        oi.Product.Category?.Name ?? string.Empty,
-                        oi.Product.Price,
-                        oi.Product.Stock,
-                        oi.Product.WarrantyMonth,
-                        oi.Product.Status,
-                        firstImageUrl,
-                        oi.Product.CreatedAt,
-                        oi.Product.UpdatedAt
-                    );
-                }
-
-                return new OrderItemDetailResponse
-                {
-                    Id = oi.Id,
-                    ProductId = oi.ProductId,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice,
-                    Product = product
-                };
-            }).ToList(),
-
+            Items = itemResponses,
+            Promotions = promotionUsages
+                ?.Select(pu => pu.Promotion)
+                .Where(p => p != null)
+                .GroupBy(p => p.Id)
+                .Select(g => MapToPromotionResponseFromPromotion(g.First()))
+                .ToList() ?? [],
             Installments = installments == null
                 ? new List<InstallmentResponse>()
                 : MapToInstallmentResponseListFromInstallmentList(installments),
-
             Payments = payments == null
                 ? new List<PaymentResponse>()
                 : MapToPaymentResponseListFromPaymentList(payments)

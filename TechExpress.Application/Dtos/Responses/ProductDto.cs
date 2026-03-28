@@ -15,7 +15,9 @@ namespace TechExpress.Application.Dtos.Responses
         ProductStatus Status,
         string? FirstImageUrl,
         DateTimeOffset CreatedAt,
-        DateTimeOffset UpdatedAt
+        DateTimeOffset UpdatedAt,
+        decimal? DiscountPrice = null,
+        decimal? DiscountValue = null
     
     );
 
