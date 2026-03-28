@@ -627,8 +627,8 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
                     PromotionType = bestPromotion?.Type,
                     DiscountAmountPerItem = discountAmountPerItem,
                     SubTotal = (item.UnitPrice - discountAmountPerItem) * item.Quantity,
-                    //AvailableStock = item.Product?.Stock ?? 0,
-                    //ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
+                    AvailableStock = item.Product!.Stock,
+                    ProductStatus = item.Product?.Status ?? ProductStatus.Unavailable,
                     CreatedAt = item.CreatedAt,
                     UpdatedAt = item.UpdatedAt
                 };
