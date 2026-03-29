@@ -20,6 +20,24 @@ public class PromotionRepository
         return await _context.Promotions.FirstOrDefaultAsync(p => p.Code == code);
     }
 
+    public async Task<Promotion?> FindByIdIncludeRequiredProductsAndFreeProductsAndAppliedProductsAsync(Guid id)
+    {
+        return await _context.Promotions
+                .Include(p => p.RequiredProducts)
+                .Include(p => p.FreeProducts)
+                .Include(p => p.AppliedProducts)
+                .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<Promotion?> FindByCodeIncludeRequiredProductsAndFreeProductsAndAppliedProductsAsync(string code)
+    {
+        return await _context.Promotions
+            .Include(p => p.RequiredProducts)
+            .Include(p => p.FreeProducts)
+            .Include(p => p.AppliedProducts)
+            .FirstOrDefaultAsync(p => p.Code == code);
+    }
+
     public async Task<bool> ExistsByCodeAsync(string code)
     {
         return await _context.Promotions.AnyAsync(p => p.Code == code);

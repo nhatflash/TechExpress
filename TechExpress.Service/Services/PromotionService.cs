@@ -732,7 +732,7 @@ public class PromotionService
     public async Task<Promotion> HandleGetPromotionDetail(Guid promotionId)
     {
         var promotion = await _unitOfWork.PromotionRepository
-            .FindByIdAsync(promotionId)
+            .FindByIdIncludeRequiredProductsAndFreeProductsAndAppliedProductsAsync(promotionId)
             ?? throw new NotFoundException($"Không tìm thấy khuyến mãi: {promotionId}");
 
         return promotion;
@@ -741,7 +741,7 @@ public class PromotionService
     public async Task<Promotion> HandleGetPromotionCodeDetail(string promotionCode)
     {
         return await _unitOfWork.PromotionRepository
-            .FindByPromtionCodeAsync(promotionCode)
+            .FindByCodeIncludeRequiredProductsAndFreeProductsAndAppliedProductsAsync(promotionCode)
             ?? throw new NotFoundException($"Không tìm thấy khuyến mãi với mã: {promotionCode}");
     }
 

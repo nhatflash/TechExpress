@@ -423,6 +423,8 @@ namespace TechExpress.Service.Services
                         ProductId = product.Id,
                         Quantity = item.Quantity,
                         UnitPrice = product.Price,
+                        IsFreeItem = false,
+                        WarrantyMonthSnapshot = product.WarrantyMonth,
                     });
 
                     checkoutCommands.Add(new CheckoutItemCommand
@@ -568,6 +570,10 @@ namespace TechExpress.Service.Services
                 await _unitOfWork.PromotionUsageRepository.AddRangeAsync(usageList);
 
             // ===== HANDLE FREE ITEMS =====
+            var freeProductIds = result.TotalFreeItems.Select(f => f.ProductId).Distinct().ToList();
+            var freeProductDict = (await _unitOfWork.ProductRepository.FindByIdsWithNoTrackingAsync(freeProductIds))
+                .ToDictionary(p => p.Id);
+
             foreach (var freeItem in result.TotalFreeItems)
             {
                 bool shouldAdd = false;
@@ -595,7 +601,9 @@ namespace TechExpress.Service.Services
                         OrderId = orderId,
                         ProductId = freeItem.ProductId,
                         Quantity = freeItem.Quantity,
-                        UnitPrice = 0
+                        UnitPrice = 0,
+                        IsFreeItem = true,
+                        WarrantyMonthSnapshot = freeProductDict[freeItem.ProductId].WarrantyMonth,
                     });
                 }
             }

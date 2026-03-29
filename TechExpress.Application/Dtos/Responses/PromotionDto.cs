@@ -48,3 +48,33 @@ public record PromotionResponse(
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt
 );
+
+public record PromotionDetailResponse(
+    Guid Id,
+    string Name,
+    string? Code,
+    string Description,
+    PromotionType DiscountType,
+    PromotionScope Scope,
+    decimal? DiscountValue,
+    decimal? MaxDiscountValue,
+    decimal? MinOrderValue,
+    List<PromotionRequiredProductResponse> RequiredProducts,
+    PromotionRequiredProductLogic? RequiredProductLogic,
+    List<PromotionFreeProductResponse> FreeProducts,
+    int? FreeItemPickCount,
+    Guid? CategoryId,
+    Guid? BrandId,
+    List<PromotionAppliedProductResponse> AppliedProducts,
+    int? MinAppliedQuantity,
+    int? MaxUsageCount,
+    int UsageCount,
+    int? MaxUsagePerUser,
+    DateTimeOffset StartDate,
+    DateTimeOffset EndDate,
+    bool IsStackable,
+    bool IsActive,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt,
+    bool IsExpired
+);

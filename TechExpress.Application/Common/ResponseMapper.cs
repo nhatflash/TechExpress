@@ -1321,32 +1321,41 @@ MapToProductListWithPricingResponsePaginationFromProductPagination(
         var now = DateTimeOffset.Now;
 
         return new PromotionDetailResponse
-        {
-            Id = promotion.Id,
-            Name = promotion.Name,
-            Code = promotion.Code,
-            Description = promotion.Description,
-            DiscountType = promotion.Type,
-            DiscountValue = promotion.DiscountValue,
-            MaxDiscountValue = promotion.MaxDiscountValue,
-            StartDate = promotion.StartDate,
-            EndDate = promotion.EndDate,
-            UsageLimit = promotion.MaxUsageCount,
-            UsagePerUser = promotion.MaxUsagePerUser,
-            Status = promotion.IsActive,
-            IsExpired = promotion.EndDate <= now,
-            CreatedAt = promotion.CreatedAt,
-            UpdatedAt = promotion.UpdatedAt,
-            Scope = promotion.Scope,
-            MinOrderValue = promotion.MinOrderValue,
-            CategoryId = promotion.CategoryId,
-            BrandId = promotion.BrandId,
-            MinAppliedQuantity = promotion.MinAppliedQuantity,
-            RequiredProductLogic = promotion.RequiredProductLogic,
-            FreeItemPickCount = promotion.FreeItemPickCount,
-            IsStackable = promotion.IsStackable,
-            UsageCount = promotion.UsageCount
-        };
+        (
+            promotion.Id,
+            promotion.Name,
+            promotion.Code,
+            promotion.Description,
+            promotion.Type,
+            promotion.Scope,
+            promotion.DiscountValue,
+            promotion.MaxDiscountValue,
+            promotion.MinOrderValue,
+            promotion.RequiredProducts
+                .Select(rp => new PromotionRequiredProductResponse(rp.Id, rp.ProductId, rp.MinQuantity, rp.MaxQuantity))
+                .ToList(),
+            promotion.RequiredProductLogic,
+            promotion.FreeProducts
+                .Select(fp => new PromotionFreeProductResponse(fp.Id, fp.ProductId, fp.Quantity))
+                .ToList(),
+            promotion.FreeItemPickCount,
+            promotion.CategoryId,
+            promotion.BrandId,
+            promotion.AppliedProducts
+                .Select(ap => new PromotionAppliedProductResponse(ap.Id, ap.ProductId))
+                .ToList(),
+            promotion.MinAppliedQuantity,
+            promotion.MaxUsageCount,
+            promotion.UsageCount,
+            promotion.MaxUsagePerUser,
+            promotion.StartDate,
+            promotion.EndDate,
+            promotion.IsStackable,
+            promotion.IsActive,
+            promotion.CreatedAt,
+            promotion.UpdatedAt,
+            promotion.EndDate <= now
+        );
     }
 
     public static WarrantyCheckResponse MapToWarrantyCheckResponseFromResult(WarrantyCheckResult result)
