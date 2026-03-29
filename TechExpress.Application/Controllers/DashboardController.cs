@@ -70,6 +70,7 @@ public class DashboardController : ControllerBase
         var maxRevenue = data.Count > 0 ? data.Max(x => x.Revenue) : 0m;
         var barMaxHeight = 160.0f;
         var barColor = Colors.Blue.Lighten2;
+        var viCulture = CultureInfo.GetCultureInfo("vi-VN");
 
         QuestPDF.Settings.License = LicenseType.Community;
 
@@ -94,44 +95,85 @@ public class DashboardController : ControllerBase
                     col.Item().Text("Biểu đồ cột doanh thu (theo từng tháng)")
                         .FontSize(12).SemiBold();
 
-                    col.Item().PaddingTop(8).Row(row =>
-                    {
-                        row.Spacing(6);
-
-                        foreach (var item in data)
+                    col.Item().PaddingTop(8)
+                        .Border(1)
+                        .BorderColor(Colors.Grey.Lighten2)
+                        .Padding(10)
+                        .Column(chartCol =>
                         {
-                            float barHeight;
-                            if (maxRevenue > 0m)
+                            chartCol.Item().Row(row =>
                             {
-                                var ratio = (double)(item.Revenue / maxRevenue);
-                                barHeight = (float)(barMaxHeight * ratio);
-                            }
-                            else
-                            {
-                                barHeight = 0f;
-                            }
+                                row.Spacing(6);
 
-                            row.RelativeItem().Column(c =>
-                            {
-                                c.Item().AlignCenter().Height(barHeight)
-                                    .Background(barColor);
+                                foreach (var item in data)
+                                {
+                                    float barHeight;
+                                    if (maxRevenue > 0m)
+                                    {
+                                        var ratio = (double)(item.Revenue / maxRevenue);
+                                        barHeight = (float)(barMaxHeight * ratio);
+                                    }
+                                    else
+                                    {
+                                        barHeight = 0f;
+                                    }
 
-                                c.Item().PaddingTop(4).Text(item.Revenue.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")))
-                                    .FontSize(9);
+                                    var visibleBarHeight = Math.Max(2f, barHeight);
+                                    var compactRevenue = item.Revenue >= 1_000_000m
+                                        ? $"{item.Revenue / 1_000_000m:0.#}M"
+                                        : item.Revenue.ToString("N0", viCulture);
 
-                                c.Item().Text(item.Month)
-                                    .FontSize(9)
-                                    .AlignCenter();
+                                    row.RelativeItem().Column(c =>
+                                    {
+                                        c.Item().Height(barMaxHeight + 2)
+                                            .AlignBottom()
+                                            .AlignCenter()
+                                            .Width(20)
+                                            .Height(visibleBarHeight)
+                                            .Background(barColor)
+                                            .Border(0.5f)
+                                            .BorderColor(Colors.Blue.Darken1);
+
+                                        c.Item().PaddingTop(4)
+                                            .AlignCenter()
+                                            .Text(compactRevenue)
+                                            .FontSize(7)
+                                            .SemiBold();
+
+                                        c.Item().Text(item.Month)
+                                            .FontSize(8)
+                                            .AlignCenter();
+                                    });
+                                }
                             });
-                        }
-                    });
+
+                            chartCol.Item()
+                                .PaddingTop(2)
+                                .LineHorizontal(1)
+                                .LineColor(Colors.Grey.Lighten2);
+                        });
 
                     col.Item().PaddingTop(14);
                     col.Item().Text("Bảng dữ liệu (Revenue)")
                         .FontSize(12).SemiBold();
 
-                    col.Item().Table(table =>
+                    col.Item().PaddingTop(6).Table(table =>
                     {
+                        static IContainer HeaderCellStyle(IContainer container)
+                            => container
+                                .Background(Colors.Grey.Lighten3)
+                                .Border(1)
+                                .BorderColor(Colors.Grey.Lighten1)
+                                .PaddingVertical(6)
+                                .PaddingHorizontal(8);
+
+                        static IContainer BodyCellStyle(IContainer container)
+                            => container
+                                .Border(1)
+                                .BorderColor(Colors.Grey.Lighten2)
+                                .PaddingVertical(5)
+                                .PaddingHorizontal(8);
+
                         table.ColumnsDefinition(columns =>
                         {
                             columns.ConstantColumn(120);
@@ -140,14 +182,14 @@ public class DashboardController : ControllerBase
 
                         table.Header(header =>
                         {
-                            header.Cell().Text("Tháng").SemiBold();
-                            header.Cell().Text("Doanh thu").SemiBold();
+                            header.Cell().Element(HeaderCellStyle).Text("Tháng").SemiBold();
+                            header.Cell().Element(HeaderCellStyle).AlignRight().Text("Doanh thu").SemiBold();
                         });
 
                         foreach (var item in data)
                         {
-                            table.Cell().Text(item.Month);
-                            table.Cell().Text(item.Revenue.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")));
+                            table.Cell().Element(BodyCellStyle).Text(item.Month);
+                            table.Cell().Element(BodyCellStyle).AlignRight().Text(item.Revenue.ToString("N0", viCulture));
                         }
                     });
                 });
