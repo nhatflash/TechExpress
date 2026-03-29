@@ -118,5 +118,10 @@ namespace TechExpress.Repository.Repositories
         {
             return await _context.Categories.AnyAsync(c => c.Id == id && !c.IsDeleted);
         }
+
+        public async Task<List<Category>> FindByNamesAndIsNotDeletedAsync(List<string> names)
+        {
+            return await _context.Categories.Where(c => names.Contains(c.Name) && !c.IsDeleted).ToListAsync();
+        }
     }
 }

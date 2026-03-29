@@ -6,6 +6,7 @@ using TechExpress.Repository;
 using TechExpress.Repository.CustomExceptions;
 using TechExpress.Repository.Enums;
 using TechExpress.Repository.Models;
+using TechExpress.Service.Constants;
 using TechExpress.Service.Utils;
 
 
@@ -246,6 +247,32 @@ namespace TechExpress.Service.Services
             {
                 throw new NotFoundException("Hiện không có danh mục cha.");
             }
+            return categories;
+        }
+
+        public async Task<List<Category>> HandleGetCategoriesForBuildPC()
+        {
+            var buildPCCategoryNames = new List<string>
+            {
+                CategoryNameConstant.CPU,
+                CategoryNameConstant.Motherboard,
+                CategoryNameConstant.RAM,
+                CategoryNameConstant.Storage,
+                CategoryNameConstant.PSU,
+                CategoryNameConstant.CpuCooler,
+                CategoryNameConstant.Case,
+                CategoryNameConstant.GPU,
+                CategoryNameConstant.Monitor,
+                CategoryNameConstant.Keyboard,
+                CategoryNameConstant.Mouse,
+                CategoryNameConstant.Mousepad,
+                CategoryNameConstant.GamingChair,
+                CategoryNameConstant.Headset,
+                CategoryNameConstant.Speaker,
+                CategoryNameConstant.Webcam,
+                CategoryNameConstant.Cable
+            };
+            var categories = await _unitOfWork.CategoryRepository.FindByNamesAndIsNotDeletedAsync(buildPCCategoryNames);
             return categories;
         }
     }

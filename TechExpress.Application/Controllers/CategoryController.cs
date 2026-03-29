@@ -124,5 +124,14 @@ namespace TechExpress.Application.Controllers
             var response = ResponseMapper.MapToCategoryResponseListFromCategories(categories);
             return Ok(ApiResponse<List<CategoryResponse>>.OkResponse(response));
         }
+
+
+        [HttpGet("buildPC")]
+        public async Task<IActionResult> GetCategoriesForBuildPC()
+        {
+            var categories = await _serviceProvider.CategoryService.HandleGetCategoriesForBuildPC();
+            var response = ResponseMapper.MapToCategoryResponseListFromCategories(categories);
+            return Ok(ApiResponse<List<CategoryResponse>>.OkResponse(response));
+        }
     }
 }
