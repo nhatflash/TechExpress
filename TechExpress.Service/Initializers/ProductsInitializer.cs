@@ -1616,7 +1616,28 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i3_12100f_Id, socket: "LGA1700", cores: 4, threads: 8, baseClock: 3.3m, boostClock: 4.3m, tdp: 58, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i3_12100f_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/12th_m35582_ang01_right_v01_1280x1280_4d930b209e67413e896c06ea77490494_9d521047bb1d4fd4b83e1f9c99b32794.png" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = i3_12100f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88b663d3-ef45-4e6f-b297-f4bc8d660f24%2Fimages%2F1774761701129_0.jpg?alt=media&token=9f6b158e-a173-4bbd-b438-31039fedc002",
+            },
+            new ProductImage
+            {
+                ProductId = i3_12100f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88b663d3-ef45-4e6f-b297-f4bc8d660f24%2Fimages%2F1774761701129_1.png?alt=media&token=7b7bb217-3473-40d5-82a1-1b88ef7a4361",
+            },
+            new ProductImage
+            {
+                ProductId = i3_12100f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88b663d3-ef45-4e6f-b297-f4bc8d660f24%2Fimages%2F1774761701130_2.png?alt=media&token=6f7bf777-9dc3-4796-ae72-8a245e6275db",
+            },
+            new ProductImage
+            {
+                ProductId = i3_12100f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F88b663d3-ef45-4e6f-b297-f4bc8d660f24%2Fimages%2F1774761701130_3.png?alt=media&token=fb6cbd88-e200-446c-96d6-b0e5b1a07b5c"
+            }
+        ]);
 
         // Intel Core i3-14100 (Low-end, with iGPU)
         var i3_14100_Id = Guid.NewGuid();
@@ -1634,7 +1655,19 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i3_14100_Id, socket: "LGA1700", cores: 4, threads: 8, baseClock: 3.5m, boostClock: 4.7m, tdp: 60, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i3_14100_Id, ImageUrl = "https://hanoicomputercdn.com/media/product/78868_i3_14.jpg" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = i3_14100_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fcb933c81-dcd8-4694-884e-7e6e54b35f44%2Fimages%2F1774761893012_0.png?alt=media&token=10932e3b-e8a9-4758-bdcc-66386611e625",
+            },
+            new ProductImage
+            {
+                ProductId = i3_14100_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fcb933c81-dcd8-4694-884e-7e6e54b35f44%2Fimages%2F1774761893013_1.jpg?alt=media&token=bd6343f3-cc9e-4919-bc4d-7e8846edfbba"
+            }
+                ]);
+
 
         // Intel Core i5-12400F (Mid-range, no iGPU)
         var i5_12400f_Id = Guid.NewGuid();
@@ -1652,7 +1685,28 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_12400f_Id, socket: "LGA1700", cores: 6, threads: 12, baseClock: 2.5m, boostClock: 4.4m, tdp: 65, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i5_12400f_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/12th_m35582_ang02_front_v01_1280x1280_e9dcdcca011345a1bd10ecccfce2d4f8_297dbb3ac30a419abb2dc7f7da00143f_master.png" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = i5_12400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe9e06dff-ea34-4d64-a87c-e7b0b9608938%2Fimages%2F1774761982264_0.jpg?alt=media&token=c704df47-eb57-46a4-b6fa-d0bd15a82d52",
+            },
+            new ProductImage
+            {
+                ProductId = i5_12400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe9e06dff-ea34-4d64-a87c-e7b0b9608938%2Fimages%2F1774761982265_1.png?alt=media&token=91ed3408-cdab-4097-848c-c9d33a0eb819",
+            },
+            new ProductImage
+            {
+                ProductId = i5_12400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe9e06dff-ea34-4d64-a87c-e7b0b9608938%2Fimages%2F1774761982266_2.png?alt=media&token=db28293e-799a-40a9-ac64-b88f45892f93",
+            },
+            new ProductImage
+            {
+                ProductId = i5_12400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe9e06dff-ea34-4d64-a87c-e7b0b9608938%2Fimages%2F1774761982266_3.png?alt=media&token=6f9906b9-eb6f-4693-9e22-17a069cccdf7"
+            }
+        ]);
 
         // Intel Core i5-14400F (Mid-range, no iGPU)
         var i5_14400f_Id = Guid.NewGuid();
@@ -1670,7 +1724,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_14400f_Id, socket: "LGA1700", cores: 10, threads: 16, baseClock: 2.5m, boostClock: 4.7m, tdp: 65, memoryType: "DDR4, DDR5", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = i5_14400f_Id, ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/cpu-intel-core-i5-14400f-up-to-4-7ghz-10-cores-16-threads-20mb.jpg?v=1734109255247" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = i5_14400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F50105f68-7e99-44d9-b392-f4502c147f26%2Fimages%2F1774762079978_0.webp?alt=media&token=beb37dbb-9c95-4bff-b747-b97a5aab89a8",
+            },
+            new ProductImage
+            {
+                ProductId = i5_14400f_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F50105f68-7e99-44d9-b392-f4502c147f26%2Fimages%2F1774762079978_1.jpg?alt=media&token=1c10e032-2c91-46ea-86b6-2a87ed367bdb"
+            }
+        ]);
 
         // Intel Core i5-14600K (Mid-high, with iGPU, unlocked)
         var i5_14600k_Id = Guid.NewGuid();
@@ -1688,7 +1753,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i5_14600k_Id, socket: "LGA1700", cores: 14, threads: 20, baseClock: 3.5m, boostClock: 5.3m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i5_14600k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22490-001-rpl-i5k-univ_png_dd9c15cdc33d45e5963d0a5f73f47f1d.png" });
+        productImages.AddRange([
+            new ProductImage
+            {
+                ProductId = i5_14600k_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12243b3c-460a-4cc0-b381-ca656fe9c852%2Fimages%2F1774762169503_0.jpg?alt=media&token=774ce157-d55d-4c8b-a09b-6a6fad9224a3",
+            },
+            new ProductImage
+            {
+                ProductId = i5_14600k_Id,
+                ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F12243b3c-460a-4cc0-b381-ca656fe9c852%2Fimages%2F1774762169505_1.jpg?alt=media&token=a23cd926-6e12-478f-ac99-c52177085c0e"
+            }
+                ]);
 
         // Intel Core i7-14700K (High-end, with iGPU, unlocked)
         var i7_14700k_Id = Guid.NewGuid();
@@ -1706,7 +1782,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i7_14700k_Id, socket: "LGA1700", cores: 20, threads: 28, baseClock: 3.4m, boostClock: 5.6m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i7_14700k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22417_png_918003a24b06431e848c39ffe676341c_master.png" });
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = i7_14700k_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1b2af12a-9345-4827-9970-a2a819c146a2%2Fimages%2F1774762249539_0.jpg?alt=media&token=eec8c60d-5091-4afe-80cd-3c6889de178d",
+    },
+    new ProductImage
+    {
+        ProductId = i7_14700k_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F1b2af12a-9345-4827-9970-a2a819c146a2%2Fimages%2F1774762249540_1.jpg?alt=media&token=ec82d61a-3ec1-4b57-acb4-62b6bf02c452"
+    }
+        ]);
 
         // Intel Core i9-14900K (Flagship, with iGPU, unlocked)
         var i9_14900k_Id = Guid.NewGuid();
@@ -1724,7 +1811,23 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, i9_14900k_Id, socket: "LGA1700", cores: 24, threads: 32, baseClock: 3.2m, boostClock: 6.0m, tdp: 125, memoryType: "DDR4, DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = i9_14900k_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/n22360_png_36691178908b435494f526d804c4b249.png" });
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = i9_14900k_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F35f00d11-2b2c-4575-9bd1-df07e4f19032%2Fimages%2F1774762299683_0.png?alt=media&token=5cbc165f-23cf-4bfd-a6d2-3b75e0c92a15",
+    },
+    new ProductImage
+    {
+        ProductId = i9_14900k_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F35f00d11-2b2c-4575-9bd1-df07e4f19032%2Fimages%2F1774762299684_1.png?alt=media&token=5ad35f24-1d9f-489d-8e93-d6fe8c28bba4",
+    },
+    new ProductImage
+    {
+        ProductId = i9_14900k_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F35f00d11-2b2c-4575-9bd1-df07e4f19032%2Fimages%2F1774762299685_2.webp?alt=media&token=d384c57c-af59-47dd-b81c-56938a0390a5"
+    }
+        ]);
 
         // Intel Xeon W3-2423 (Entry Workstation)
         var xeon_w3_2423_Id = Guid.NewGuid();
@@ -1742,7 +1845,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w3_2423_Id, socket: "LGA4677", cores: 6, threads: 12, baseClock: 2.1m, boostClock: 4.2m, tdp: 120, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w3_2423_Id, ImageUrl = "https://maychumang.vn/content/images/thumbs/0026024_intel-xeon-w3-2423-15-mb-cache-6-cores-12-threads-21-ghz-to-42-ghz-turbo-120-w_550.jpeg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = xeon_w3_2423_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa281be39-05c0-4941-bf02-6dfeb3e099b4%2Fimages%2F1774762520151_0.jpg?alt=media&token=9a0ffcbe-4a92-4388-bf47-827a387a33cc",
+    },
+    new ProductImage
+    {
+        ProductId = xeon_w3_2423_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fa281be39-05c0-4941-bf02-6dfeb3e099b4%2Fimages%2F1774762520152_1.png?alt=media&token=59d1be78-d434-457c-aea9-c77d54f36561"
+    }
+]);
 
         // Intel Xeon W5-2455X (Mid Workstation)
         var xeon_w5_2455x_Id = Guid.NewGuid();
@@ -1760,8 +1874,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w5_2455x_Id, socket: "LGA4677", cores: 12, threads: 24, baseClock: 3.2m, boostClock: 4.6m, tdp: 200, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w5_2455x_Id, ImageUrl = "https://cdn.cs.1worldsync.com/6d/c7/6dc7bef2-ee62-4174-ac0e-d8ce61c18ca5.jpg" });
-
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = xeon_w5_2455x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F7ac09c54-158d-4cef-915e-8d356f28253b%2Fimages%2F1774762608298_0.jpg?alt=media&token=4b429e37-30ff-466b-ace5-c38ae78572db",
+    },
+    new ProductImage
+    {
+        ProductId = xeon_w5_2455x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F7ac09c54-158d-4cef-915e-8d356f28253b%2Fimages%2F1774762614613_0.jpg?alt=media&token=370d8c44-fa66-434d-84ef-3fd4ae81582c"
+    }
+        ]);
         // Intel Xeon W9-3495X (High-end Workstation)
         var xeon_w9_3495x_Id = Guid.NewGuid();
         context.Products.Add(new Product
@@ -1778,8 +1902,23 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, xeon_w9_3495x_Id, socket: "LGA4677", cores: 56, threads: 112, baseClock: 1.9m, boostClock: 4.8m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = xeon_w9_3495x_Id, ImageUrl = "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2023-01/badge-xeon-workstation-w9.png" });
-
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = xeon_w9_3495x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fb40cad61-5b8a-4537-9c6d-5c49152cfaf2%2Fimages%2F1774762716225_0.webp?alt=media&token=595981a0-afbb-4cf3-aacd-86d2e07f110e",
+    },
+    new ProductImage
+    {
+        ProductId = xeon_w9_3495x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fb40cad61-5b8a-4537-9c6d-5c49152cfaf2%2Fimages%2F1774762716226_1.webp?alt=media&token=d185a764-b03e-4ecb-856b-500b99a00732",
+    },
+    new ProductImage
+    {
+        ProductId = xeon_w9_3495x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fb40cad61-5b8a-4537-9c6d-5c49152cfaf2%2Fimages%2F1774762716227_2.webp?alt=media&token=ef1c3c13-c9cb-44fe-b76b-76159013564f"
+    }
+        ]);
         // ============= AMD CPUs =============
 
         // AMD Ryzen 3 4100 (Low-end, no iGPU)
@@ -1798,7 +1937,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r3_4100_Id, socket: "AM4", cores: 4, threads: 8, baseClock: 3.8m, boostClock: 4.0m, tdp: 65, memoryType: "DDR4", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = r3_4100_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-3-702x702.png" });
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = r3_4100_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd7987b92-94dc-4f74-a749-103195d111e9%2Fimages%2F1774762928108_0.png?alt=media&token=7b44bdfe-29e4-40a0-a810-cd4a380fabc9",
+    },
+    new ProductImage
+    {
+        ProductId = r3_4100_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fd7987b92-94dc-4f74-a749-103195d111e9%2Fimages%2F1774762928109_1.jpg?alt=media&token=8cefe5f7-18c2-49dc-95ae-1a9570033ac7"
+    }
+        ]);
 
         // AMD Ryzen 5 5600G (Low-mid, with iGPU - APU)
         var r5_5600g_Id = Guid.NewGuid();
@@ -1816,7 +1966,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_5600g_Id, socket: "AM4", cores: 6, threads: 12, baseClock: 3.9m, boostClock: 4.4m, tdp: 65, memoryType: "DDR4", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r5_5600g_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/3751_027a6a7a0e65add66af8e368c3041a32_8f4958df421c4023b6bb6fb0b2c0e067_635a806a86ce4678962f4e63adfbce5c_master.jpg" });
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = r5_5600g_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F9baa6285-4178-456f-a76a-91ccad05d648%2Fimages%2F1774763008979_0.jpg?alt=media&token=fa74ff00-d41b-4819-aed4-886534470412",
+    },
+    new ProductImage
+    {
+        ProductId = r5_5600g_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F9baa6285-4178-456f-a76a-91ccad05d648%2Fimages%2F1774763008981_1.webp?alt=media&token=cf404eb7-e347-445b-ade1-7654cca03df0"
+    }
+        ]);
 
         // AMD Ryzen 5 5600X (Mid-range, no iGPU)
         var r5_5600x_Id = Guid.NewGuid();
@@ -1834,7 +1995,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_5600x_Id, socket: "AM4", cores: 6, threads: 12, baseClock: 3.7m, boostClock: 4.6m, tdp: 65, memoryType: "DDR4", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = r5_5600x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/3-7ghz-boost-4-6ghz-6-nhan-12-luong-6_167f2550f47e49498dbbcbc955278ecc_6433636327b747c9ad3175496d4b73e7_master.jpg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r5_5600x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F538df82f-bc9d-4f4b-9d0d-2170bf3a9218%2Fimages%2F1774763085180_0.png?alt=media&token=7f7c1bad-1fc0-4ce1-9dd5-718edf38c4dc",
+    },
+    new ProductImage
+    {
+        ProductId = r5_5600x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F538df82f-bc9d-4f4b-9d0d-2170bf3a9218%2Fimages%2F1774763085181_1.jpg?alt=media&token=e2ffd719-1111-4299-86f5-715098eae6c8"
+    }
+]);
 
         // AMD Ryzen 5 7600X (Mid-range, no iGPU, AM5)
         var r5_7600x_Id = Guid.NewGuid();
@@ -1852,7 +2024,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_7600x_Id, socket: "AM5", cores: 6, threads: 12, baseClock: 4.7m, boostClock: 5.3m, tdp: 105, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r5_7600x_Id, ImageUrl = "https://hanoicomputercdn.com/media/product/67743_cpu_amd_ryzen_5_7600x_4_7_ghz_upto_5_3ghz_38mb_6_cores_12_threads_105w_socket_am5_fix.jpg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r5_7600x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fb34c8e10-2bf3-441e-bfef-e4416232036e%2Fimages%2F1774763139069_0.jpg?alt=media&token=4f0a8641-1fee-4f82-bee2-7ee649879fc2",
+    },
+    new ProductImage
+    {
+        ProductId = r5_7600x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fb34c8e10-2bf3-441e-bfef-e4416232036e%2Fimages%2F1774763139070_1.jpg?alt=media&token=1d4d0bd5-7b69-40a8-86b1-517c6c16cb8b"
+    }
+]);
 
         // AMD Ryzen 5 7600 (Mid-range, lower TDP)
         var r5_7600_Id = Guid.NewGuid();
@@ -1870,7 +2053,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r5_7600_Id, socket: "AM5", cores: 6, threads: 12, baseClock: 3.8m, boostClock: 5.1m, tdp: 65, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r5_7600_Id, ImageUrl = "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-amd-ryzen-702x702.png" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r5_7600_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ff1de023e-cced-4c6f-a88f-4da31832f030%2Fimages%2F1774763220444_0.jpg?alt=media&token=6345ccc4-143c-4a57-9dad-24186a5624cb",
+    },
+    new ProductImage
+    {
+        ProductId = r5_7600_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Ff1de023e-cced-4c6f-a88f-4da31832f030%2Fimages%2F1774763220445_1.jpg?alt=media&token=9d768392-e580-427a-884a-595d6d24a492"
+    }
+]);
 
         // AMD Ryzen 7 7800X3D (High-end Gaming King)
         var r7_7800x3d_Id = Guid.NewGuid();
@@ -1888,7 +2082,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r7_7800x3d_Id, socket: "AM5", cores: 8, threads: 16, baseClock: 4.2m, boostClock: 5.0m, tdp: 120, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r7_7800x3d_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen-7-7800x3d-600x600_30d6f05d43524a6c950830a366e4f4eb_2fb2daf9ef7d4faf92f0b1ed1612b1a0.png" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r7_7800x3d_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8111c10-25d8-4789-b6e0-4b8d2b1583a9%2Fimages%2F1774763393599_0.webp?alt=media&token=86614c87-20b6-47ce-b513-6026b814ea50",
+    },
+    new ProductImage
+    {
+        ProductId = r7_7800x3d_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fe8111c10-25d8-4789-b6e0-4b8d2b1583a9%2Fimages%2F1774763393600_1.webp?alt=media&token=606ad089-d63b-43c5-86cb-46624efd73e5"
+    }
+]);
 
         // AMD Ryzen 9 7900X (High-end)
         var r9_7900x_Id = Guid.NewGuid();
@@ -1906,7 +2111,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r9_7900x_Id, socket: "AM5", cores: 12, threads: 24, baseClock: 4.7m, boostClock: 5.6m, tdp: 170, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r9_7900x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_9_-_1_5157911128a742f3bde4732cf4abdfb2_806c446fab4b42b6b6c71b298e08f563_master.jpg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r9_7900x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F016b580c-8990-4280-a1c4-a9d329cd2ef3%2Fimages%2F1774763484727_0.jpg?alt=media&token=a7a9908b-2e3c-4ea3-beb9-ba9e1cb2653b",
+    },
+    new ProductImage
+    {
+        ProductId = r9_7900x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F016b580c-8990-4280-a1c4-a9d329cd2ef3%2Fimages%2F1774763484728_1.jpg?alt=media&token=31c5f212-44a5-4cb3-bb6d-73b19febcf36"
+    }
+]);
 
         // AMD Ryzen 9 7950X (Flagship)
         var r9_7950x_Id = Guid.NewGuid();
@@ -1924,7 +2140,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, r9_7950x_Id, socket: "AM5", cores: 16, threads: 32, baseClock: 4.5m, boostClock: 5.7m, tdp: 170, memoryType: "DDR5", hasIgpu: true);
-        productImages.Add(new ProductImage { ProductId = r9_7950x_Id, ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_9_-_1_fa0f5db1db294e6fa653eb37cab6f3fa_0885fb4b6488450f921dc3cdc2c8f520_master.jpg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = r9_7950x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fef6d8837-d067-4a88-b650-7ef588ce4c27%2Fimages%2F1774763577705_0.jpg?alt=media&token=72d69e71-2784-449c-a9cc-455c06b90c2f",
+    },
+    new ProductImage
+    {
+        ProductId = r9_7950x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fef6d8837-d067-4a88-b650-7ef588ce4c27%2Fimages%2F1774763577706_1.jpg?alt=media&token=7a6813bd-3cd8-4115-ac3f-517c083adae4"
+    }
+]);
 
         // AMD Ryzen Threadripper 7960X (HEDT Workstation)
         var tr_7960x_Id = Guid.NewGuid();
@@ -1942,7 +2169,18 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, tr_7960x_Id, socket: "sTR5", cores: 24, threads: 48, baseClock: 4.2m, boostClock: 5.3m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = tr_7960x_Id, ImageUrl = "https://nguyencongpc.vn/media/product/25862-ryzen-threadripper-7960x.jpg" });
+        productImages.AddRange([
+            new ProductImage
+    {
+        ProductId = tr_7960x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fab6de844-82a1-4ce5-9c1c-52411d631a40%2Fimages%2F1774763657020_0.webp?alt=media&token=026bb227-ae66-4b6b-b0f6-b6f5789da822",
+    },
+    new ProductImage
+    {
+        ProductId = tr_7960x_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2Fab6de844-82a1-4ce5-9c1c-52411d631a40%2Fimages%2F1774763657021_1.jpg?alt=media&token=b28f27b8-099c-4271-916b-95056c510fc6"
+    }
+        ]);
 
         // AMD Ryzen Threadripper PRO 7995WX (Ultimate Workstation)
         var tr_pro_7995wx_Id = Guid.NewGuid();
@@ -1960,7 +2198,13 @@ public static class ProductsInitializer
             Status = ProductStatus.Available,
         });
         AddCpuSpecs(specValues, cpuSpecs, tr_pro_7995wx_Id, socket: "sWRX9", cores: 96, threads: 192, baseClock: 2.5m, boostClock: 5.1m, tdp: 350, memoryType: "DDR5 ECC", hasIgpu: false);
-        productImages.Add(new ProductImage { ProductId = tr_pro_7995wx_Id, ImageUrl = "https://anphat.com.vn/media/lib/24-02-2024/str5.jpg" });
+        productImages.AddRange([
+    new ProductImage
+    {
+        ProductId = tr_pro_7995wx_Id,
+        ImageUrl = "https://firebasestorage.googleapis.com/v0/b/tech-express-storage-3f755.firebasestorage.app/o/products%2F0cb337c4-fd2b-4b68-b1d5-fc09d8523275%2Fimages%2F1774763722654_0.jpg?alt=media&token=d4d89aee-0c73-446f-a369-b21031611b09"
+    }
+]);
     }
 
     private static void AddGpuSpecs(List<ProductSpecValue> specValues, List<SpecDefinition> specs, Guid productId, int vram, int tdp, int length, string pcieSlot, string powerConnector)

@@ -27,7 +27,7 @@ namespace TechExpress.Application.Controllers
         }
 
         [HttpPost("payments/orders/{orderId:guid}/online/init")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> InitOnlinePaymentForOrder(
             [FromRoute] Guid orderId,
             [FromBody] InitOrderOnlinePaymentRequest request,
@@ -41,7 +41,7 @@ namespace TechExpress.Application.Controllers
         }
 
         [HttpPost("payments/installments/{installmentId:guid}/online/init")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> InitOnlinePaymentForInstallment(
             [FromRoute] Guid installmentId,
             [FromBody] InitInstallmentOnlinePaymentRequest request,
@@ -55,7 +55,7 @@ namespace TechExpress.Application.Controllers
         }
 
         [HttpPost("payments/orders/{orderId:guid}/full-settlement/init")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> InitFullSettlement(
             [FromRoute] Guid orderId,
             [FromBody] InitOrderOnlinePaymentRequest request,
