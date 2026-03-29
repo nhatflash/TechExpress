@@ -35,6 +35,7 @@ public class PromotionUsageRepository
     {
         return await _context.PromotionUsages
             .Include(pu => pu.Promotion) // Bắt buộc Include để lấy Code và Name
+                .ThenInclude(p => p.AppliedProducts)
             .Where(pu => pu.OrderId == orderId)
             .ToListAsync();
     }   

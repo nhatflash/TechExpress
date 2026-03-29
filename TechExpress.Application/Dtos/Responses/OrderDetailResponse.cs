@@ -9,6 +9,8 @@ namespace TechExpress.Application.DTOs.Responses
         public Guid ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+        public decimal? DiscountPrice { get; set; }
+        public decimal? DiscountValue { get; set; }
         public decimal TotalPrice => Quantity * UnitPrice;
 
         // Product basic info
@@ -22,6 +24,8 @@ namespace TechExpress.Application.DTOs.Responses
         public DateTimeOffset OrderDate { get; set; }
         public OrderStatus Status { get; set; }
         public decimal SubTotal { get; set; }
+        public decimal SubTotalDiscount { get; set; }
+        public decimal SubTotalDiscountValue { get; set; }
         public decimal ShippingCost { get; set; }
         public decimal Tax { get; set; }
         public decimal TotalPrice { get; set; }
@@ -36,6 +40,7 @@ namespace TechExpress.Application.DTOs.Responses
         public int? InstallmentDurationMonth { get; set; }
 
         public ICollection<OrderItemDetailResponse> Items { get; set; } = [];
+        public ICollection<PromotionResponse> Promotions { get; set; } = [];
         public ICollection<InstallmentResponse> Installments { get; set; } = [];
         public ICollection<PaymentResponse> Payments { get; set; } = [];
     }
